@@ -3,52 +3,42 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class RejectionNotification extends Notification
 {
     use Queueable;
 
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct()
+    protected $approval;
+
+    public function __construct($approval)
     {
-        //
+        $this->approval = $approval;
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
+    public function via($notifiable)
     {
-        return ['mail'];
+        return ['database', 'mail'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): MailMessage
-    {
-        return (new MailMessage)
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
+    public function toDatabase($notifiable)
     {
         return [
-            //
+            'title' => 'Clearance Rejected',
+            'message' => "Your clearance request was rejected by {$this->approval->department->name}. Reason: {$this->approval->remarks}",
+            'clearance_id' => $this->approval->clearance_request_id,
+            'department' => $this->approval->department->name,
+            'reason' => $this->approval->remarks,
         ];
+    }
+
+    public function toMail($notifiable)
+    {
+        return (new \Illuminate\Notifications\Messages\MailMessage)
+                    ->subject('Clearance Rejected - Salale University')
+                    ->line("Your clearance request has been rejected by {$this->approval->department->name}.")
+                    ->line("Reason: {$this->approval->remarks}")
+                    ->action('View Details', url("/student/clearance/{$this->approval->clearance_request_id}"))
+                    ->line('Please contact the department for more information.');
     }
 }

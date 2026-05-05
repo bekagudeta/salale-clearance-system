@@ -8,40 +8,74 @@ use Spatie\Permission\Models\Permission;
 
 class RoleSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        // Create permissions first
+        // Reset cached roles and permissions
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
+        // Create permissions
         $permissions = [
-            'manage users',
-            'manage departments', 
+            // User management
+            'view users',
+            'create users',
+            'edit users',
+            'delete users',
+            
+            // Department management
+            'view departments',
+            'create departments',
+            'edit departments',
+            'delete departments',
+            
+            // Clearance management
+            'view clearances',
+            'create clearances',
+            'approve clearances',
+            'reject clearances',
+            'finalize clearances',
+            
+            // Reports
             'view reports',
-            'finalize clearances'
+            'export reports',
+            
+            // System settings
+            'manage settings',
+            'view logs',
+            'manage backups',
         ];
-        
+
         foreach ($permissions as $permission) {
             Permission::firstOrCreate(['name' => $permission]);
         }
-        
+
         // Create roles
-        $roles = ['super_admin', 'student', 'department_officer', 'registrar'];
-        
-        foreach ($roles as $role) {
-            Role::firstOrCreate(['name' => $role]);
-        }
-        
+        $superAdmin = Role::create(['name' => 'super_admin']);
+        $registrar = Role::create(['name' => 'registrar']);
+        $departmentOfficer = Role::create(['name' => 'department_officer']);
+        $student = Role::create(['name' => 'student']);
+
         // Assign permissions to roles
-        $superAdmin = Role::findByName('super_admin');
-        $superAdmin->givePermissionTo([
-            Permission::findByName('manage users'),
-            Permission::findByName('manage departments'),
-            Permission::findByName('view reports'),
-            Permission::findByName('finalize clearances')
-        ]);
-        
-        $registrar = Role::findByName('registrar');
+        $superAdmin->givePermissionTo(Permission::all());
+
         $registrar->givePermissionTo([
-            Permission::findByName('view reports'),
-            Permission::findByName('finalize clearances')
+            'view clearances',
+            'finalize clearances',
+            'view reports',
+            'export reports',
+        ]);
+
+        $departmentOfficer->givePermissionTo([
+            'view clearances',
+            'approve clearances',
+            'reject clearances',
+        ]);
+
+        $student->givePermissionTo([
+            'view clearances',
+            'create clearances',
         ]);
     }
 }

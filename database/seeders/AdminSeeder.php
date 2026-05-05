@@ -1,0 +1,86 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
+class AdminSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        // Create Super Admin
+        $superAdmin = User::create([
+            'name' => 'Super Administrator',
+            'email' => 'admin@salale.edu.et',
+            'password' => Hash::make('Admin@123'),
+        ]);
+        $superAdmin->assignRole('super_admin');
+
+        // Create Registrar
+        $registrar = User::create([
+            'name' => 'Registrar Office',
+            'email' => 'registrar@salale.edu.et',
+            'password' => Hash::make('Registrar@123'),
+        ]);
+        $registrar->assignRole('registrar');
+
+        // Create Department Officers
+        $officers = [
+            ['name' => 'School Department Officer', 'email' => 'school@salale.edu.et'],
+            ['name' => 'Book Store Officer', 'email' => 'bookstore@salale.edu.et'],
+            ['name' => 'Library Officer', 'email' => 'library@salale.edu.et'],
+            ['name' => 'Food Service Officer', 'email' => 'food@salale.edu.et'],
+            ['name' => 'Housing Officer', 'email' => 'housing@salale.edu.et'],
+            ['name' => 'Store Keeper Officer', 'email' => 'store@salale.edu.et'],
+            ['name' => 'Security Officer', 'email' => 'security@salale.edu.et'],
+            ['name' => 'ICT Center Officer', 'email' => 'ict@salale.edu.et'],
+            ['name' => 'Finance Officer', 'email' => 'finance@salale.edu.et'],
+            ['name' => 'Clinic Officer', 'email' => 'clinic@salale.edu.et'],
+        ];
+
+        foreach ($officers as $officer) {
+            $user = User::create([
+                'name' => $officer['name'],
+                'email' => $officer['email'],
+                'password' => Hash::make('Officer@123'),
+            ]);
+            $user->assignRole('department_officer');
+        }
+
+        // Assign officers to departments
+        $this->assignOfficersToDepartments();
+    }
+
+    /**
+     * Assign officers to their respective departments
+     */
+    private function assignOfficersToDepartments(): void
+    {
+        $departmentMappings = [
+            'school-department' => 'school@salale.edu.et',
+            'book-store' => 'bookstore@salale.edu.et',
+            'library' => 'library@salale.edu.et',
+            'food-service' => 'food@salale.edu.et',
+            'housing' => 'housing@salale.edu.et',
+            'store-keeper' => 'store@salale.edu.et',
+            'campus-security' => 'security@salale.edu.et',
+            'ict-center' => 'ict@salale.edu.et',
+            'finance-office' => 'finance@salale.edu.et',
+            'clinic' => 'clinic@salale.edu.et',
+        ];
+
+        foreach ($departmentMappings as $slug => $email) {
+            $department = \App\Models\Department::where('slug', $slug)->first();
+            $user = User::where('email', $email)->first();
+            
+            if ($department && $user) {
+                $department->update(['officer_user_id' => $user->id]);
+            }
+        }
+    }
+}

@@ -3,52 +3,42 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class ClearanceSubmittedNotification extends Notification
 {
     use Queueable;
 
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct()
+    protected $clearance;
+
+    public function __construct($clearance)
     {
-        //
+        $this->clearance = $clearance;
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
+    public function via($notifiable)
     {
-        return ['mail'];
+        return ['database', 'mail'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): MailMessage
-    {
-        return (new MailMessage)
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
+    public function toDatabase($notifiable)
     {
         return [
-            //
+            'title' => 'New Clearance Request',
+            'message' => "Student {$this->clearance->student->full_name} has submitted a new clearance request.",
+            'clearance_id' => $this->clearance->id,
+            'reference_no' => $this->clearance->reference_no,
         ];
+    }
+
+    public function toMail($notifiable)
+    {
+        return (new \Illuminate\Notifications\Messages\MailMessage)
+                    ->subject('New Clearance Request - Salale University')
+                    ->line("A new clearance request has been submitted.")
+                    ->line("Reference: {$this->clearance->reference_no}")
+                    ->line("Student: {$this->clearance->student->full_name}")
+                    ->action('View Request', url("/department/approvals/{$this->clearance->id}"))
+                    ->line('Please review and take action.');
     }
 }
