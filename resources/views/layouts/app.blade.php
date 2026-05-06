@@ -60,9 +60,9 @@
             <div class="flex flex-col h-full">
                 <!-- Logo -->
                 <div class="flex items-center justify-center h-20 px-4 bg-gray-900/50 border-b border-gray-700">
-                    <div class="text-center">
-                        <h1 class="text-xl font-bold text-white">🏛️ Salale University</h1>
-                        <p class="text-xs text-gray-400">Clearance Management System</p>
+                    <div class="flex flex-col items-center">
+                        <img src="{{ asset('uploads/logos/logo.png') }}" alt="Salale University" class="h-12 w-auto object-contain rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        <p class="text-xs text-gray-400 mt-2 font-medium">Clearance Management System</p>
                     </div>
                 </div>
                 

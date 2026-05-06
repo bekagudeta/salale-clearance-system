@@ -34,7 +34,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
-                    <i class="fas fa-university text-blue-600 text-2xl mr-2"></i>
+                    <img src="{{ asset('uploads/logos/logo.png') }}" alt="Salale University" class="h-8 w-auto object-contain rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 mr-2">
                     <span class="font-bold text-xl text-gray-800">Salale University</span>
                     <span class="ml-2 text-sm text-gray-500">Clearance System</span>
                 </div>
@@ -201,7 +201,7 @@
         <div class="max-w-7xl mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
-                    <h3 class="text-white font-semibold mb-4">Salale University</h3>
+                    <img src="{{ asset('uploads/logos/logo.png') }}" alt="Salale University" class="h-16 w-auto object-contain rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 mb-4">
                     <p class="text-sm">Excellence in Education</p>
                 </div>
                 <div>

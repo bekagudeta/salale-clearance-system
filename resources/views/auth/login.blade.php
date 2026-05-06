@@ -39,7 +39,7 @@
         <!-- Logo and Title -->
         <div class="text-center mb-8">
             <div class="bg-white/10 backdrop-blur-lg rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-university text-white text-4xl"></i>
+                <img src="{{ asset('uploads/logos/logo.png') }}" alt="Salale University" class="h-12 w-auto object-contain rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
             </div>
             <h1 class="text-3xl font-bold text-white">Salale University</h1>
             <p class="text-gray-200 mt-2">Clearance Management System</p>
