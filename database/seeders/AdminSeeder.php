@@ -13,20 +13,24 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create Super Admin
-        $superAdmin = User::create([
-            'name' => 'Super Administrator',
-            'email' => 'admin@salale.edu.et',
-            'password' => Hash::make('Admin@123'),
-        ]);
+        // Create or Update Super Admin
+        $superAdmin = User::updateOrCreate(
+            ['email' => 'admin@salale.edu.et'],
+            [
+                'name' => 'Super Administrator',
+                'password' => Hash::make('Admin@123'),
+            ]
+        );
         $superAdmin->assignRole('super_admin');
 
-        // Create Registrar
-        $registrar = User::create([
-            'name' => 'Registrar Office',
-            'email' => 'registrar@salale.edu.et',
-            'password' => Hash::make('Registrar@123'),
-        ]);
+        // Create or Update Registrar
+        $registrar = User::updateOrCreate(
+            ['email' => 'registrar@salale.edu.et'],
+            [
+                'name' => 'Registrar Office',
+                'password' => Hash::make('Registrar@123'),
+            ]
+        );
         $registrar->assignRole('registrar');
 
         // Create Department Officers
@@ -44,11 +48,13 @@ class AdminSeeder extends Seeder
         ];
 
         foreach ($officers as $officer) {
-            $user = User::create([
-                'name' => $officer['name'],
-                'email' => $officer['email'],
-                'password' => Hash::make('Officer@123'),
-            ]);
+            $user = User::updateOrCreate(
+                ['email' => $officer['email']],
+                [
+                    'name' => $officer['name'],
+                    'password' => Hash::make('Officer@123'),
+                ]
+            );
             $user->assignRole('department_officer');
         }
 
