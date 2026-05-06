@@ -52,10 +52,10 @@ class RoleSeeder extends Seeder
         }
 
         // Create roles
-        $superAdmin = Role::create(['name' => 'super_admin']);
-        $registrar = Role::create(['name' => 'registrar']);
-        $departmentOfficer = Role::create(['name' => 'department_officer']);
-        $student = Role::create(['name' => 'student']);
+        $superAdmin = Role::firstOrCreate(['name' => 'super_admin']);
+        $registrar = Role::firstOrCreate(['name' => 'registrar']);
+        $departmentOfficer = Role::firstOrCreate(['name' => 'department_officer']);
+        $student = Role::firstOrCreate(['name' => 'student']);
 
         // Assign permissions to roles
         $superAdmin->givePermissionTo(Permission::all());
