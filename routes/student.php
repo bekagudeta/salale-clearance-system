@@ -13,7 +13,7 @@ use App\Http\Controllers\Student\NotificationController;
 | All routes in this group require authentication and student role
 */
 
-Route::middleware(['auth', 'is.student'])->prefix('student')->name('student.')->group(function () {
+Route::middleware(['auth'])->prefix('student')->name('student.')->group(function () {
     
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -22,9 +22,9 @@ Route::middleware(['auth', 'is.student'])->prefix('student')->name('student.')->
     Route::prefix('clearance')->name('clearance.')->group(function () {
         Route::get('/create', [ClearanceController::class, 'create'])->name('create');
         Route::post('/', [ClearanceController::class, 'store'])->name('store');
-        Route::get('/{id}', [ClearanceController::class, 'show'])->name('show');
         Route::get('/history', [ClearanceController::class, 'history'])->name('history');
-        Route::post('/{id}/cancel', [ClearanceController::class, 'cancel'])->name('cancel');
+        Route::get('/{id}', [ClearanceController::class, 'show'])->name('show')->whereNumber('id');
+        Route::post('/{id}/cancel', [ClearanceController::class, 'cancel'])->name('cancel')->whereNumber('id');
     });
     
     // Profile Management
