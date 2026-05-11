@@ -1,7 +1,7 @@
 <div class="p-3 border-b bg-gray-50">
     <div class="flex justify-between items-center">
         <h3 class="font-semibold text-gray-800">Notifications</h3>
-        <a href="{{ route('student.notifications') }}" class="text-xs text-blue-600 hover:text-blue-800">View All</a>
+        <a href="{{ route('student.notifications.index') }}" class="text-xs text-blue-600 hover:text-blue-800">View All</a>
     </div>
 </div>
 <div class="max-h-96 overflow-y-auto">
@@ -9,7 +9,7 @@
         $notifications = auth()->user()->notifications()->latest()->take(5)->get();
     @endphp
     @forelse($notifications as $notification)
-        <div class="p-3 border-b hover:bg-gray-50 transition cursor-pointer" onclick="window.location.href='{{ route('student.notifications') }}'">
+        <div class="p-3 border-b hover:bg-gray-50 transition cursor-pointer" onclick="window.location.href='{{ route('student.notifications.index') }}'">
             <div class="flex items-start">
                 <div class="flex-shrink-0">
                     @if($notification->type == 'approval')

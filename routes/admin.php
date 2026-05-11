@@ -72,8 +72,13 @@ Route::middleware(['auth', 'is.admin'])->prefix('admin')->name('admin.')->group(
         Route::post('/backup/create', [SettingController::class, 'createBackup'])->name('backup.create');
         Route::get('/backup/download/{filename}', [SettingController::class, 'downloadBackup'])->name('backup.download');
         Route::delete('/backup/delete/{filename}', [SettingController::class, 'deleteBackup'])->name('backup.delete');
+        Route::post('/backup-schedule', [SettingController::class, 'backupSchedule'])->name('backup-schedule');
         Route::get('/system-info', [SettingController::class, 'systemInfo'])->name('system-info');
         Route::post('/clear-cache', [SettingController::class, 'clearCache'])->name('clear-cache');
+        Route::post('/test-email', [SettingController::class, 'testEmail'])->name('test-email');
+        Route::post('/optimize', [SettingController::class, 'optimize'])->name('optimize');
+        Route::post('/maintenance', [SettingController::class, 'maintenance'])->name('maintenance');
+        Route::get('/export-info', [SettingController::class, 'exportInfo'])->name('export-info');
     });
     
     // Activity Logs

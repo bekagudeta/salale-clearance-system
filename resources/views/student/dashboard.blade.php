@@ -49,11 +49,11 @@
         <div class="bg-white rounded-xl shadow-lg p-6 card-hover transition">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-gray-500 text-sm">In Progress</p>
-                    <p class="text-3xl font-bold text-blue-600">{{ $stats['in_progress'] ?? 0 }}</p>
+                    <p class="text-gray-500 text-sm">Approved</p>
+                    <p class="text-3xl font-bold text-green-600">{{ $stats['approved'] }}</p>
                 </div>
-                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <i class="fas fa-spinner text-blue-600 text-xl"></i>
+                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-check text-green-600 text-xl"></i>
                 </div>
             </div>
         </div>

@@ -172,4 +172,149 @@ class SettingController extends Controller
         
         return view('admin.settings.system-info', compact('info'));
     }
+
+    public function testEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        try {
+            $email = $request->email;
+            
+            // Send test email
+            \Mail::raw('This is a test email from Salale University Clearance System.', function ($message) use ($email) {
+                $message->to($email)
+                    ->subject('Test Email - Clearance System')
+                    ->from(config('mail.from.address', config('mail.from.name')));
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Test email sent successfully to ' . $email
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function clearCache()
+    {
+        try {
+            \Artisan::call('cache:clear');
+            \Artisan::call('config:clear');
+            \Artisan::call('view:clear');
+            \Artisan::call('route:clear');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cache cleared successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function backupSchedule(Request $request)
+    {
+        $request->validate([
+            'auto_backup' => 'nullable|string',
+            'retention_days' => 'nullable|integer|min:1|max:365',
+        ]);
+
+        try {
+            // Save backup schedule settings
+            foreach ($request->only(['auto_backup', 'retention_days']) as $key => $value) {
+                Setting::set($key, $value);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Backup schedule updated successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function optimize(Request $request)
+    {
+        try {
+            // Run Laravel optimization commands
+            \Artisan::call('config:clear');
+            \Artisan::call('cache:clear');
+            \Artisan::call('view:clear');
+            \Artisan::call('route:clear');
+            \Artisan::call('optimize');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Application optimized successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function maintenance(Request $request)
+    {
+        try {
+            // Run maintenance tasks
+            \Artisan::call('migrate', ['--force' => true]);
+            \Artisan::call('cache:clear');
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Maintenance tasks completed successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function exportInfo()
+    {
+        try {
+            $info = [
+                'laravel_version' => app()->version(),
+                'php_version' => phpversion(),
+                'mysql_version' => \DB::select('select version() as version')[0]->version,
+                'server_software' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
+                'server_os' => php_uname(),
+                'max_execution_time' => ini_get('max_execution_time'),
+                'memory_limit' => ini_get('memory_limit'),
+                'upload_max_filesize' => ini_get('upload_max_filesize'),
+                'post_max_size' => ini_get('post_max_size'),
+                'loaded_extensions' => implode(', ', get_loaded_extensions()),
+                'exported_at' => now()->format('Y-m-d H:i:s'),
+            ];
+
+            $filename = 'system-info-' . date('Y-m-d_His') . '.json';
+            $content = json_encode($info, JSON_PRETTY_PRINT);
+
+            return response($content)
+                ->header('Content-Type', 'application/json')
+                ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

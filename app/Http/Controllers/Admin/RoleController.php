@@ -12,7 +12,8 @@ class RoleController extends Controller
     public function index()
     {
         $roles = Role::with('permissions')->get();
-        return view('admin.roles.index', compact('roles'));
+        $permissions = Permission::all();
+        return view('admin.roles.index', compact('roles', 'permissions'));
     }
 
     public function create()

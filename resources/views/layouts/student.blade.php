@@ -21,7 +21,7 @@
         <span>Profile</span>
     </a>
     
-    <a href="{{ route('student.notifications') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg transition group {{ request()->routeIs('student.notifications') ? 'bg-gray-700 text-white' : '' }}">
+    <a href="{{ route('student.notifications.index') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg transition group {{ request()->routeIs('student.notifications.index') ? 'bg-gray-700 text-white' : '' }}">
         <i class="fas fa-bell w-5 mr-3"></i>
         <span>Notifications</span>
         @if(isset($unreadNotifications) && $unreadNotifications > 0)

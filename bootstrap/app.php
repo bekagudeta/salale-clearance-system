@@ -19,6 +19,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
     })
+    ->withSingletons([
+        \App\Repositories\Interfaces\ClearanceRepositoryInterface::class => \App\Repositories\ClearanceRepository::class,
+        \App\Repositories\Interfaces\ReportRepositoryInterface::class => \App\Repositories\ReportRepository::class,
+        \App\Repositories\Interfaces\UserRepositoryInterface::class => \App\Repositories\UserRepository::class,
+    ])
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();
