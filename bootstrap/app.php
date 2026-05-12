@@ -12,6 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
+            'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
+            'guest' => \Illuminate\Auth\Middleware\RedirectIfAuthenticated::class,
             'is.admin' => \App\Http\Middleware\IsAdmin::class,
             'is.student' => \App\Http\Middleware\IsStudent::class,
             'is.officer' => \App\Http\Middleware\IsOfficer::class,
