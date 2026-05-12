@@ -23,6 +23,7 @@ class DashboardController extends Controller
             'pending' => ClearanceRequest::where('status', 'pending')->count(),
             'in_progress' => ClearanceRequest::where('status', 'in_progress')->count(),
             'approved' => ClearanceRequest::where('status', 'approved')->count(),
+            'awaiting_final' => ClearanceRequest::where('status', 'approved')->count(),
             'completed' => ClearanceRequest::where('status', 'completed')->count(),
             'rejected' => ClearanceRequest::where('status', 'rejected')->count(),
         ];

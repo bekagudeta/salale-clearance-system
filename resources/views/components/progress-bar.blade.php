@@ -1,5 +1,7 @@
 @php
-    $percentage = ($value / $max) * 100;
+    $value = $value ?? 0;
+    $max = $max ?? 0;
+    $percentage = $max > 0 ? ($value / $max) * 100 : 0;
 @endphp
 
 <div class="w-full">

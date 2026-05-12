@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
@@ -27,24 +28,61 @@ class LoginController extends Controller
             $request->session()->regenerate();
             
             $user = Auth::user();
-            
-            // Redirect based on role
-            if ($user->hasRole('student')) {
-                return redirect()->intended(route('student.dashboard'));
-            } elseif ($user->hasRole('department_officer')) {
-                return redirect()->intended(route('department.dashboard'));
-            } elseif ($user->hasRole('registrar')) {
-                return redirect()->intended(route('registrar.dashboard'));
-            } elseif ($user->hasRole('super_admin')) {
-                return redirect()->intended(route('admin.dashboard'));
+            $redirectRoute = $this->getDashboardRoute($user);
+            $intendedUrl = $request->session()->pull('url.intended');
+
+            if ($intendedUrl && $this->isIntendedAllowedForRole($intendedUrl, $user)) {
+                return redirect()->to($intendedUrl);
             }
-            
-            return redirect()->intended('/dashboard');
+
+            return redirect()->route($redirectRoute);
         }
 
         throw ValidationException::withMessages([
             'email' => [trans('auth.failed')],
         ]);
+    }
+
+    private function getDashboardRoute($user)
+    {
+        if ($user->hasRole('student')) {
+            return 'student.dashboard';
+        }
+
+        if ($user->hasRole('department_officer')) {
+            return 'department.dashboard';
+        }
+
+        if ($user->hasRole('registrar')) {
+            return 'registrar.dashboard';
+        }
+
+        if ($user->hasRole('super_admin')) {
+            return 'admin.dashboard';
+        }
+
+        return 'dashboard';
+    }
+
+    private function isIntendedAllowedForRole(string $url, $user): bool
+    {
+        if ($user->hasRole('super_admin')) {
+            return Str::contains($url, '/admin');
+        }
+
+        if ($user->hasRole('registrar')) {
+            return Str::contains($url, '/registrar');
+        }
+
+        if ($user->hasRole('department_officer')) {
+            return Str::contains($url, '/department');
+        }
+
+        if ($user->hasRole('student')) {
+            return Str::contains($url, '/student');
+        }
+
+        return false;
     }
 
     public function logout(Request $request)
