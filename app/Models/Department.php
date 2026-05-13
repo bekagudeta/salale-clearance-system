@@ -26,4 +26,16 @@ class Department extends Model
     {
         return $this->hasMany(ClearanceApproval::class);
     }
+
+    public function staff()
+    {
+        return $this->belongsToMany(User::class)
+            ->withPivot('position', 'can_approve')
+            ->withTimestamps();
+    }
+
+    public function allStaff()
+    {
+        return $this->staff()->where('can_approve', true);
+    }
 }

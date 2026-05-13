@@ -19,15 +19,18 @@ class NotifyDepartments implements ShouldQueue
     public function handle(ClearanceSubmitted $event)
     {
         $departments = Department::where('is_active', true)
-            ->with('officer')
+            ->with('staff')
             ->get();
         
         foreach ($departments as $department) {
-            if ($department->officer) {
+            // Get all staff members in this department who can approve
+            $staff = $department->allStaff;
+            
+            foreach ($staff as $person) {
                 $this->notificationService->createDatabaseNotification(
-                    $department->officer_id,
+                    $person->id,
                     'New Clearance Request',
-                    "New clearance request {$event->clearance->reference_no} from student {$event->clearance->student->full_name} requires your approval.",
+                    "New clearance request {$event->clearance->reference_no} from student {$event->clearance->student->full_name} requires your approval in {$department->name}.",
                     'new_clearance'
                 );
             }
