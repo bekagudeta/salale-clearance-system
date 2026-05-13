@@ -70,7 +70,7 @@ class ApprovalRequest extends FormRequest
     /**
      * Get the validation data.
      */
-    protected function validationData(): array
+    public function validationData(): array
     {
         return array_merge($this->all(), [
             'approved_by' => auth()->id(),

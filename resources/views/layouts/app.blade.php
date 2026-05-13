@@ -129,10 +129,17 @@
                             
                             <!-- Profile Dropdown -->
                             <div x-data="{ open: false }" class="relative">
+                                @php
+                                    $profilePhotoUrl = auth()->user()->student?->photo_url;
+                                @endphp
                                 <button @click="open = !open" class="flex items-center space-x-2 text-gray-600 hover:text-gray-900">
-                                    <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                                        <span class="text-white text-sm font-bold">{{ substr(auth()->user()->name, 0, 2) }}</span>
-                                    </div>
+                                    @if($profilePhotoUrl)
+                                        <img src="{{ $profilePhotoUrl }}" alt="Profile Photo" class="w-9 h-9 rounded-full object-cover border-2 border-white shadow-sm">
+                                    @else
+                                        <div class="w-9 h-9 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center shadow-sm">
+                                            <span class="text-white text-sm font-semibold">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</span>
+                                        </div>
+                                    @endif
                                     <i class="fas fa-chevron-down text-xs"></i>
                                 </button>
                                 

@@ -12,8 +12,8 @@
                 <p class="text-sm text-gray-500">Keep your student contact and profile details up to date.</p>
             </div>
             <div class="flex items-center gap-3">
-                @if($student->photo)
-                    <img src="{{ asset('storage/' . $student->photo) }}" alt="Profile Photo" class="w-16 h-16 rounded-full object-cover border border-gray-200">
+                @if($student->photo_url)
+                    <img src="{{ $student->photo_url }}" alt="Profile Photo" class="w-16 h-16 rounded-full object-cover border border-gray-200">
                 @else
                     <div class="w-16 h-16 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xl font-semibold">
                         {{ strtoupper(substr($user->name, 0, 1)) }}

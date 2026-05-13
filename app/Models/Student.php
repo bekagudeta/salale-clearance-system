@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Student extends Model
 {
@@ -21,6 +22,15 @@ class Student extends Model
         'gender',
         'photo',
     ];
+
+    public function getPhotoUrlAttribute()
+    {
+        if ($this->photo && Storage::disk('public')->exists($this->photo)) {
+            return Storage::disk('public')->url($this->photo);
+        }
+
+        return null;
+    }
 
     public function user()
     {
