@@ -31,3 +31,16 @@
         <span>Settings</span>
     </a>
 @endsection
+
+@section('profile-link', route('admin.settings.index'))
+@section('settings-link', route('admin.settings.index'))
+
+@section('notifications-dropdown')
+    <div class="p-4 text-sm text-gray-600">
+        <p class="font-semibold text-gray-800">No notifications available</p>
+        <p class="mt-2">Review your activity logs for recent admin actions.</p>
+        <a href="{{ route('admin.logs.index') }}" class="mt-3 inline-flex items-center px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
+            <i class="fas fa-history mr-2"></i> View Activity Logs
+        </a>
+    </div>
+@endsection

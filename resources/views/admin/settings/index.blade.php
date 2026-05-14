@@ -7,63 +7,68 @@
 @section('content')
 <div class="space-y-6">
     <!-- Quick Actions -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <a href="{{ route('admin.settings.email') }}" class="bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition">
-            <div class="flex items-center">
-                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <i class="fas fa-envelope text-blue-600 text-xl"></i>
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <a href="{{ route('admin.settings.email') }}" class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-xl">
+            <div class="flex items-start gap-4">
+                <div class="inline-flex h-14 w-14 items-center justify-center rounded-3xl bg-blue-100 text-blue-700">
+                    <i class="fas fa-envelope text-2xl"></i>
                 </div>
-                <div class="ml-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Email Settings</h3>
-                    <p class="text-sm text-gray-500">Configure mail server</p>
-                </div>
-            </div>
-        </a>
-        
-        <a href="{{ route('admin.settings.backup') }}" class="bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition">
-            <div class="flex items-center">
-                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                    <i class="fas fa-database text-green-600 text-xl"></i>
-                </div>
-                <div class="ml-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Backup</h3>
-                    <p class="text-sm text-gray-500">Database backups</p>
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-900">Email Settings</h3>
+                    <p class="mt-1 text-sm text-slate-500">Manage outgoing mail server and notifications.</p>
                 </div>
             </div>
         </a>
-        
-        <a href="{{ route('admin.settings.system-info') }}" class="bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition">
-            <div class="flex items-center">
-                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                    <i class="fas fa-info-circle text-purple-600 text-xl"></i>
+
+        <a href="{{ route('admin.settings.backup') }}" class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-xl">
+            <div class="flex items-start gap-4">
+                <div class="inline-flex h-14 w-14 items-center justify-center rounded-3xl bg-emerald-100 text-emerald-700">
+                    <i class="fas fa-database text-2xl"></i>
                 </div>
-                <div class="ml-4">
-                    <h3 class="text-lg font-semibold text-gray-900">System Info</h3>
-                    <p class="text-sm text-gray-500">Server information</p>
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-900">Backup</h3>
+                    <p class="mt-1 text-sm text-slate-500">Create and manage database backups.</p>
                 </div>
             </div>
         </a>
-        
-        <button onclick="confirmClearCache()" class="bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition text-left w-full">
-            <div class="flex items-center">
-                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                    <i class="fas fa-broom text-red-600 text-xl"></i>
+
+        <a href="{{ route('admin.settings.system-info') }}" class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-xl">
+            <div class="flex items-start gap-4">
+                <div class="inline-flex h-14 w-14 items-center justify-center rounded-3xl bg-violet-100 text-violet-700">
+                    <i class="fas fa-info-circle text-2xl"></i>
                 </div>
-                <div class="ml-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Clear Cache</h3>
-                    <p class="text-sm text-gray-500">Clear system cache</p>
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-900">System Info</h3>
+                    <p class="mt-1 text-sm text-slate-500">View server and application details.</p>
+                </div>
+            </div>
+        </a>
+
+        <button onclick="confirmClearCache()" class="text-left rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-xl">
+            <div class="flex items-start gap-4">
+                <div class="inline-flex h-14 w-14 items-center justify-center rounded-3xl bg-amber-100 text-amber-700">
+                    <i class="fas fa-broom text-2xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-900">Clear Cache</h3>
+                    <p class="mt-1 text-sm text-slate-500">Clear application cache and refresh configuration.</p>
                 </div>
             </div>
         </button>
     </div>
     
     <!-- General Settings Form -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
-        <h2 class="text-xl font-bold text-gray-900 mb-6">General Settings</h2>
-        
-        <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data" class="space-y-6">
+    <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900">General Settings</h2>
+                <p class="text-sm text-slate-500">Configure the primary system defaults for the clearance dashboard.</p>
+            </div>
+            <span class="inline-flex rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">Last updated: {{ now()->format('M d, Y') }}</span>
+        </div>
+
+        <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
             @csrf
-            @method('PUT')
             
             <!-- University Information -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -196,10 +201,10 @@
             <div class="items-center px-4 py-3">
                 <form method="POST" action="{{ route('admin.settings.clear-cache') }}">
                     @csrf
-                    <button type="button" onclick="closeClearCacheModal()" class="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md w-24 mr-2 hover:bg-gray-600">
+                    <button type="button" onclick="closeClearCacheModal()" class="px-4 py-2 bg-slate-500 text-white text-base font-medium rounded-md w-24 mr-2 hover:bg-slate-600">
                         Cancel
                     </button>
-                    <button type="submit" class="px-4 py-2 bg-yellow-600 text-white text-base font-medium rounded-md w-24 hover:bg-yellow-700">
+                    <button type="submit" class="px-4 py-2 bg-amber-600 text-white text-base font-medium rounded-md w-24 hover:bg-amber-700">
                         Clear
                     </button>
                 </form>
@@ -216,27 +221,5 @@ function confirmClearCache() {
 function closeClearCacheModal() {
     document.getElementById('clearCacheModal').classList.add('hidden');
 }
-
-// Auto-save settings every 30 seconds
-let formChanged = false;
-document.querySelector('form').addEventListener('change', function() {
-    formChanged = true;
-});
-
-setInterval(function() {
-    if (formChanged && !document.hidden) {
-        // Show auto-save notification
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-        notification.textContent = 'Auto-saving settings...';
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.remove();
-        }, 2000);
-        
-        formChanged = false;
-    }
-}, 30000);
 </script>
 @endsection

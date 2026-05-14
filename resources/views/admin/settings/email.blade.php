@@ -25,7 +25,6 @@
         
         <form method="POST" action="{{ route('admin.settings.email.update') }}" class="space-y-6">
             @csrf
-            @method('PUT')
             
             <!-- Basic Settings -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -82,6 +81,19 @@
                     <input type="text" name="mail_from_name" value="{{ $settings['mail_from_name'] ?? '' }}" placeholder="Application Name" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
                 </div>
             </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Test Email Address</label>
+                    <input id="testEmailAddress" type="email" name="test_email" value="{{ old('test_email', $settings['mail_from_address'] ?? '') }}" placeholder="admin@example.com" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    <p class="text-xs text-gray-500 mt-1">Enter an email address to verify outgoing settings.</p>
+                </div>
+                <div class="flex items-end justify-end">
+                    <button id="sendTestEmailButton" type="button" onclick="sendTestEmail()" class="inline-flex items-center rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700">
+                        <i class="fas fa-paper-plane mr-2"></i> Send Test Email
+                    </button>
+                </div>
+            </div>
             
             <!-- Submit Button -->
             <div class="flex justify-end">
@@ -134,18 +146,26 @@
 
 <script>
 function sendTestEmail() {
-    const button = event.target;
+    const button = document.getElementById('sendTestEmailButton');
+    const emailField = document.getElementById('testEmailAddress');
+    const email = emailField.value.trim();
+
+    if (!email) {
+        showNotification('Please enter a valid test email address.', 'error');
+        return;
+    }
+
     const originalText = button.innerHTML;
-    
     button.disabled = true;
     button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Sending...';
-    
+
     fetch('{{ route('admin.settings.test-email') }}', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        }
+        },
+        body: JSON.stringify({ email })
     })
     .then(response => response.json())
     .then(data => {
