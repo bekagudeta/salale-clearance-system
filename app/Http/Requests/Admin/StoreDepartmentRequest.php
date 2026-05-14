@@ -4,6 +4,8 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use \App\Models\User;
+use \App\Models\Department;
 
 class StoreDepartmentRequest extends FormRequest
 {
@@ -41,7 +43,7 @@ class StoreDepartmentRequest extends FormRequest
                 'exists:users,id',
                 function ($attribute, $value, $fail) {
                     if ($value) {
-                        $user = \App\Models\User::find($value);
+                        $user = User::find($value);
                         if ($user && !$user->hasRole('department_officer')) {
                             $fail('The selected user must have the department officer role.');
                         }
@@ -109,7 +111,7 @@ class StoreDepartmentRequest extends FormRequest
 
             // Check if priority order is already taken
             if ($this->priority_order && $this->priority_order > 0) {
-                $exists = \App\Models\Department::where('priority_order', $this->priority_order)
+                $exists = Department::where('priority_order', $this->priority_order)
                     ->when($this->route('department'), function($query) {
                         return $query->where('id', '!=', $this->route('department')->id);
                     })

@@ -26,16 +26,19 @@ class DepartmentController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255|unique:departments',
             'slug' => 'required|string|max:255|unique:departments',
             'officer_user_id' => 'nullable|exists:users,id',
             'priority_order' => 'nullable|integer',
             'is_active' => 'boolean',
         ]);
-        
-        $department = Department::create($request->all());
-        
+
+        $validated['is_active'] = $request->boolean('is_active');
+        $validated['priority_order'] = $validated['priority_order'] ?? (Department::max('priority_order') + 1);
+
+        Department::create($validated);
+
         return redirect()->route('admin.departments.index')
             ->with('success', 'Department created successfully.');
     }
@@ -51,15 +54,18 @@ class DepartmentController extends Controller
     {
         $department = Department::findOrFail($id);
         
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255|unique:departments,name,' . $id,
             'slug' => 'required|string|max:255|unique:departments,slug,' . $id,
             'officer_user_id' => 'nullable|exists:users,id',
             'priority_order' => 'nullable|integer',
             'is_active' => 'boolean',
         ]);
-        
-        $department->update($request->all());
+
+        $validated['is_active'] = $request->boolean('is_active');
+        $validated['priority_order'] = $validated['priority_order'] ?? $department->priority_order;
+
+        $department->update($validated);
         
         return redirect()->route('admin.departments.index')
             ->with('success', 'Department updated successfully.');

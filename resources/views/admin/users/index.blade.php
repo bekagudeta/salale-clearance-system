@@ -134,9 +134,12 @@
                                         </button>
                                     @endif
                                     @if(auth()->user()->hasRole('super_admin'))
-                                        <a href="{{ route('admin.users.impersonate', $user->id) }}" class="text-purple-600 hover:text-purple-800">
-                                            <i class="fas fa-mask"></i>
-                                        </a>
+                                        <form action="{{ route('admin.users.impersonate', $user->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="text-purple-600 hover:text-purple-800">
+                                                <i class="fas fa-mask"></i>
+                                            </button>
+                                        </form>
                                     @endif
                                 </div>
                             </td>

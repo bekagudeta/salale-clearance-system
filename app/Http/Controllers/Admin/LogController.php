@@ -49,9 +49,9 @@ class LogController extends Controller
             ->paginate(50);
         
         // Get filter options
-        $actions = ActivityLog::distinct()->pluck('action');
-        $tables = ActivityLog::distinct()->pluck('table_name');
-        $users = ActivityLog::with('user')->get()->pluck('user')->filter()->unique('id');
+        $actions = ActivityLog::select('action')->distinct()->orderBy('action')->pluck('action');
+        $tables = ActivityLog::select('table_name')->distinct()->orderBy('table_name')->pluck('table_name');
+        $users = ActivityLog::with('user')->get()->pluck('user')->filter()->unique('id')->sortBy('name');
         
         // Statistics
         $stats = [

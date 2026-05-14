@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Student;
+use App\Models\Department;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -57,7 +59,8 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::whereNotIn('name', ['super_admin'])->get();
-        return view('admin.users.create', compact('roles'));
+        $departments = Department::where('is_active', true)->get();
+        return view('admin.users.create', compact('roles', 'departments'));
     }
 
     public function store(Request $request)
@@ -67,6 +70,9 @@ class UserController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8|confirmed',
             'role' => 'required|exists:roles,name',
+            'department_id' => 'required_if:role,department_officer|nullable|exists:departments,id',
+            'position' => 'nullable|string|max:50',
+            'can_approve' => 'nullable|boolean',
         ]);
         
         $user = User::create([
@@ -77,7 +83,6 @@ class UserController extends Controller
         
         $user->assignRole($request->role);
         
-        // If role is student, create student profile
         if ($request->role === 'student') {
             $request->validate([
                 'student_id' => 'required|string|unique:students',
@@ -85,7 +90,13 @@ class UserController extends Controller
                 'department' => 'required|string',
                 'year' => 'required|integer|min:1|max:6',
                 'semester' => 'required|string',
+                'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
+            
+            $photoPath = null;
+            if ($request->hasFile('photo')) {
+                $photoPath = $request->file('photo')->store('students', 'public');
+            }
             
             Student::create([
                 'user_id' => $user->id,
@@ -97,6 +108,16 @@ class UserController extends Controller
                 'semester' => $request->semester,
                 'phone' => $request->phone,
                 'gender' => $request->gender,
+                'photo' => $photoPath,
+            ]);
+        }
+
+        if ($request->role === 'department_officer' && $request->department_id) {
+            $user->departments()->syncWithoutDetaching([
+                $request->department_id => [
+                    'position' => $request->position ?: 'staff',
+                    'can_approve' => $request->boolean('can_approve', true),
+                ],
             ]);
         }
         
@@ -107,10 +128,11 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::with('student')->findOrFail($id);
-        $roles = Role::all();
+        $roles = Role::whereNotIn('name', ['super_admin'])->get();
+        $departments = Department::where('is_active', true)->get();
         $userRoles = $user->roles->pluck('name')->toArray();
         
-        return view('admin.users.edit', compact('user', 'roles', 'userRoles'));
+        return view('admin.users.edit', compact('user', 'roles', 'departments', 'userRoles'));
     }
 
     public function update(Request $request, $id)
@@ -134,18 +156,59 @@ class UserController extends Controller
         }
         
         $user->syncRoles([$request->role]);
-        
-        // Update student profile if exists
-        if ($user->student && $request->role === 'student') {
-            $user->student->update([
-                'full_name' => $request->name,
-                'faculty' => $request->faculty ?? $user->student->faculty,
-                'department' => $request->department ?? $user->student->department,
-                'year' => $request->year ?? $user->student->year,
-                'semester' => $request->semester ?? $user->student->semester,
-                'phone' => $request->phone ?? $user->student->phone,
-                'gender' => $request->gender ?? $user->student->gender,
+
+        if ($request->role === 'student') {
+            $request->validate([
+                'student_id' => 'required|string|unique:students,student_id,' . optional($user->student)->id,
+                'faculty' => 'required|string',
+                'department' => 'required|string',
+                'year' => 'required|integer|min:1|max:6',
+                'semester' => 'required|string',
+                'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
+
+            $updateData = [
+                'student_id' => $request->student_id,
+                'full_name' => $request->name,
+                'faculty' => $request->faculty,
+                'department' => $request->department,
+                'year' => $request->year,
+                'semester' => $request->semester,
+                'phone' => $request->phone,
+                'gender' => $request->gender,
+            ];
+
+            if ($request->hasFile('photo')) {
+                // Delete old photo if exists
+                if ($user->student && $user->student->photo) {
+                    Storage::disk('public')->delete($user->student->photo);
+                }
+                $updateData['photo'] = $request->file('photo')->store('students', 'public');
+            }
+
+            if ($user->student) {
+                $user->student->update($updateData);
+            } else {
+                $updateData['user_id'] = $user->id;
+                Student::create($updateData);
+            }
+        }
+
+        if ($request->role === 'department_officer') {
+            $request->validate([
+                'department_id' => 'required|exists:departments,id',
+                'position' => 'nullable|string|max:50',
+                'can_approve' => 'nullable|boolean',
+            ]);
+            
+            $user->departments()->sync([
+                $request->department_id => [
+                    'position' => $request->position ?: 'staff',
+                    'can_approve' => $request->boolean('can_approve', true),
+                ],
+            ]);
+        } else {
+            $user->departments()->detach();
         }
         
         return redirect()->route('admin.users.index')

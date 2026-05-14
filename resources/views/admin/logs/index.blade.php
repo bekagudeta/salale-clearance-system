@@ -1,252 +1,244 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', 'Activity Logs - Admin')
 @section('page-title', 'Activity Logs')
-@section('page-subtitle', 'Monitor and track system activities')
+@section('page-subtitle', 'Monitor and track system activities with clarity')
 
 @section('content')
 <div class="space-y-6">
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-white rounded-xl shadow-lg p-4">
-            <p class="text-gray-500 text-sm">Total Logs</p>
-            <p class="text-2xl font-bold">{{ $stats['total_logs'] }}</p>
+    <div class="grid gap-4 xl:grid-cols-4">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Total Logs</p>
+                    <p class="mt-4 text-3xl font-semibold text-slate-900">{{ $stats['total_logs'] }}</p>
+                </div>
+                <span class="inline-flex h-12 w-12 items-center justify-center rounded-3xl bg-slate-100 text-slate-700">
+                    <i class="fas fa-file-alt"></i>
+                </span>
+            </div>
         </div>
-        <div class="bg-blue-50 rounded-xl shadow-lg p-4">
-            <p class="text-blue-600 text-sm">Today's Logs</p>
-            <p class="text-2xl font-bold text-blue-700">{{ $stats['today_logs'] }}</p>
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-sky-400">Today's Logs</p>
+                    <p class="mt-4 text-3xl font-semibold text-slate-900">{{ $stats['today_logs'] }}</p>
+                </div>
+                <span class="inline-flex h-12 w-12 items-center justify-center rounded-3xl bg-sky-100 text-sky-700">
+                    <i class="fas fa-calendar-day"></i>
+                </span>
+            </div>
         </div>
-        <div class="bg-green-50 rounded-xl shadow-lg p-4">
-            <p class="text-green-600 text-sm">Unique Users</p>
-            <p class="text-2xl font-bold text-green-700">{{ $stats['unique_users'] }}</p>
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-400">Unique Users</p>
+                    <p class="mt-4 text-3xl font-semibold text-slate-900">{{ $stats['unique_users'] }}</p>
+                </div>
+                <span class="inline-flex h-12 w-12 items-center justify-center rounded-3xl bg-emerald-100 text-emerald-700">
+                    <i class="fas fa-users"></i>
+                </span>
+            </div>
         </div>
-        <div class="bg-purple-50 rounded-xl shadow-lg p-4">
-            <p class="text-purple-600 text-sm">Most Active</p>
-            <p class="text-sm font-bold text-purple-700">{{ $stats['most_active_action']->action ?? 'N/A' }}</p>
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-violet-400">Most Active</p>
+                    <p class="mt-4 text-base font-semibold text-slate-900">{{ $stats['most_active_action']->action ?? 'N/A' }}</p>
+                    <p class="mt-1 text-sm text-slate-500">{{ optional($stats['most_active_action'])->total ? optional($stats['most_active_action'])->total . ' events' : 'No activity yet' }}</p>
+                </div>
+                <span class="inline-flex h-12 w-12 items-center justify-center rounded-3xl bg-violet-100 text-violet-700">
+                    <i class="fas fa-chart-line"></i>
+                </span>
+            </div>
         </div>
     </div>
-    
-    <!-- Filters -->
-    <div class="bg-white rounded-xl shadow-lg p-4">
-        <form method="GET" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search logs..." class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+
+    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div class="space-y-2">
+                <h2 class="text-xl font-semibold text-slate-900">Filter activity history</h2>
+                <p class="text-sm text-slate-500">Use search and filters to quickly surface the logs you need.</p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <a href="{{ route('admin.logs.index') }}" class="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                    <i class="fas fa-eraser"></i>
+                    Reset Filters
+                </a>
+                <button type="button" onclick="confirmClearLogs()" class="inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100">
+                    <i class="fas fa-trash"></i>
+                    Clear Old Logs
+                </button>
+            </div>
+        </div>
+
+        <form method="GET" class="mt-6 grid gap-4 xl:grid-cols-[1.4fr_1fr]">
+            <div class="grid gap-4 lg:grid-cols-2">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-slate-700">Search</label>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by description, IP, or keyword" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200" />
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Action</label>
-                    <select name="action" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-slate-700">Action</label>
+                    <select name="action" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200">
                         <option value="all">All Actions</option>
                         @foreach($actions as $action)
                             <option value="{{ $action }}" {{ request('action') == $action ? 'selected' : '' }}>{{ $action }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Table</label>
-                    <select name="table_name" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-slate-700">Table</label>
+                    <select name="table_name" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200">
                         <option value="">All Tables</option>
                         @foreach($tables as $table)
                             <option value="{{ $table }}" {{ request('table_name') == $table ? 'selected' : '' }}>{{ $table }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">User</label>
-                    <select name="user_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-slate-700">User</label>
+                    <select name="user_id" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200">
                         <option value="">All Users</option>
                         @foreach($users as $user)
                             <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
-                    <div class="flex space-x-2">
-                        <input type="date" name="from_date" value="{{ request('from_date') }}" placeholder="From" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg">
-                        <input type="date" name="to_date" value="{{ request('to_date') }}" placeholder="To" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg">
+                <div class="space-y-2 lg:col-span-2">
+                    <label class="block text-sm font-medium text-slate-700">Date range</label>
+                    <div class="grid gap-3 sm:grid-cols-2">
+                        <input type="date" name="from_date" value="{{ request('from_date') }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200" />
+                        <input type="date" name="to_date" value="{{ request('to_date') }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200" />
                     </div>
                 </div>
             </div>
-            <div class="flex justify-end space-x-2">
-                <a href="{{ route('admin.logs.index') }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                    Clear
-                </a>
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-                    <i class="fas fa-filter mr-2"></i> Filter
+            <div class="flex items-end justify-end gap-3">
+                <button type="submit" class="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
+                    <i class="fas fa-filter mr-2"></i> Apply filters
                 </button>
             </div>
         </form>
     </div>
-    
-    <!-- Actions Bar -->
-    <div class="bg-white rounded-xl shadow-lg p-4">
-        <div class="flex justify-between items-center">
-            <div class="flex space-x-3">
-                <button onclick="confirmClearLogs()" class="border border-red-600 text-red-600 px-4 py-2 rounded-lg hover:bg-red-50 transition">
-                    <i class="fas fa-trash mr-2"></i> Clear Old Logs
-                </button>
-                <a href="{{ route('admin.logs.export') }}" class="border border-green-600 text-green-600 px-4 py-2 rounded-lg hover:bg-green-50 transition">
-                    <i class="fas fa-download mr-2"></i> Export
-                </a>
+
+    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+                <h3 class="text-xl font-semibold text-slate-900">Activity logs</h3>
+                <p class="mt-1 text-sm text-slate-500">Sorted by newest activity first.</p>
             </div>
-            <div class="text-sm text-gray-500">
-                Showing {{ $logs->firstItem() ?? 0 }} to {{ $logs->lastItem() ?? 0 }} of {{ $logs->total() }} logs
+            <div class="flex flex-wrap gap-3 items-center">
+                <p class="text-sm text-slate-500">Showing {{ $logs->firstItem() ?? 0 }}–{{ $logs->lastItem() ?? 0 }} of {{ $logs->total() }}</p>
+                <button type="button" onclick="location.reload()" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh
+                </button>
             </div>
         </div>
-    </div>
-    
-    <!-- Logs Table -->
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50 border-b">
+
+        <div class="mt-6 overflow-x-auto">
+            <table class="w-full min-w-[900px] divide-y divide-slate-200 text-sm text-slate-700">
+                <thead class="bg-slate-50 text-left text-xs uppercase tracking-[0.2em] text-slate-500">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            User
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Action
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Table/Record
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Description
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            IP Address
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Date
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Actions
-                        </th>
+                        <th class="px-6 py-3">User</th>
+                        <th class="px-6 py-3">Action</th>
+                        <th class="px-6 py-3">Table / Record</th>
+                        <th class="px-6 py-3">Description</th>
+                        <th class="px-6 py-3">IP Address</th>
+                        <th class="px-6 py-3">Date</th>
+                        <th class="px-6 py-3">View</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="divide-y divide-slate-200 bg-white">
                     @forelse($logs as $log)
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4 whitespace-nowrap">
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="px-6 py-4 align-top whitespace-nowrap">
                                 @if($log->user)
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-8 w-8">
-                                            <img class="h-8 w-8 rounded-full" src="{{ $log->user->photo ?? asset('images/default-avatar.png') }}" alt="">
-                                        </div>
-                                        <div class="ml-3">
-                                            <div class="text-sm font-medium text-gray-900">{{ $log->user->name }}</div>
-                                            <div class="text-sm text-gray-500">{{ $log->user->email }}</div>
+                                    <div class="flex items-center gap-3">
+                                        <img class="h-10 w-10 rounded-2xl object-cover" src="{{ $log->user->photo ?? asset('images/default-avatar.png') }}" alt="{{ $log->user->name }}">
+                                        <div>
+                                            <div class="font-semibold text-slate-900">{{ $log->user->name }}</div>
+                                            <div class="text-xs text-slate-500">{{ $log->user->email }}</div>
                                         </div>
                                     </div>
                                 @else
-                                    <span class="text-sm text-gray-500">System</span>
+                                    <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-600">
+                                        <i class="fas fa-cogs"></i>
+                                        System
+                                    </div>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                    {{ $log->action }}
-                                </span>
+                            <td class="px-6 py-4 align-top">
+                                <span class="inline-flex rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-700">{{ $log->action }}</span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">
-                                    <div class="font-medium">{{ $log->table_name }}</div>
-                                    @if($log->record_id)
-                                        <div class="text-gray-500">#{{ $log->record_id }}</div>
-                                    @endif
-                                </div>
+                            <td class="px-6 py-4 align-top">
+                                <div class="font-medium text-slate-900">{{ $log->table_name }}</div>
+                                @if($log->record_id)
+                                    <div class="text-xs text-slate-500">#{{ $log->record_id }}</div>
+                                @endif
                             </td>
-                            <td class="px-6 py-4">
-                                <div class="text-sm text-gray-900 max-w-xs truncate" title="{{ $log->description }}">
-                                    {{ $log->description }}
-                                </div>
+                            <td class="px-6 py-4 align-top max-w-[320px]">
+                                <div class="text-slate-700 line-clamp-2" title="{{ $log->description }}">{{ $log->description }}</div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $log->ip_address }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $log->created_at->format('M j, Y H:i') }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="{{ route('admin.logs.show', $log->id) }}" class="text-blue-600 hover:text-blue-900">
-                                    <i class="fas fa-eye"></i> View
+                            <td class="px-6 py-4 align-top text-slate-500">{{ $log->ip_address }}</td>
+                            <td class="px-6 py-4 align-top text-slate-500">{{ $log->created_at->format('M j, Y H:i') }}</td>
+                            <td class="px-6 py-4 align-top">
+                                <a href="{{ route('admin.logs.show', $log->id) }}" class="inline-flex items-center gap-2 text-slate-700 hover:text-slate-900">
+                                    <i class="fas fa-eye"></i>
+                                    View
                                 </a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-8 text-center text-gray-500">
-                                <i class="fas fa-clipboard-list text-4xl mb-4 block text-gray-300"></i>
-                                No activity logs found.
+                            <td colspan="7" class="px-6 py-12 text-center text-slate-500">
+                                <i class="fas fa-clipboard-list text-4xl text-slate-300"></i>
+                                <p class="mt-4 text-base">No activity logs found.</p>
                             </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        
-        <!-- Pagination -->
+
         @if($logs->hasPages())
-            <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-                <div class="flex-1 flex justify-between sm:hidden">
-                    {{ $logs->links() }}
-                </div>
-                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                    <div>
-                        <p class="text-sm text-gray-700">
-                            Showing
-                            <span class="font-medium">{{ $logs->firstItem() }}</span>
-                            to
-                            <span class="font-medium">{{ $logs->lastItem() }}</span>
-                            of
-                            <span class="font-medium">{{ $logs->total() }}</span>
-                            results
-                        </p>
-                    </div>
-                    <div>
-                        {{ $logs->links() }}
-                    </div>
-                </div>
+            <div class="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <p class="text-sm text-slate-500">
+                    Showing <span class="font-medium text-slate-900">{{ $logs->firstItem() }}</span> to <span class="font-medium text-slate-900">{{ $logs->lastItem() }}</span> of <span class="font-medium text-slate-900">{{ $logs->total() }}</span> entries
+                </p>
+                <div>{{ $logs->links() }}</div>
             </div>
         @endif
     </div>
 </div>
 
-<!-- Clear Logs Modal -->
-<div id="clearModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-        <div class="mt-3 text-center">
-            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
-                <i class="fas fa-exclamation-triangle text-red-600"></i>
+<div id="clearModal" class="fixed inset-0 z-50 hidden bg-slate-950/50 p-4 backdrop-blur-sm">
+    <div class="mx-auto w-full max-w-lg overflow-hidden rounded-[32px] bg-white shadow-2xl">
+        <div class="flex items-center justify-between border-b border-slate-200 px-6 py-5">
+            <div>
+                <h3 class="text-xl font-semibold text-slate-900">Clear Old Logs</h3>
+                <p class="mt-2 text-sm text-slate-500">Permanently delete older activity logs to keep the audit trail manageable.</p>
             </div>
-            <h3 class="text-lg leading-6 font-medium text-gray-900 mt-4">Clear Old Logs</h3>
-            <div class="mt-2 px-7 py-3">
-                <p class="text-sm text-gray-500">
-                    Select how many days of logs to keep. Logs older than this will be permanently deleted.
-                </p>
-                <div class="mt-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Keep logs from last</label>
-                    <select name="days" id="daysSelect" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
-                        <option value="7">7 days</option>
-                        <option value="30" selected>30 days</option>
-                        <option value="90">90 days</option>
-                        <option value="365">1 year</option>
-                    </select>
-                </div>
-            </div>
-            <div class="items-center px-4 py-3">
-                <form id="clearForm" method="POST" action="{{ route('admin.logs.clear') }}">
-                    @csrf
-                    <button type="button" onclick="closeClearModal()" class="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md w-24 mr-2 hover:bg-gray-600">
-                        Cancel
-                    </button>
-                    <button type="submit" class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-24 hover:bg-red-700">
-                        Clear
-                    </button>
-                </form>
-            </div>
+            <button type="button" onclick="closeClearModal()" class="rounded-full border border-slate-200 p-2 text-slate-500 transition hover:border-slate-300 hover:text-slate-800">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
+        <form id="clearForm" method="POST" action="{{ route('admin.logs.clear') }}" class="space-y-6 px-6 py-6">
+            @csrf
+            <div class="space-y-2">
+                <label for="daysSelect" class="block text-sm font-medium text-slate-700">Keep logs from last</label>
+                <select id="daysSelect" name="days" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200">
+                    <option value="7">7 days</option>
+                    <option value="30" selected>30 days</option>
+                    <option value="90">90 days</option>
+                    <option value="365">1 year</option>
+                </select>
+            </div>
+            <div class="flex flex-col gap-3 sm:flex-row sm:justify-end">
+                <button type="button" onclick="closeClearModal()" class="rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50">Cancel</button>
+                <button type="submit" class="rounded-2xl bg-red-600 px-5 py-3 text-sm font-semibold text-white hover:bg-red-700">Clear logs</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -258,12 +250,5 @@ function confirmClearLogs() {
 function closeClearModal() {
     document.getElementById('clearModal').classList.add('hidden');
 }
-
-// Auto-refresh logs every 30 seconds
-setInterval(function() {
-    if (!document.hidden) {
-        location.reload();
-    }
-}, 30000);
 </script>
 @endsection
