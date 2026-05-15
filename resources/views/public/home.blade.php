@@ -9,15 +9,130 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { font-family: 'Inter', sans-serif; }
+        :root {
+            --rich-black: #001722;
+            --deep-jungle-green: #084A48;
+            --pearl-aqua: #6BCFCB;
+            --orange: #FE580B;
+        }
         .hero-section {
-            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, rgba(8, 74, 72, 0.95) 0%, rgba(0, 23, 34, 0.95) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 80% 20%, rgba(107, 207, 203, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -20%;
+            width: 80%;
+            height: 80%;
+            background: radial-gradient(circle, rgba(254, 88, 11, 0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        nav {
+            backdrop-filter: blur(20px);
+            background-color: rgba(255, 255, 255, 0.95);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        nav.scrolled {
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+        }
+        .nav-link {
+            position: relative;
+            font-weight: 500;
+            color: #374151;
+            transition: all 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(to right, #FE580B, #084A48);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .nav-link:hover {
+            color: #FE580B;
+        }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(10px, 10px);
+        }
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #084A48;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            flex-direction: column;
+            gap: 0;
+            border-top: 1px solid #e5e7eb;
+            animation: slideDown 0.3s ease;
+        }
+        .mobile-menu.active {
+            display: flex;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+            .hidden.md\:flex {
+                display: none !important;
+            }
         }
         .feature-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .feature-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(8, 74, 72, 0.15);
         }
         .stats-number {
             animation: countUp 2s ease-out;
@@ -30,65 +145,159 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="bg-white shadow-lg sticky top-0 z-50">
+    <nav class="fixed w-full top-0 z-50 transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <img src="{{ asset('uploads/logos/logo.png') }}" alt="Salale University" class="h-8 w-auto object-contain rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 mr-2">
-                    <span class="font-bold text-xl text-gray-800">Salale University</span>
-                    <span class="ml-2 text-sm text-gray-500">Clearance System</span>
+            <div class="flex justify-between items-center h-16 md:h-20">
+                <!-- Logo and Brand -->
+                <div class="flex items-center gap-3 group cursor-pointer">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-[#FE580B] to-[#084A48] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center overflow-hidden">
+                        <img src="{{ asset('uploads/logos/logo.png') }}" alt="Salale" class="w-8 h-8 md:w-10 md:h-10 object-contain">
+                    </div>
+                    <div>
+                        <div class="font-bold text-lg md:text-xl text-gray-900">Salale</div>
+                        <div class="text-xs text-[#084A48] font-semibold">Clearance System</div>
+                    </div>
                 </div>
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition">Home</a>
-                    <a href="#features" class="text-gray-600 hover:text-indigo-600 font-medium transition">Features</a>
-                    <a href="#workflow" class="text-gray-600 hover:text-indigo-600 font-medium transition">Workflow</a>
-                    <a href="#roles" class="text-gray-600 hover:text-indigo-600 font-medium transition">Roles</a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#" class="nav-link">Home</a>
+                    <a href="#features" class="nav-link">Features</a>
+                    <a href="#workflow" class="nav-link">Workflow</a>
+                    <a href="#roles" class="nav-link">Roles</a>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <a href="{{ route('login') }}" class="px-4 py-2 text-gray-600 hover:text-gray-900 transition font-medium">Login</a>
-                    <a href="{{ route('register') }}" class="px-6 py-2 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-lg hover:shadow-lg transition font-medium">
-                        Register
+
+                <!-- CTA Buttons -->
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('login') }}" class="hidden sm:inline-block px-6 py-2 bg-gradient-to-r from-[#FE580B] to-[#084A48] text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-[#FE580B]/40 transition-all duration-300 transform hover:scale-105">
+                        Login
                     </a>
+                    <!-- Mobile Hamburger -->
+                    <div class="hamburger md:hidden" id="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div class="mobile-menu md:hidden" id="mobileMenu">
+                <a href="#" class="px-4 py-3 text-gray-700 hover:bg-gray-50 border-b">Home</a>
+                <a href="#features" class="px-4 py-3 text-gray-700 hover:bg-gray-50 border-b">Features</a>
+                <a href="#workflow" class="px-4 py-3 text-gray-700 hover:bg-gray-50 border-b">Workflow</a>
+                <a href="#roles" class="px-4 py-3 text-gray-700 hover:bg-gray-50 border-b">Roles</a>
+                <a href="{{ route('login') }}" class="px-4 py-3 bg-gradient-to-r from-[#FE580B] to-[#084A48] text-white font-semibold">Login</a>
             </div>
         </div>
     </nav>
     
     <!-- Hero Section -->
-    <section class="hero-section text-white py-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section class="hero-section text-white pt-32 md:pt-40 pb-16 md:pb-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div>
                     <h1 class="text-5xl font-bold mb-6 leading-tight">Salale University Digital Clearance Portal</h1>
-                    <p class="text-xl mb-8 text-blue-100 leading-relaxed">Track, approve, and manage student clearance digitally across departments in real time.</p>
+                    <p class="text-xl mb-8 text-[#6BCFCB] leading-relaxed">Track, approve, and manage student clearance digitally across departments in real time.</p>
                     <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                        <a href="{{ route('register') }}" class="px-8 py-4 bg-white text-indigo-600 rounded-lg font-semibold hover:shadow-xl transition transform hover:scale-105 text-center">
-                            Get Started <i class="fas fa-arrow-right ml-2"></i>
+                        <a href="{{ route('login') }}" class="px-8 py-4 bg-[#FE580B] text-white rounded-lg font-semibold hover:shadow-xl transition transform hover:scale-105 text-center">
+                            Sign In <i class="fas fa-arrow-right ml-2"></i>
                         </a>
-                        <a href="#features" class="px-8 py-4 border-2 border-white text-white rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition text-center">
+                        <a href="#features" class="px-8 py-4 border-2 border-[#6BCFCB] text-[#6BCFCB] rounded-lg font-semibold hover:bg-[#6BCFCB] hover:text-[#001722] transition text-center">
                             Learn More
                         </a>
                     </div>
                 </div>
                 <div class="hidden lg:block">
-                    <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-2xl border border-white/20">
-                        <div class="bg-gray-900 rounded-xl p-4 shadow-inner">
-                            <div class="flex items-center space-x-2 mb-4">
-                                <div class="w-3 h-3 bg-red-500 rounded-full"></div>
-                                <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <div class="space-y-6">
+                        <!-- Stats Card -->
+                        <div class="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-300">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-white">System Stats</h3>
+                                <div class="w-12 h-12 bg-gradient-to-br from-[#FE580B] to-[#6BCFCB] rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-chart-bar text-white text-lg"></i>
+                                </div>
                             </div>
                             <div class="space-y-3">
-                                <div class="h-8 bg-indigo-600/30 rounded-lg animate-pulse"></div>
-                                <div class="grid grid-cols-3 gap-2">
-                                    <div class="h-16 bg-blue-600/30 rounded-lg animate-pulse"></div>
-                                    <div class="h-16 bg-purple-600/30 rounded-lg animate-pulse"></div>
-                                    <div class="h-16 bg-green-600/30 rounded-lg animate-pulse"></div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[#6BCFCB]/80">Pending Clearances</span>
+                                    <span class="text-2xl font-bold text-white">1,247</span>
                                 </div>
-                                <div class="h-20 bg-indigo-600/20 rounded-lg animate-pulse"></div>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div class="h-12 bg-blue-600/20 rounded-lg animate-pulse"></div>
-                                    <div class="h-12 bg-purple-600/20 rounded-lg animate-pulse"></div>
+                                <div class="w-full bg-white/10 rounded-full h-2">
+                                    <div class="bg-gradient-to-r from-[#FE580B] to-[#6BCFCB] h-2 rounded-full" style="width: 68%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Features Grid -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- Processing Speed -->
+                            <div class="bg-white/10 backdrop-blur-xl rounded-xl p-4 border border-white/20 hover:border-[#FE580B]/40 transition-all duration-300">
+                                <div class="w-10 h-10 bg-[#FE580B]/20 rounded-lg flex items-center justify-center mb-3">
+                                    <i class="fas fa-bolt text-[#FE580B] text-lg"></i>
+                                </div>
+                                <div class="text-sm text-[#6BCFCB]/80 mb-1">Avg Speed</div>
+                                <div class="text-xl font-bold text-white">3.2 min</div>
+                            </div>
+
+                            <!-- Security Status -->
+                            <div class="bg-white/10 backdrop-blur-xl rounded-xl p-4 border border-white/20 hover:border-[#6BCFCB]/40 transition-all duration-300">
+                                <div class="w-10 h-10 bg-[#6BCFCB]/20 rounded-lg flex items-center justify-center mb-3">
+                                    <i class="fas fa-shield-alt text-[#6BCFCB] text-lg"></i>
+                                </div>
+                                <div class="text-sm text-[#6BCFCB]/80 mb-1">Security</div>
+                                <div class="text-xl font-bold text-white">100%</div>
+                            </div>
+
+                            <!-- Success Rate -->
+                            <div class="bg-white/10 backdrop-blur-xl rounded-xl p-4 border border-white/20 hover:border-[#084A48]/40 transition-all duration-300">
+                                <div class="w-10 h-10 bg-[#084A48]/20 rounded-lg flex items-center justify-center mb-3">
+                                    <i class="fas fa-check-circle text-[#084A48] text-lg"></i>
+                                </div>
+                                <div class="text-sm text-[#6BCFCB]/80 mb-1">Success Rate</div>
+                                <div class="text-xl font-bold text-white">99.8%</div>
+                            </div>
+
+                            <!-- Departments -->
+                            <div class="bg-white/10 backdrop-blur-xl rounded-xl p-4 border border-white/20 hover:border-[#FE580B]/40 transition-all duration-300">
+                                <div class="w-10 h-10 bg-[#FE580B]/20 rounded-lg flex items-center justify-center mb-3">
+                                    <i class="fas fa-building text-[#FE580B] text-lg"></i>
+                                </div>
+                                <div class="text-sm text-[#6BCFCB]/80 mb-1">Departments</div>
+                                <div class="text-xl font-bold text-white">18+</div>
+                            </div>
+                        </div>
+
+                        <!-- Key Benefits -->
+                        <div class="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
+                            <h3 class="text-lg font-semibold text-white mb-4">Key Benefits</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-6 h-6 bg-[#FE580B]/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                        <i class="fas fa-check text-[#FE580B] text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold text-white text-sm">Instant Approvals</div>
+                                        <div class="text-xs text-[#6BCFCB]/70">Real-time processing</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="w-6 h-6 bg-[#6BCFCB]/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                        <i class="fas fa-check text-[#6BCFCB] text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold text-white text-sm">Digital Records</div>
+                                        <div class="text-xs text-[#6BCFCB]/70">Secure & traceable</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="w-6 h-6 bg-[#084A48]/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                        <i class="fas fa-check text-[#084A48] text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold text-white text-sm">24/7 Access</div>
+                                        <div class="text-xs text-[#6BCFCB]/70">Anytime, anywhere</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -107,48 +316,48 @@
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="feature-card bg-white p-6 rounded-xl shadow-lg text-center">
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-file-alt text-blue-600 text-2xl"></i>
+                    <div class="w-16 h-16 bg-[#6BCFCB]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-file-alt text-[#084A48] text-2xl"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Easy Application</h3>
                     <p class="text-gray-600">Submit clearance requests online from anywhere, anytime</p>
                 </div>
                 
                 <div class="feature-card bg-white p-6 rounded-xl shadow-lg text-center">
-                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-tachometer-alt text-green-600 text-2xl"></i>
+                    <div class="w-16 h-16 bg-[#084A48]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-tachometer-alt text-[#084A48] text-2xl"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Real-time Tracking</h3>
                     <p class="text-gray-600">Track your clearance progress in real-time</p>
                 </div>
                 
                 <div class="feature-card bg-white p-6 rounded-xl shadow-lg text-center">
-                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-bell text-purple-600 text-2xl"></i>
+                    <div class="w-16 h-16 bg-[#FE580B]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-bell text-[#FE580B] text-2xl"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Instant Notifications</h3>
                     <p class="text-gray-600">Get email and in-app notifications for updates</p>
                 </div>
                 
                 <div class="feature-card bg-white p-6 rounded-xl shadow-lg text-center">
-                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-chart-line text-red-600 text-2xl"></i>
+                    <div class="w-16 h-16 bg-[#084A48]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-chart-line text-[#084A48] text-2xl"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Analytics & Reports</h3>
                     <p class="text-gray-600">Comprehensive reports and analytics dashboard</p>
                 </div>
                 
                 <div class="feature-card bg-white p-6 rounded-xl shadow-lg text-center">
-                    <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-qrcode text-yellow-600 text-2xl"></i>
+                    <div class="w-16 h-16 bg-[#6BCFCB]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-qrcode text-[#084A48] text-2xl"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">QR Verification</h3>
                     <p class="text-gray-600">Secure QR codes for certificate verification</p>
                 </div>
                 
                 <div class="feature-card bg-white p-6 rounded-xl shadow-lg text-center">
-                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-shield-alt text-indigo-600 text-2xl"></i>
+                    <div class="w-16 h-16 bg-[#001722]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-alt text-[#001722] text-2xl"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Secure & Reliable</h3>
                     <p class="text-gray-600">Bank-level security for your data</p>
@@ -167,32 +376,32 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <div class="feature-card bg-white p-6 rounded-xl shadow-lg text-center">
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-user-graduate text-blue-600 text-2xl"></i>
+                    <div class="w-16 h-16 bg-[#6BCFCB]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-user-graduate text-[#084A48] text-2xl"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Student</h3>
                     <p class="text-gray-600 text-sm">Submit clearance requests and track progress in real-time</p>
                 </div>
                 
                 <div class="feature-card bg-white p-6 rounded-xl shadow-lg text-center">
-                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-building text-green-600 text-2xl"></i>
+                    <div class="w-16 h-16 bg-[#084A48]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-building text-[#084A48] text-2xl"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Department</h3>
                     <p class="text-gray-600 text-sm">Review and approve clearance requests for your department</p>
                 </div>
                 
                 <div class="feature-card bg-white p-6 rounded-xl shadow-lg text-center">
-                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-certificate text-purple-600 text-2xl"></i>
+                    <div class="w-16 h-16 bg-[#FE580B]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-certificate text-[#FE580B] text-2xl"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Registrar</h3>
                     <p class="text-gray-600 text-sm">Final approval and clearance certificate generation</p>
                 </div>
                 
                 <div class="feature-card bg-white p-6 rounded-xl shadow-lg text-center">
-                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-user-shield text-red-600 text-2xl"></i>
+                    <div class="w-16 h-16 bg-[#001722]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-user-shield text-[#001722] text-2xl"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Super Admin</h3>
                     <p class="text-gray-600 text-sm">Full system control and user management</p>
@@ -211,25 +420,25 @@
             
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="text-center relative">
-                    <div class="w-20 h-20 bg-indigo-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">1</div>
+                    <div class="w-20 h-20 bg-[#084A48] text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">1</div>
                     <h3 class="font-semibold mb-2 text-gray-800">Student Submits Request</h3>
                     <p class="text-gray-500 text-sm">Student initiates clearance process by submitting request online</p>
-                    <div class="hidden md:block absolute top-10 left-full w-full h-0.5 bg-gradient-to-r from-indigo-600 to-purple-600"></div>
+                    <div class="hidden md:block absolute top-10 left-full w-full h-0.5 bg-gradient-to-r from-[#084A48] to-[#6BCFCB]"></div>
                 </div>
                 <div class="text-center relative">
-                    <div class="w-20 h-20 bg-purple-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">2</div>
+                    <div class="w-20 h-20 bg-[#6BCFCB] text-[#001722] rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">2</div>
                     <h3 class="font-semibold mb-2 text-gray-800">Departments Verify</h3>
                     <p class="text-gray-500 text-sm">Each department reviews and approves their specific requirements</p>
-                    <div class="hidden md:block absolute top-10 left-full w-full h-0.5 bg-gradient-to-r from-purple-600 to-blue-600"></div>
+                    <div class="hidden md:block absolute top-10 left-full w-full h-0.5 bg-gradient-to-r from-[#6BCFCB] to-[#FE580B]"></div>
                 </div>
                 <div class="text-center relative">
-                    <div class="w-20 h-20 bg-blue-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">3</div>
+                    <div class="w-20 h-20 bg-[#FE580B] text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">3</div>
                     <h3 class="font-semibold mb-2 text-gray-800">Registrar Approves</h3>
                     <p class="text-gray-500 text-sm">Registrar performs final review and grants approval</p>
-                    <div class="hidden md:block absolute top-10 left-full w-full h-0.5 bg-gradient-to-r from-blue-600 to-green-600"></div>
+                    <div class="hidden md:block absolute top-10 left-full w-full h-0.5 bg-gradient-to-r from-[#FE580B] to-[#084A48]"></div>
                 </div>
                 <div class="text-center">
-                    <div class="w-20 h-20 bg-green-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">4</div>
+                    <div class="w-20 h-20 bg-[#001722] text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">4</div>
                     <h3 class="font-semibold mb-2 text-gray-800">Certificate Generated</h3>
                     <p class="text-gray-500 text-sm">Clearance certificate is generated and available for download</p>
                 </div>
@@ -238,18 +447,18 @@
     </section>
     
     <!-- CTA Section -->
-    <section class="hero-section text-white py-16">
+    <section class="bg-gradient-to-r from-[#084A48] to-[#001722] text-white py-16">
         <div class="max-w-7xl mx-auto px-4 text-center">
             <h2 class="text-3xl font-bold mb-4">Ready to Get Started?</h2>
-            <p class="text-xl mb-8">Join thousands of students who have streamlined their clearance process</p>
-            <a href="{{ route('register') }}" class="px-8 py-3 bg-white text-purple-600 rounded-lg font-semibold hover:shadow-xl transition inline-block">
-                Register Now <i class="fas fa-arrow-right ml-2"></i>
+            <p class="text-xl mb-8 text-[#6BCFCB]">Contact your institution administrator to request access to the clearance system</p>
+            <a href="{{ route('login') }}" class="px-8 py-3 bg-[#FE580B] text-white rounded-lg font-semibold hover:shadow-xl transition inline-block">
+                Sign In Now <i class="fas fa-arrow-right ml-2"></i>
             </a>
         </div>
     </section>
     
     <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-400 py-12">
+    <footer class="bg-[#001722] text-gray-400 py-12">
         <div class="max-w-7xl mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
@@ -269,16 +478,16 @@
                 <div>
                     <h4 class="text-white font-semibold mb-4">Contact</h4>
                     <ul class="space-y-2 text-sm">
-                        <li><i class="fas fa-envelope mr-2 text-indigo-400"></i> info@salale.edu.et</li>
-                        <li><i class="fas fa-phone mr-2 text-indigo-400"></i> +251-XXX-XXXX</li>
-                        <li><i class="fas fa-map-marker-alt mr-2 text-indigo-400"></i> Salale University, Ethiopia</li>
+                        <li><i class="fas fa-envelope mr-2 text-[#6BCFCB]"></i> info@salale.edu.et</li>
+                        <li><i class="fas fa-phone mr-2 text-[#6BCFCB]"></i> +251-XXX-XXXX</li>
+                        <li><i class="fas fa-map-marker-alt mr-2 text-[#6BCFCB]"></i> Salale University, Ethiopia</li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="text-white font-semibold mb-4">System Info</h4>
                     <ul class="space-y-2 text-sm">
                         <li><span class="text-gray-500">Version:</span> 1.0.0</li>
-                        <li><span class="text-gray-500">Status:</span> <span class="text-green-400">Active</span></li>
+                        <li><span class="text-gray-500">Status:</span> <span class="text-[#6BCFCB]">Active</span></li>
                     </ul>
                     <h4 class="text-white font-semibold mb-4 mt-6">Follow Us</h4>
                     <div class="flex space-x-4">
@@ -294,5 +503,49 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Mobile menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                mobileMenu.classList.toggle('active');
+            });
+
+            // Close mobile menu when clicking on links
+            document.querySelectorAll('.mobile-menu a').forEach(link => {
+                link.addEventListener('click', () => {
+                    hamburger.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                });
+            });
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#' && document.querySelector(href)) {
+                    e.preventDefault();
+                    document.querySelector(href).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>

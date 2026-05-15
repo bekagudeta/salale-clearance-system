@@ -10,119 +10,123 @@
     <style>
         * { font-family: 'Inter', sans-serif; }
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            background: #08101f;
         }
         .login-card {
-            animation: fadeInUp 0.6s ease-out;
+            animation: fadeInUp 0.65s ease-out;
         }
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(28px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .input-group {
-            transition: all 0.3s ease;
-        }
-        .input-group:focus-within {
-            transform: translateX(5px);
-        }
+        .input-group { transition: all 0.25s ease; }
+        .input-group:focus-within { transform: translateY(-1px); }
+        .glass-panel { background: rgba(255,255,255,0.9); backdrop-filter: blur(14px); }
     </style>
 </head>
-<body class="flex items-center justify-center p-4">
-    <div class="login-card w-full max-w-md">
-        <!-- Logo and Title -->
-        <div class="text-center mb-8">
-            <div class="bg-white/10 backdrop-blur-lg rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                <img src="{{ asset('uploads/logos/logo.png') }}" alt="Salale University" class="h-12 w-auto object-contain rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-            </div>
-            <h1 class="text-3xl font-bold text-white">Salale University</h1>
-            <p class="text-gray-200 mt-2">Clearance Management System</p>
-        </div>
-        
-        <!-- Login Form -->
-        <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-            <div class="p-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Welcome Back</h2>
-                <p class="text-gray-500 mb-6">Please login to your account</p>
-                
-                <form method="POST" action="{{ route('login') }}">
-                    @csrf
-                    
-                    <!-- Email Field -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                        <div class="input-group relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-envelope text-gray-400"></i>
-                            </div>
-                            <input type="email" name="email" value="{{ old('email') }}" required autofocus
-                                class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                                placeholder="you@example.com">
-                        </div>
-                        @error('email')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    
-                    <!-- Password Field -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                        <div class="input-group relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-lock text-gray-400"></i>
-                            </div>
-                            <input type="password" name="password" required
-                                class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                                placeholder="••••••••">
-                        </div>
-                        @error('password')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    
-                    <!-- Remember Me -->
-                    <div class="flex items-center justify-between mb-6">
-                        <label class="flex items-center">
-                            <input type="checkbox" name="remember" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                            <span class="ml-2 text-sm text-gray-600">Remember me</span>
-                        </label>
-                        <a href="{{ route('password.request') }}" class="text-sm text-blue-600 hover:text-blue-800">
-                            Forgot password?
-                        </a>
-                    </div>
-                    
-                    <!-- Submit Button -->
-                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition shadow-lg transform hover:scale-[1.02]">
-                        <i class="fas fa-sign-in-alt mr-2"></i> Sign In
-                    </button>
-                </form>
-                
-                <!-- Register Link -->
-                <div class="mt-6 text-center">
-                    <p class="text-gray-600">
-                        Don't have an account?
-                        <a href="{{ route('register') }}" class="text-blue-600 hover:text-blue-800 font-semibold">Register</a>
-                    </p>
+<body class="relative overflow-hidden">
+    <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#111829] via-[#0f1527] to-[#08121e]"></div>
+    <div class="pointer-events-none absolute -top-28 -left-24 h-80 w-80 rounded-full bg-[#6bcfcb]/20 blur-3xl"></div>
+    <div class="pointer-events-none absolute -bottom-28 -right-28 h-96 w-96 rounded-full bg-[#fe580b]/15 blur-3xl"></div>
+
+    <div class="relative z-10 flex min-h-screen items-center justify-center px-4 py-12">
+        <div class="w-full max-w-xl">
+            <div class="text-center mb-10">
+                <div class="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15 shadow-2xl shadow-[#020617]/40 overflow-hidden">
+                    <img src="{{ asset('uploads/logos/logo.png') }}" alt="Salale University" class="h-full w-full rounded-full object-cover" />
                 </div>
+                <h1 class="text-4xl font-semibold text-white">Salale University</h1>
+                <p class="mt-2 text-sm text-slate-300">Clearance Management System</p>
             </div>
-            
-            <!-- Demo Credentials -->
-            <div class="bg-gray-50 px-8 py-4 border-t">
-                <p class="text-xs text-gray-500 text-center">Demo Credentials:</p>
-                <div class="text-xs text-gray-500 text-center mt-1 space-y-1">
-                    <p>Student: student1@salale.edu.et / Student@123</p>
-                    <p>Officer: library@salale.edu.et / Officer@123</p>
-                    <p>Registrar: registrar@salale.edu.et / Registrar@123</p>
-                    <p>Admin: admin@salale.edu.et / Admin@123</p>
+
+            <div class="glass-panel overflow-hidden rounded-[2rem] border border-white/10 shadow-[0_30px_100px_-50px_rgba(0,0,0,0.8)]">
+                <div class="px-8 py-10 sm:px-10">
+                    <div class="mb-8">
+                        <span class="inline-flex rounded-full bg-[#6bcfcb]/15 px-4 py-1 text-sm font-semibold text-[#084A48]">Secure access</span>
+                        <h2 class="mt-5 text-3xl font-bold text-slate-900">Welcome Back</h2>
+                        <p class="mt-3 text-sm leading-6 text-slate-600">Sign in to access your dashboard and manage clearance workflows.</p>
+                    </div>
+
+                    <form method="POST" action="{{ route('login') }}">
+                        @csrf
+                        <div class="mb-5">
+                            <label class="mb-2 block text-sm font-medium text-slate-700">Email Address</label>
+                            <div class="input-group relative rounded-3xl border border-slate-200 bg-white shadow-sm">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <input type="email" name="email" value="{{ old('email') }}" required autofocus
+                                    class="w-full rounded-3xl border-none bg-transparent py-3 pl-12 pr-4 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-[#6bcfcb]/50"
+                                    placeholder="you@example.com">
+                            </div>
+                            @error('email')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="mb-2 block text-sm font-medium text-slate-700">Password</label>
+                            <div class="input-group relative rounded-3xl border border-slate-200 bg-white shadow-sm">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <input id="password" type="password" name="password" required
+                                    class="w-full rounded-3xl border-none bg-transparent py-3 pl-12 pr-12 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-[#6bcfcb]/50"
+                                    placeholder="••••••••">
+                                <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-500 transition hover:text-slate-900 focus:outline-none">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            @error('password')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                            <label class="inline-flex items-center gap-2 text-sm text-slate-600">
+                                <input type="checkbox" name="remember" class="h-4 w-4 rounded border-slate-300 text-[#084A48] focus:ring-[#084A48]/60">
+                                Remember me
+                            </label>
+                            <a href="{{ route('password.request') }}" class="text-sm font-medium text-[#084A48] hover:text-[#0b3e34] transition">Forgot password?</a>
+                        </div>
+
+                        <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-3xl bg-gradient-to-r from-[#fe580b] to-[#084a48] px-5 py-3 text-base font-semibold text-white shadow-lg shadow-[#083e3b]/20 transition hover:scale-[1.01] hover:shadow-[#fe580b]/30">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Sign In
+                        </button>
+                    </form>
+
+                    <div class="mt-7 text-center text-sm text-slate-600">
+                        Don't have an account?
+                        <a href="{{ route('register') }}" class="font-semibold text-[#084A48] hover:text-[#0b3e34] transition">Register</a>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-200 bg-slate-50 px-8 py-5 text-center text-xs text-slate-500">
+                    <p class="font-semibold text-slate-700">Demo Credentials</p>
+                    <div class="mt-2 space-y-1">
+                        <p><span class="font-medium text-slate-900">Student:</span> student1@salale.edu.et / Student@123</p>
+                        <p><span class="font-medium text-slate-900">Officer:</span> library@salale.edu.et / Officer@123</p>
+                        <p><span class="font-medium text-slate-900">Registrar:</span> registrar@salale.edu.et / Registrar@123</p>
+                        <p><span class="font-medium text-slate-900">Admin:</span> admin@salale.edu.et / Admin@123</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        const passwordField = document.getElementById('password');
+        const togglePassword = document.getElementById('togglePassword');
+
+        if (passwordField && togglePassword) {
+            togglePassword.addEventListener('click', function () {
+                const visible = passwordField.type === 'password';
+                passwordField.type = visible ? 'text' : 'password';
+                this.innerHTML = visible ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
+            });
+        }
+    </script>
 </body>
 </html>
