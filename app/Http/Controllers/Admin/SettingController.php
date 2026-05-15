@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateEmailConfigRequest;
 use App\Models\Setting;
+use App\Services\EmailConfigService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SettingController extends Controller
 {
@@ -42,43 +45,82 @@ class SettingController extends Controller
 
     public function emailSettings()
     {
+        // Load settings from database
         $settings = Setting::all()->pluck('value', 'key')->toArray();
+        
+        // Set default values if not configured
+        if (empty($settings['mail_from_address'])) {
+            $settings['mail_from_address'] = env('MAIL_FROM_ADDRESS', 'noreply@salale.edu.et');
+        }
+        if (empty($settings['mail_from_name'])) {
+            $settings['mail_from_name'] = env('MAIL_FROM_NAME', 'Salale Clearance System');
+        }
+        if (empty($settings['mail_host'])) {
+            $settings['mail_host'] = env('MAIL_HOST', 'smtp.gmail.com');
+        }
+        if (empty($settings['mail_port'])) {
+            $settings['mail_port'] = env('MAIL_PORT', 587);
+        }
+        if (empty($settings['mail_encryption'])) {
+            $settings['mail_encryption'] = env('MAIL_ENCRYPTION', 'tls');
+        }
+        if (empty($settings['mail_mailer'])) {
+            $settings['mail_mailer'] = env('MAIL_MAILER', 'smtp');
+        }
+        
         return view('admin.settings.email', compact('settings'));
     }
 
-    public function updateEmailSettings(Request $request)
+    public function updateEmailSettings(UpdateEmailConfigRequest $request)
     {
-        $request->validate([
-            'mail_mailer' => 'nullable|string',
-            'mail_host' => 'nullable|string',
-            'mail_port' => 'nullable|integer',
-            'mail_username' => 'nullable|string',
-            'mail_password' => 'nullable|string',
-            'mail_encryption' => 'nullable|string',
-            'mail_from_address' => 'nullable|email',
-            'mail_from_name' => 'nullable|string',
-        ]);
+        $emailService = new EmailConfigService();
         
-        foreach ($request->except(['_token', '_method']) as $key => $value) {
-            Setting::set($key, $value);
-            
-            // Update .env file (optional - for production)
-            $this->updateEnvFile($key, $value);
-        }
+        // Get all validated data
+        $settings = $request->validated();
+        $testConnection = $request->input('test_connection', false);
         
-        return redirect()->route('admin.settings.email')
-            ->with('success', 'Email settings updated successfully.');
-    }
+        try {
+            // If connection test is requested, test it first
+            if ($testConnection) {
+                $connectionResult = $emailService->testConnection($settings);
+                if (!$connectionResult['success']) {
+                    return redirect()->route('admin.settings.email')
+                        ->withInput()
+                        ->with('error', $connectionResult['message']);
+                }
+            }
 
-    private function updateEnvFile($key, $value)
-    {
-        $key = strtoupper($key);
-        $path = base_path('.env');
-        
-        if (file_exists($path)) {
-            $content = file_get_contents($path);
-            $content = preg_replace("/{$key}=.*/", "{$key}={$value}", $content);
-            file_put_contents($path, $content);
+            // Save settings to database
+            foreach ($settings as $key => $value) {
+                if ($key !== 'test_connection') {
+                    Setting::set($key, $value);
+                }
+            }
+
+            // Update .env file
+            $envUpdated = $emailService->updateEnvFile($settings);
+            
+            // Load configuration into application
+            EmailConfigService::loadFromDatabase();
+            
+            // Clear config cache to apply new settings
+            \Artisan::call('config:clear');
+
+            Log::info('Email settings updated successfully by user: ' . auth()->user()->email);
+
+            $successMessage = '✓ Email settings saved successfully.';
+            if ($testConnection) {
+                $successMessage .= ' Connection verified!';
+            }
+
+            return redirect()->route('admin.settings.email')
+                ->with('success', $successMessage);
+        } catch (\Exception $e) {
+            Log::error('Error updating email settings: ' . $e->getMessage());
+            
+            return redirect()->route('admin.settings.email')
+                ->withInput()
+                ->with('error', 'Failed to update email settings: ' . $e->getMessage());
         }
     }
 
@@ -177,26 +219,51 @@ class SettingController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
+            'mail_mailer' => 'nullable|string',
+            'mail_host' => 'nullable|string',
+            'mail_port' => 'nullable|integer',
+            'mail_username' => 'nullable|string',
+            'mail_password' => 'nullable|string',
+            'mail_encryption' => 'nullable|string',
+            'mail_from_address' => 'nullable|email',
+            'mail_from_name' => 'nullable|string',
         ]);
 
         try {
-            $email = $request->email;
+            $emailService = new EmailConfigService();
             
-            // Send test email
-            \Mail::raw('This is a test email from Salale University Clearance System.', function ($message) use ($email) {
-                $message->to($email)
-                    ->subject('Test Email - Clearance System')
-                    ->from(config('mail.from.address', config('mail.from.name')));
-            });
+            // Load current settings from database
+            $dbSettings = Setting::all()->pluck('value', 'key')->toArray();
+            
+            // Use settings from form if provided, otherwise use saved settings from database
+            $config = [
+                'mail_mailer' => $request->input('mail_mailer') ?: ($dbSettings['mail_mailer'] ?? 'smtp'),
+                'mail_host' => $request->input('mail_host') ?: ($dbSettings['mail_host'] ?? 'smtp.gmail.com'),
+                'mail_port' => $request->input('mail_port') ?: ($dbSettings['mail_port'] ?? 587),
+                'mail_username' => $request->input('mail_username') ?: ($dbSettings['mail_username'] ?? ''),
+                'mail_password' => $request->input('mail_password') ?: ($dbSettings['mail_password'] ?? ''),
+                'mail_encryption' => $request->input('mail_encryption') ?: ($dbSettings['mail_encryption'] ?? 'tls'),
+                'mail_from_address' => $request->input('mail_from_address') ?: ($dbSettings['mail_from_address'] ?? env('MAIL_FROM_ADDRESS', 'noreply@salale.edu.et')),
+                'mail_from_name' => $request->input('mail_from_name') ?: ($dbSettings['mail_from_name'] ?? 'Salale Clearance System'),
+            ];
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Test email sent successfully to ' . $email
-            ]);
+            // Validate configuration before sending
+            $errors = $emailService->validate($config);
+            if (!empty($errors)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Configuration Error: ' . implode('. ', $errors)
+                ], 422);
+            }
+
+            $result = $emailService->sendTestEmail($request->email, $config);
+            
+            return response()->json($result, $result['success'] ? 200 : 422);
         } catch (\Exception $e) {
+            Log::error('Test email error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => 'An error occurred while sending the test email. Check server logs for details.'
             ], 500);
         }
     }

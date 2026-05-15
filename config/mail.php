@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'log'),
+    'default' => config('mail.mailer_driver') ?? env('MAIL_MAILER', 'smtp'),
 
     /*
     |--------------------------------------------------------------------------
@@ -39,13 +39,13 @@ return [
 
         'smtp' => [
             'transport' => 'smtp',
-            'scheme' => env('MAIL_SCHEME'),
+            'scheme' => config('mail.smtp_encryption') ?? env('MAIL_SCHEME', 'tls'),
             'url' => env('MAIL_URL'),
-            'host' => env('MAIL_HOST', '127.0.0.1'),
-            'port' => env('MAIL_PORT', 2525),
-            'username' => env('MAIL_USERNAME'),
-            'password' => env('MAIL_PASSWORD'),
-            'timeout' => null,
+            'host' => config('mail.smtp_host') ?? env('MAIL_HOST', 'smtp.gmail.com'),
+            'port' => config('mail.smtp_port') ?? env('MAIL_PORT', 587),
+            'username' => config('mail.smtp_username') ?? env('MAIL_USERNAME'),
+            'password' => config('mail.smtp_password') ?? env('MAIL_PASSWORD'),
+            'timeout' => 10,
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
@@ -111,8 +111,23 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
+        'address' => config('mail.from_address') ?? env('MAIL_FROM_ADDRESS', 'noreply@salale.edu.et'),
+        'name' => config('mail.from_name') ?? env('MAIL_FROM_NAME', 'Salale Clearance System'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Database Configuration Cache
+    |--------------------------------------------------------------------------
+    | These are loaded from Settings table at runtime
+    */
+    'from_address' => null,
+    'from_name' => null,
+    'smtp_host' => null,
+    'smtp_port' => null,
+    'smtp_encryption' => null,
+    'smtp_username' => null,
+    'smtp_password' => null,
+    'mailer_driver' => null,
 
 ];
