@@ -26,11 +26,70 @@
             font-family: 'Inter', sans-serif;
         }
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #001722 0%, #084A48 100%);
             min-height: 100vh;
+            color: #e8f8f5;
         }
         .sidebar-transition {
             transition: all 0.3s ease;
+        }
+        .surface-card {
+            background: rgba(255, 255, 255, 0.94);
+            border: 1px solid rgba(107, 207, 203, 0.18);
+            box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.18);
+            border-radius: 28px;
+        }
+        .surface-card-soft {
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(107, 207, 203, 0.12);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+            border-radius: 28px;
+        }
+        .btn-primary {
+            background: #084A48;
+            color: #ffffff;
+            border-radius: 9999px;
+            transition: background 0.2s ease;
+        }
+        .btn-primary:hover {
+            background: #0f6c5d;
+        }
+        .btn-accent {
+            background: #FE580B;
+            color: #ffffff;
+            border-radius: 9999px;
+            transition: background 0.2s ease;
+        }
+        .btn-accent:hover {
+            background: #ff6f2c;
+        }
+        .btn-secondary {
+            background: rgba(107, 207, 203, 0.17);
+            color: #001722;
+            border-radius: 9999px;
+            transition: background 0.2s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(107, 207, 203, 0.28);
+        }
+        .form-input {
+            background: #f5fffe;
+            border: 1px solid #bce9e1;
+            color: #0e3433;
+            border-radius: 1rem;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #6bcfcb;
+            box-shadow: 0 0 0 4px rgba(107, 207, 203, 0.18);
+        }
+        .badge-teal {
+            background: rgba(107, 207, 203, 0.18);
+            color: #084A48;
+        }
+        .badge-accent {
+            background: rgba(254, 88, 11, 0.15);
+            color: #7f2f00;
         }
         .card-hover:hover {
             transform: translateY(-5px);
@@ -56,10 +115,10 @@
 <body class="font-sans antialiased">
     <div x-data="{ sidebarOpen: true }" class="min-h-screen">
         <!-- Sidebar -->
-        <aside x-show="sidebarOpen" x-transition:enter="transition ease-in-out duration-300" x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition ease-in-out duration-300" x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full" class="fixed inset-y-0 left-0 z-30 w-64 bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl sidebar-transition">
+        <aside x-show="sidebarOpen" x-transition:enter="transition ease-in-out duration-300" x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition ease-in-out duration-300" x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full" class="fixed inset-y-0 left-0 z-30 w-64 bg-gradient-to-br from-[#001722] via-[#084A48] to-[#084A48] shadow-2xl sidebar-transition">
             <div class="flex flex-col h-full">
                 <!-- Logo -->
-                <div class="flex items-center justify-center h-20 px-4 bg-gray-900/50 border-b border-gray-700">
+                <div class="flex items-center justify-center h-20 px-4 bg-[#001722]/80 border-b border-[#6BCFCB]/20">
                     <div class="flex flex-col items-center">
                         <img src="{{ asset('uploads/logos/logo.png') }}" alt="Salale University" class="h-12 w-auto object-contain rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                         <p class="text-xs text-gray-400 mt-2 font-medium">Clearance Management System</p>
@@ -72,9 +131,9 @@
                 </nav>
                 
                 <!-- User Info -->
-                <div class="p-4 border-t border-gray-700">
+                <div class="p-4 border-t border-[#6BCFCB]/20">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#084A48] to-[#6BCFCB] flex items-center justify-center shadow-inner shadow-[#084A48]/20">
                             <span class="text-white font-bold">{{ substr(auth()->user()->name, 0, 2) }}</span>
                         </div>
                         <div class="flex-1 min-w-0">
@@ -95,20 +154,20 @@
         <!-- Main Content -->
         <div :class="sidebarOpen ? 'lg:ml-64' : ''" class="min-h-screen transition-all duration-300">
             <!-- Top Navbar -->
-            <nav class="bg-white shadow-lg sticky top-0 z-20">
+            <nav class="bg-[#001722]/95 border-b border-[#6BCFCB]/10 shadow-lg sticky top-0 z-20 backdrop-blur-sm">
                 <div class="px-4 py-3">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-4">
-                            <button @click="sidebarOpen = !sidebarOpen" class="text-gray-600 hover:text-gray-900 focus:outline-none">
+                            <button @click="sidebarOpen = !sidebarOpen" class="text-[#c8e8e2] hover:text-white focus:outline-none">
                                 <i class="fas fa-bars text-xl"></i>
                             </button>
-                            <h2 class="text-xl font-semibold text-gray-800">@yield('page-title', 'Dashboard')</h2>
+                            <h2 class="text-xl font-semibold text-[#e8f8f5]">@yield('page-title', 'Dashboard')</h2>
                         </div>
                         
                         <div class="flex items-center space-x-4">
                             <!-- Notifications -->
                             <div x-data="{ open: false }" class="relative">
-                                <button @click="open = !open" class="relative text-gray-600 hover:text-gray-900">
+                                <button @click="open = !open" class="relative text-[#c8e8e2] hover:text-white">
                                     <i class="fas fa-bell text-xl"></i>
                                     @if(isset($unreadNotifications) && $unreadNotifications > 0)
                                         <span class="absolute -top-1 -right-2 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center animate-pulse">
@@ -132,11 +191,11 @@
                                 @php
                                     $profilePhotoUrl = auth()->user()->student?->photo_url;
                                 @endphp
-                                <button @click="open = !open" class="flex items-center space-x-2 text-gray-600 hover:text-gray-900">
+                                <button @click="open = !open" class="flex items-center space-x-2 text-[#c8e8e2] hover:text-white">
                                     @if($profilePhotoUrl)
                                         <img src="{{ $profilePhotoUrl }}" alt="Profile Photo" class="w-9 h-9 rounded-full object-cover border-2 border-white shadow-sm">
                                     @else
-                                        <div class="w-9 h-9 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center shadow-sm">
+                                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#084A48] to-[#6BCFCB] flex items-center justify-center shadow-sm">
                                             <span class="text-white text-sm font-semibold">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</span>
                                         </div>
                                     @endif

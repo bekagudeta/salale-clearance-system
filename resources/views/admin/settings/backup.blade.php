@@ -7,11 +7,11 @@
 @section('content')
 <div class="space-y-6">
     <!-- Quick Actions -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
+    <div class="surface-card p-6">
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold text-gray-900">Backup Management</h2>
-            <button onclick="createBackup()" class="bg-gradient-to-r from-green-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-green-700 hover:to-blue-700">
-                <i class="fas fa-plus mr-2"></i> Create New Backup
+            <button onclick="createBackup()" class="btn-primary px-4 py-2 inline-flex items-center gap-2">
+                <i class="fas fa-plus"></i> Create New Backup
             </button>
         </div>
         
@@ -42,7 +42,7 @@
         <!-- Backups List -->
         <div class="space-y-3">
             @forelse($backups as $backup)
-                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition">
+                <div class="surface-card rounded-lg p-4 transition hover:shadow-md">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-4">
                             <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
@@ -75,7 +75,7 @@
     </div>
     
     <!-- Backup Settings -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
+    <div class="surface-card p-6">
         <h2 class="text-xl font-bold text-gray-900 mb-6">Backup Settings</h2>
         
         <form method="POST" action="{{ route('admin.settings.backup-schedule') }}" class="space-y-6">
@@ -83,7 +83,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Auto Backup</label>
-                    <select name="auto_backup" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    <select name="auto_backup" class="form-input w-full px-3 py-2">
                         <option value="disabled">Disabled</option>
                         <option value="daily">Daily</option>
                         <option value="weekly">Weekly</option>
@@ -92,7 +92,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Retention Period</label>
-                    <select name="retention_days" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    <select name="retention_days" class="form-input w-full px-3 py-2">
                         <option value="7">7 days</option>
                         <option value="30">30 days</option>
                         <option value="90">90 days</option>

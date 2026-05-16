@@ -7,11 +7,11 @@
 @section('content')
 <div class="space-y-6">
     <!-- System Overview -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
+    <div class="surface-card p-6">
         <h2 class="text-xl font-bold text-gray-900 mb-6">System Overview</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="border border-gray-200 rounded-lg p-4">
+            <div class="surface-card rounded-lg p-4">
                 <h3 class="text-sm font-medium text-gray-500 mb-2">Laravel Version</h3>
                 <p class="text-lg font-semibold text-gray-900">{{ $info['laravel_version'] }}</p>
             </div>
@@ -34,7 +34,7 @@
     </div>
     
     <!-- Server Configuration -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
+    <div class="surface-card p-6">
         <h2 class="text-xl font-bold text-gray-900 mb-6">Server Configuration</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -85,7 +85,7 @@
     </div>
     
     <!-- PHP Extensions -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
+    <div class="surface-card p-6">
         <h2 class="text-xl font-bold text-gray-900 mb-6">Loaded PHP Extensions</h2>
         
         <div class="bg-gray-50 rounded-lg p-4">
@@ -114,7 +114,7 @@
     </div>
     
     <!-- System Health -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
+    <div class="surface-card p-6">
         <h2 class="text-xl font-bold text-gray-900 mb-6">System Health</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -193,11 +193,11 @@
     </div>
     
     <!-- Actions -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
+    <div class="surface-card p-6">
         <h2 class="text-xl font-bold text-gray-900 mb-6">System Actions</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <button onclick="optimizeApplication()" class="w-full text-left bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg p-4 transition">
+            <button onclick="optimizeApplication()" class="surface-card w-full text-left p-4 transition hover:shadow-md">
                 <div class="flex items-center">
                     <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                         <i class="fas fa-rocket text-blue-600"></i>
@@ -209,7 +209,7 @@
                 </div>
             </button>
             
-            <button onclick="runMaintenance()" class="w-full text-left bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg p-4 transition">
+            <button onclick="runMaintenance()" class="surface-card w-full text-left p-4 transition hover:shadow-md">
                 <div class="flex items-center">
                     <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
                         <i class="fas fa-tools text-yellow-600"></i>
@@ -221,7 +221,7 @@
                 </div>
             </button>
             
-            <button onclick="downloadSystemInfo()" class="w-full text-left bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg p-4 transition">
+            <button onclick="downloadSystemInfo()" class="surface-card w-full text-left p-4 transition hover:shadow-md">
                 <div class="flex items-center">
                     <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                         <i class="fas fa-download text-green-600"></i>
@@ -233,7 +233,7 @@
                 </div>
             </button>
             
-            <button onclick="refreshSystemInfo()" class="w-full text-left bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg p-4 transition">
+            <button onclick="refreshSystemInfo()" class="surface-card w-full text-left p-4 transition hover:shadow-md">
                 <div class="flex items-center">
                     <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
                         <i class="fas fa-sync text-purple-600"></i>

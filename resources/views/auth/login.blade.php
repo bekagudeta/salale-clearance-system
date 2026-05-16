@@ -22,15 +22,24 @@
         }
         .input-group { transition: all 0.25s ease; }
         .input-group:focus-within { transform: translateY(-1px); }
-        .glass-panel { background: rgba(255,255,255,0.9); backdrop-filter: blur(14px); }
+        .glass-panel { background: rgba(255,255,255,0.95); backdrop-filter: blur(14px); }
+        /* Ensure the panel can shrink on short viewports and allow internal scrolling */
+        .glass-panel {
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+        }
+        /* Slightly reduce large shadows on small screens */
+        @media (max-height: 700px) {
+            .shadow-[0_30px_100px_-50px_rgba(0,0,0,0.8)] { box-shadow: 0 10px 30px -10px rgba(0,0,0,0.6); }
+        }
     </style>
 </head>
-<body class="relative overflow-hidden">
+<body class="relative overflow-auto">
     <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#111829] via-[#0f1527] to-[#08121e]"></div>
     <div class="pointer-events-none absolute -top-28 -left-24 h-80 w-80 rounded-full bg-[#6bcfcb]/20 blur-3xl"></div>
     <div class="pointer-events-none absolute -bottom-28 -right-28 h-96 w-96 rounded-full bg-[#fe580b]/15 blur-3xl"></div>
 
-    <div class="relative z-10 flex min-h-screen items-center justify-center px-4 py-12">
+    <div class="relative z-10 flex min-h-screen items-start sm:items-center justify-center px-4 py-8 sm:py-12">
         <div class="w-full max-w-xl">
             <div class="text-center mb-10">
                 <div class="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15 shadow-2xl shadow-[#020617]/40 overflow-hidden">

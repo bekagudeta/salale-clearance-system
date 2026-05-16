@@ -42,7 +42,7 @@
     @endif
     
     <!-- Email Settings Form -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
+    <div class="surface-card p-6">
         <h2 class="text-xl font-bold text-gray-900 mb-2">Mail Server Configuration</h2>
         <p class="text-sm text-gray-600 mb-6">Configure your SMTP settings for sending emails</p>
         
@@ -65,7 +65,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Mail Driver <span class="text-red-500">*</span>
                     </label>
-                    <select name="mail_mailer" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('mail_mailer') border-red-500 @enderror">
+                    <select name="mail_mailer" class="form-input w-full px-4 py-2 @error('mail_mailer') border-red-500 @enderror">
                         <option value="">Select Driver</option>
                         <option value="smtp" {{ old('mail_mailer', $settings['mail_mailer'] ?? 'smtp') == 'smtp' ? 'selected' : '' }}>SMTP (Recommended)</option>
                         <option value="mail" {{ old('mail_mailer', $settings['mail_mailer'] ?? '') == 'mail' ? 'selected' : '' }}>PHP Mail Function</option>
@@ -79,7 +79,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Encryption <span class="text-red-500">*</span>
                     </label>
-                    <select name="mail_encryption" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('mail_encryption') border-red-500 @enderror">
+                    <select name="mail_encryption" class="form-input w-full px-4 py-2 @error('mail_encryption') border-red-500 @enderror">
                         <option value="tls" {{ old('mail_encryption', $settings['mail_encryption'] ?? 'tls') == 'tls' ? 'selected' : '' }}>TLS (Port 587) - Recommended</option>
                         <option value="ssl" {{ old('mail_encryption', $settings['mail_encryption'] ?? '') == 'ssl' ? 'selected' : '' }}>SSL (Port 465)</option>
                         <option value="" {{ old('mail_encryption', $settings['mail_encryption'] ?? '') == '' ? 'selected' : '' }}>None</option>
@@ -95,7 +95,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         SMTP Host <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="mail_host" value="{{ old('mail_host', $settings['mail_host'] ?? '') }}" placeholder="e.g., smtp.gmail.com" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('mail_host') border-red-500 @enderror">
+                    <input type="text" name="mail_host" value="{{ old('mail_host', $settings['mail_host'] ?? '') }}" placeholder="e.g., smtp.gmail.com" class="form-input w-full px-4 py-2 @error('mail_host') border-red-500 @enderror">
                     <p class="text-xs text-gray-500 mt-1">The SMTP server address</p>
                     @error('mail_host')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
@@ -104,7 +104,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         SMTP Port <span class="text-red-500">*</span>
                     </label>
-                    <input type="number" name="mail_port" value="{{ old('mail_port', $settings['mail_port'] ?? '587') }}" placeholder="587" min="1" max="65535" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('mail_port') border-red-500 @enderror">
+                    <input type="number" name="mail_port" value="{{ old('mail_port', $settings['mail_port'] ?? '587') }}" placeholder="587" min="1" max="65535" class="form-input w-full px-4 py-2 @error('mail_port') border-red-500 @enderror">
                     <p class="text-xs text-gray-500 mt-1">Usually 587 (TLS) or 465 (SSL)</p>
                     @error('mail_port')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
@@ -116,7 +116,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Username / Email
                     </label>
-                    <input type="text" name="mail_username" value="{{ old('mail_username', $settings['mail_username'] ?? '') }}" placeholder="your-email@example.com" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('mail_username') border-red-500 @enderror">
+                    <input type="text" name="mail_username" value="{{ old('mail_username', $settings['mail_username'] ?? '') }}" placeholder="your-email@example.com" class="form-input w-full px-4 py-2 @error('mail_username') border-red-500 @enderror">
                     <p class="text-xs text-gray-500 mt-1">Leave empty if no authentication is required</p>
                     @error('mail_username')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
@@ -126,7 +126,7 @@
                         Password
                     </label>
                     <div class="relative">
-                        <input type="password" name="mail_password" id="mail_password" value="{{ old('mail_password', $settings['mail_password'] ?? '') }}" placeholder="••••••••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('mail_password') border-red-500 @enderror">
+                        <input type="password" name="mail_password" id="mail_password" value="{{ old('mail_password', $settings['mail_password'] ?? '') }}" placeholder="••••••••••" class="form-input w-full px-4 py-2 @error('mail_password') border-red-500 @enderror">
                         <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-2 text-gray-500 hover:text-gray-700">
                             <i class="fas fa-eye" id="toggleIcon"></i>
                         </button>
@@ -142,7 +142,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         From Address <span class="text-red-500">*</span>
                     </label>
-                    <input type="email" name="mail_from_address" value="{{ old('mail_from_address', $settings['mail_from_address'] ?? '') }}" placeholder="noreply@yourdomain.com" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('mail_from_address') border-red-500 @enderror">
+                    <input type="email" name="mail_from_address" value="{{ old('mail_from_address', $settings['mail_from_address'] ?? '') }}" placeholder="noreply@yourdomain.com" class="form-input w-full px-4 py-2 @error('mail_from_address') border-red-500 @enderror">
                     <p class="text-xs text-gray-500 mt-1">Email address shown as sender</p>
                     @error('mail_from_address')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
@@ -151,7 +151,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         From Name <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="mail_from_name" value="{{ old('mail_from_name', $settings['mail_from_name'] ?? 'Salale Clearance System') }}" placeholder="Application Name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('mail_from_name') border-red-500 @enderror">
+                    <input type="text" name="mail_from_name" value="{{ old('mail_from_name', $settings['mail_from_name'] ?? 'Salale Clearance System') }}" placeholder="Application Name" class="form-input w-full px-4 py-2 @error('mail_from_name') border-red-500 @enderror">
                     <p class="text-xs text-gray-500 mt-1">Display name for emails</p>
                     @error('mail_from_name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
@@ -163,7 +163,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Test Email Address</label>
-                        <input id="testEmailAddress" type="email" placeholder="admin@example.com" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <input id="testEmailAddress" type="email" placeholder="admin@example.com" class="form-input w-full px-4 py-2 flex-1">
                         <p class="text-xs text-gray-500 mt-1">Enter an address to test the configuration</p>
                     </div>
                     <div class="flex flex-col justify-end gap-2">
@@ -180,23 +180,23 @@
             
             <!-- Submit Button -->
             <div class="flex justify-end gap-3 border-t border-gray-200 pt-6">
-                <button type="reset" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
-                    <i class="fas fa-redo mr-2"></i> Reset
+                <button type="reset" class="btn-secondary px-6 py-2 inline-flex items-center justify-center gap-2">
+                    <i class="fas fa-redo"></i> Reset
                 </button>
-                <button type="submit" class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-blue-800 transition font-semibold">
-                    <i class="fas fa-save mr-2"></i> Save Email Settings
+                <button type="submit" class="btn-primary px-6 py-2 inline-flex items-center justify-center gap-2 font-semibold">
+                    <i class="fas fa-save"></i> Save Email Settings
                 </button>
             </div>
         </form>
     </div>
     
     <!-- Email Templates -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
+    <div class="surface-card p-6">
         <h2 class="text-xl font-bold text-gray-900 mb-2">Email Templates</h2>
         <p class="text-sm text-gray-600 mb-6">Customize email templates sent to users</p>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+            <div class="surface-card p-4 rounded-lg transition hover:shadow-md">
                 <div class="flex items-start justify-between mb-3">
                     <div>
                         <h3 class="text-lg font-semibold text-gray-900">Clearance Request</h3>
@@ -209,7 +209,7 @@
                 </a>
             </div>
             
-            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+            <div class="surface-card p-4 rounded-lg transition hover:shadow-md">
                 <div class="flex items-start justify-between mb-3">
                     <div>
                         <h3 class="text-lg font-semibold text-gray-900">Approval Notification</h3>
@@ -222,7 +222,7 @@
                 </a>
             </div>
             
-            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+            <div class="surface-card p-4 rounded-lg transition hover:shadow-md">
                 <div class="flex items-start justify-between mb-3">
                     <div>
                         <h3 class="text-lg font-semibold text-gray-900">Rejection Notice</h3>
@@ -235,7 +235,7 @@
                 </a>
             </div>
             
-            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+            <div class="surface-card p-4 rounded-lg transition hover:shadow-md">
                 <div class="flex items-start justify-between mb-3">
                     <div>
                         <h3 class="text-lg font-semibold text-gray-900">Completion Alert</h3>

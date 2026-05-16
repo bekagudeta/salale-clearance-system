@@ -8,7 +8,7 @@
 <div class="space-y-6">
     <!-- Quick Actions -->
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <a href="{{ route('admin.settings.email') }}" class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-xl">
+        <a href="{{ route('admin.settings.email') }}" class="surface-card p-5 transition hover:shadow-xl">
             <div class="flex items-start gap-4">
                 <div class="inline-flex h-14 w-14 items-center justify-center rounded-3xl bg-blue-100 text-blue-700">
                     <i class="fas fa-envelope text-2xl"></i>
@@ -20,7 +20,7 @@
             </div>
         </a>
 
-        <a href="{{ route('admin.settings.backup') }}" class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-xl">
+        <a href="{{ route('admin.settings.backup') }}" class="surface-card p-5 transition hover:shadow-xl">
             <div class="flex items-start gap-4">
                 <div class="inline-flex h-14 w-14 items-center justify-center rounded-3xl bg-emerald-100 text-emerald-700">
                     <i class="fas fa-database text-2xl"></i>
@@ -32,7 +32,7 @@
             </div>
         </a>
 
-        <a href="{{ route('admin.settings.system-info') }}" class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-xl">
+        <a href="{{ route('admin.settings.system-info') }}" class="surface-card p-5 transition hover:shadow-xl">
             <div class="flex items-start gap-4">
                 <div class="inline-flex h-14 w-14 items-center justify-center rounded-3xl bg-violet-100 text-violet-700">
                     <i class="fas fa-info-circle text-2xl"></i>
@@ -44,7 +44,7 @@
             </div>
         </a>
 
-        <button onclick="confirmClearCache()" class="text-left rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-xl">
+        <button onclick="confirmClearCache()" class="text-left surface-card p-5 transition hover:shadow-xl">
             <div class="flex items-start gap-4">
                 <div class="inline-flex h-14 w-14 items-center justify-center rounded-3xl bg-amber-100 text-amber-700">
                     <i class="fas fa-broom text-2xl"></i>
@@ -58,7 +58,7 @@
     </div>
     
     <!-- General Settings Form -->
-    <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+    <div class="surface-card p-6">
         <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h2 class="text-2xl font-bold text-slate-900">General Settings</h2>
@@ -74,11 +74,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">University Name</label>
-                    <input type="text" name="university_name" value="{{ $settings['university_name'] ?? 'Salale University' }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    <input type="text" name="university_name" value="{{ $settings['university_name'] ?? 'Salale University' }}" class="form-input w-full px-3 py-2">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">University Logo</label>
-                    <input type="file" name="university_logo" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    <input type="file" name="university_logo" accept="image/*" class="form-input w-full px-3 py-2">
                     @if($settings['university_logo'] ?? false)
                         <div class="mt-2">
                             <img src="{{ asset('storage/' . $settings['university_logo']) }}" alt="University Logo" class="h-16 rounded">
@@ -91,11 +91,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Contact Email</label>
-                    <input type="email" name="contact_email" value="{{ $settings['contact_email'] ?? '' }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    <input type="email" name="contact_email" value="{{ $settings['contact_email'] ?? '' }}" class="form-input w-full px-3 py-2">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Contact Phone</label>
-                    <input type="tel" name="contact_phone" value="{{ $settings['contact_phone'] ?? '' }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    <input type="tel" name="contact_phone" value="{{ $settings['contact_phone'] ?? '' }}" class="form-input w-full px-3 py-2">
                 </div>
             </div>
             
@@ -103,17 +103,17 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Reminder Days</label>
-                    <input type="number" name="reminder_days" value="{{ $settings['reminder_days'] ?? 7 }}" min="1" max="30" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    <input type="number" name="reminder_days" value="{{ $settings['reminder_days'] ?? 7 }}" min="1" max="30" class="form-input w-full px-3 py-2">
                     <p class="text-xs text-gray-500 mt-1">Days before deadline to send reminders</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Auto Complete Days</label>
-                    <input type="number" name="auto_complete_days" value="{{ $settings['auto_complete_days'] ?? 30 }}" min="1" max="90" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    <input type="number" name="auto_complete_days" value="{{ $settings['auto_complete_days'] ?? 30 }}" min="1" max="90" class="form-input w-full px-3 py-2">
                     <p class="text-xs text-gray-500 mt-1">Days to auto-complete pending requests</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Maintenance Mode</label>
-                    <select name="maintenance_mode" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    <select name="maintenance_mode" class="form-input w-full px-3 py-2">
                         <option value="0" {{ !($settings['maintenance_mode'] ?? false) ? 'selected' : '' }}>Disabled</option>
                         <option value="1" {{ ($settings['maintenance_mode'] ?? false) ? 'selected' : '' }}>Enabled</option>
                     </select>
@@ -122,15 +122,15 @@
             
             <!-- Submit Button -->
             <div class="flex justify-end">
-                <button type="submit" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-purple-700 transition">
-                    <i class="fas fa-save mr-2"></i> Save Settings
+                <button type="submit" class="btn-primary px-6 py-3 inline-flex items-center gap-2">
+                    <i class="fas fa-save"></i> Save Settings
                 </button>
             </div>
         </form>
     </div>
     
     <!-- System Status -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
+    <div class="surface-card p-6">
         <h2 class="text-xl font-bold text-gray-900 mb-6">System Status</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

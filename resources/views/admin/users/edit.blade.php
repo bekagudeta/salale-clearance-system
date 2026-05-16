@@ -8,7 +8,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- Form Card -->
     <div class="lg:col-span-2">
-        <div class="bg-white rounded-xl shadow-lg p-6">
+        <div class="surface-card p-6">
             <form action="{{ route('admin.users.update', $user->id) }}" method="POST" id="editUserForm" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
@@ -20,7 +20,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                            <input type="text" name="name" value="{{ old('name', $user->name) }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('name') border-red-500 @enderror" required>
+                            <input type="text" name="name" value="{{ old('name', $user->name) }}" class="form-input w-full px-4 py-2 @error('name') border-red-500 @enderror" required>
                             @error('name')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -28,7 +28,7 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                            <input type="email" name="email" value="{{ old('email', $user->email) }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('email') border-red-500 @enderror" required>
+                            <input type="email" name="email" value="{{ old('email', $user->email) }}" class="form-input w-full px-4 py-2 @error('email') border-red-500 @enderror" required>
                             @error('email')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -45,8 +45,8 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
                             <div class="flex gap-2 items-center">
-                                <input type="password" name="password" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('password') border-red-500 @enderror">
-                                <button type="button" onclick="generatePassword()" class="px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-200 transition">Generate</button>
+                                <input type="password" name="password" class="form-input flex-1 px-4 py-2 @error('password') border-red-500 @enderror">
+                                <button type="button" onclick="generatePassword()" class="btn-secondary px-3 py-2 text-sm font-medium">Generate</button>
                             </div>
                             <small class="text-gray-500">Leave blank to keep current password</small>
                             @error('password')
@@ -56,7 +56,7 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
-                            <input type="password" name="password_confirmation" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <input type="password" name="password_confirmation" class="form-input w-full px-4 py-2">
                         </div>
                     </div>
                 </div>
@@ -104,7 +104,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Student ID</label>
-                                <input type="text" name="student_id" value="{{ old('student_id', $user->student->student_id ?? '') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('student_id') border-red-500 @enderror">
+                                <input type="text" name="student_id" value="{{ old('student_id', $user->student->student_id ?? '') }}" class="form-input w-full px-4 py-2 @error('student_id') border-red-500 @enderror">
                                 @error('student_id')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -112,7 +112,7 @@
                             
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Faculty</label>
-                                <input type="text" name="faculty" value="{{ old('faculty', $user->student->faculty ?? '') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('faculty') border-red-500 @enderror">
+                                <input type="text" name="faculty" value="{{ old('faculty', $user->student->faculty ?? '') }}" class="form-input w-full px-4 py-2 @error('faculty') border-red-500 @enderror">
                                 @error('faculty')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -120,7 +120,7 @@
                             
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Department</label>
-                                <input type="text" name="department" value="{{ old('department', $user->student->department ?? '') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('department') border-red-500 @enderror">
+                                <input type="text" name="department" value="{{ old('department', $user->student->department ?? '') }}" class="form-input w-full px-4 py-2 @error('department') border-red-500 @enderror">
                                 @error('department')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -128,7 +128,7 @@
                             
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Year</label>
-                                <select name="year" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('year') border-red-500 @enderror">
+                                <select name="year" class="form-input w-full px-4 py-2 @error('year') border-red-500 @enderror">
                                     <option value="">-- Select Year --</option>
                                     <option value="1" {{ old('year', $user->student->year ?? '') == '1' ? 'selected' : '' }}>Year 1</option>
                                     <option value="2" {{ old('year', $user->student->year ?? '') == '2' ? 'selected' : '' }}>Year 2</option>
@@ -144,7 +144,7 @@
                             
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Semester</label>
-                                <select name="semester" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('semester') border-red-500 @enderror">
+                                <select name="semester" class="form-input w-full px-4 py-2 @error('semester') border-red-500 @enderror">
                                     <option value="">-- Select Semester --</option>
                                     <option value="1" {{ old('semester', $user->student->semester ?? '') == '1' ? 'selected' : '' }}>Semester 1</option>
                                     <option value="2" {{ old('semester', $user->student->semester ?? '') == '2' ? 'selected' : '' }}>Semester 2</option>
@@ -156,7 +156,7 @@
                             
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
-                                <select name="gender" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('gender') border-red-500 @enderror">
+                                <select name="gender" class="form-input w-full px-4 py-2 @error('gender') border-red-500 @enderror">
                                     <option value="">-- Select Gender --</option>
                                     <option value="M" {{ old('gender', $user->student->gender ?? '') == 'M' ? 'selected' : '' }}>Male</option>
                                     <option value="F" {{ old('gender', $user->student->gender ?? '') == 'F' ? 'selected' : '' }}>Female</option>
@@ -169,7 +169,7 @@
                             
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                                <input type="tel" name="phone" value="{{ old('phone', $user->student->phone ?? '') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('phone') border-red-500 @enderror">
+                                <input type="tel" name="phone" value="{{ old('phone', $user->student->phone ?? '') }}" class="form-input w-full px-4 py-2 @error('phone') border-red-500 @enderror">
                                 @error('phone')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -186,7 +186,7 @@
                                         @endif
                                     </div>
                                     <div class="flex-1">
-                                        <input type="file" name="photo" accept="image/*" id="photoInput" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                        <input type="file" name="photo" accept="image/*" id="photoInput" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#E5FCF9] file:text-[#084A48] hover:file:bg-[#C7F0E5]">
                                         <small class="text-gray-500">JPG, PNG max 2MB</small>
                                         @error('photo')
                                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -204,7 +204,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Department</label>
-                            <select name="department_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('department_id') border-red-500 @enderror">
+                            <select name="department_id" class="form-input w-full px-4 py-2 @error('department_id') border-red-500 @enderror">
                                 <option value="">-- Select Department --</option>
                                 @foreach($departments as $department)
                                     <option value="{{ $department->id }}" {{ old('department_id', $user->departments->first()?->id) == $department->id ? 'selected' : '' }}>{{ $department->name }}</option>
@@ -216,7 +216,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Position</label>
-                            <input type="text" name="position" value="{{ old('position', $user->departments->first()?->pivot->position ?? 'staff') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('position') border-red-500 @enderror" placeholder="e.g. Head, Staff, Assistant">
+                            <input type="text" name="position" value="{{ old('position', $user->departments->first()?->pivot->position ?? 'staff') }}" class="form-input w-full px-4 py-2 @error('position') border-red-500 @enderror" placeholder="e.g. Head, Staff, Assistant">
                             @error('position')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -232,10 +232,10 @@
 
                 <!-- Submit Buttons -->
                 <div class="flex gap-3 pt-6">
-                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
-                        <i class="fas fa-save mr-2"></i> Update User
+                    <button type="submit" class="btn-primary px-6 py-2 inline-flex items-center justify-center gap-2">
+                        <i class="fas fa-save"></i> Update User
                     </button>
-                    <a href="{{ route('admin.users.index') }}" class="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-50 transition">
+                    <a href="{{ route('admin.users.index') }}" class="btn-secondary px-6 py-2 inline-flex items-center justify-center gap-2">
                         Cancel
                     </a>
                 </div>

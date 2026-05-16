@@ -7,7 +7,7 @@
 @section('content')
 <div class="space-y-6">
     <div class="grid gap-4 xl:grid-cols-4">
-        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="surface-card p-6">
             <div class="flex items-start justify-between gap-4">
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Total Logs</p>
@@ -18,7 +18,7 @@
                 </span>
             </div>
         </div>
-        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="surface-card p-6">
             <div class="flex items-start justify-between gap-4">
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-[0.3em] text-sky-400">Today's Logs</p>
@@ -29,7 +29,7 @@
                 </span>
             </div>
         </div>
-        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="surface-card p-6">
             <div class="flex items-start justify-between gap-4">
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-400">Unique Users</p>
@@ -40,7 +40,7 @@
                 </span>
             </div>
         </div>
-        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="surface-card p-6">
             <div class="flex items-start justify-between gap-4">
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-[0.3em] text-violet-400">Most Active</p>
@@ -54,18 +54,18 @@
         </div>
     </div>
 
-    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="surface-card p-6">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div class="space-y-2">
                 <h2 class="text-xl font-semibold text-slate-900">Filter activity history</h2>
                 <p class="text-sm text-slate-500">Use search and filters to quickly surface the logs you need.</p>
             </div>
             <div class="flex flex-wrap gap-3">
-                <a href="{{ route('admin.logs.index') }}" class="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                <a href="{{ route('admin.logs.index') }}" class="btn-secondary inline-flex items-center gap-2 px-4 py-2 text-sm font-medium">
                     <i class="fas fa-eraser"></i>
                     Reset Filters
                 </a>
-                <button type="button" onclick="confirmClearLogs()" class="inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100">
+                <button type="button" onclick="confirmClearLogs()" class="btn-accent inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold">
                     <i class="fas fa-trash"></i>
                     Clear Old Logs
                 </button>
@@ -76,11 +76,11 @@
             <div class="grid gap-4 lg:grid-cols-2">
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-slate-700">Search</label>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by description, IP, or keyword" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200" />
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by description, IP, or keyword" class="w-full rounded-2xl form-input px-4 py-3 text-sm text-[#0e3433] outline-none" />
                 </div>
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-slate-700">Action</label>
-                    <select name="action" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200">
+                    <select name="action" class="w-full rounded-2xl form-input px-4 py-3 text-sm text-[#0e3433] outline-none">
                         <option value="all">All Actions</option>
                         @foreach($actions as $action)
                             <option value="{{ $action }}" {{ request('action') == $action ? 'selected' : '' }}>{{ $action }}</option>
@@ -89,7 +89,7 @@
                 </div>
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-slate-700">Table</label>
-                    <select name="table_name" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200">
+                    <select name="table_name" class="w-full rounded-2xl form-input px-4 py-3 text-sm text-[#0e3433] outline-none">
                         <option value="">All Tables</option>
                         @foreach($tables as $table)
                             <option value="{{ $table }}" {{ request('table_name') == $table ? 'selected' : '' }}>{{ $table }}</option>
@@ -98,7 +98,7 @@
                 </div>
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-slate-700">User</label>
-                    <select name="user_id" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200">
+                    <select name="user_id" class="w-full rounded-2xl form-input px-4 py-3 text-sm text-[#0e3433] outline-none">
                         <option value="">All Users</option>
                         @foreach($users as $user)
                             <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
@@ -108,20 +108,20 @@
                 <div class="space-y-2 lg:col-span-2">
                     <label class="block text-sm font-medium text-slate-700">Date range</label>
                     <div class="grid gap-3 sm:grid-cols-2">
-                        <input type="date" name="from_date" value="{{ request('from_date') }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200" />
-                        <input type="date" name="to_date" value="{{ request('to_date') }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200" />
+                        <input type="date" name="from_date" value="{{ request('from_date') }}" class="w-full rounded-2xl form-input px-4 py-3 text-sm text-[#0e3433] outline-none" />
+                        <input type="date" name="to_date" value="{{ request('to_date') }}" class="w-full rounded-2xl form-input px-4 py-3 text-sm text-[#0e3433] outline-none" />
                     </div>
                 </div>
             </div>
             <div class="flex items-end justify-end gap-3">
-                <button type="submit" class="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
+                <button type="submit" class="btn-primary inline-flex items-center justify-center px-5 py-3 text-sm font-semibold">
                     <i class="fas fa-filter mr-2"></i> Apply filters
                 </button>
             </div>
         </form>
     </div>
 
-    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="surface-card p-6">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
                 <h3 class="text-xl font-semibold text-slate-900">Activity logs</h3>
@@ -129,7 +129,7 @@
             </div>
             <div class="flex flex-wrap gap-3 items-center">
                 <p class="text-sm text-slate-500">Showing {{ $logs->firstItem() ?? 0 }}–{{ $logs->lastItem() ?? 0 }} of {{ $logs->total() }}</p>
-                <button type="button" onclick="location.reload()" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                <button type="button" onclick="location.reload()" class="btn-secondary inline-flex items-center gap-2 px-4 py-2 text-sm font-medium">
                     <i class="fas fa-sync-alt"></i>
                     Refresh
                 </button>
@@ -138,7 +138,7 @@
 
         <div class="mt-6 overflow-x-auto">
             <table class="w-full min-w-[900px] divide-y divide-slate-200 text-sm text-slate-700">
-                <thead class="bg-slate-50 text-left text-xs uppercase tracking-[0.2em] text-slate-500">
+                <thead class="bg-[#001722]/10 text-left text-xs uppercase tracking-[0.2em] text-slate-500">
                     <tr>
                         <th class="px-6 py-3">User</th>
                         <th class="px-6 py-3">Action</th>
@@ -151,7 +151,7 @@
                 </thead>
                 <tbody class="divide-y divide-slate-200 bg-white">
                     @forelse($logs as $log)
-                        <tr class="hover:bg-slate-50 transition">
+                        <tr class="hover:bg-[#001722]/10 transition">
                             <td class="px-6 py-4 align-top whitespace-nowrap">
                                 @if($log->user)
                                     <div class="flex items-center gap-3">
@@ -183,7 +183,7 @@
                             <td class="px-6 py-4 align-top text-slate-500">{{ $log->ip_address }}</td>
                             <td class="px-6 py-4 align-top text-slate-500">{{ $log->created_at->format('M j, Y H:i') }}</td>
                             <td class="px-6 py-4 align-top">
-                                <a href="{{ route('admin.logs.show', $log->id) }}" class="inline-flex items-center gap-2 text-slate-700 hover:text-slate-900">
+                                <a href="{{ route('admin.logs.show', $log->id) }}" class="inline-flex items-center gap-2 text-[#084A48] hover:text-[#0f6c5d]">
                                     <i class="fas fa-eye"></i>
                                     View
                                 </a>
@@ -213,7 +213,7 @@
 </div>
 
 <div id="clearModal" class="fixed inset-0 z-50 hidden bg-slate-950/50 p-4 backdrop-blur-sm">
-    <div class="mx-auto w-full max-w-lg overflow-hidden rounded-[32px] bg-white shadow-2xl">
+    <div class="surface-card max-w-lg w-full mx-auto overflow-hidden">
         <div class="flex items-center justify-between border-b border-slate-200 px-6 py-5">
             <div>
                 <h3 class="text-xl font-semibold text-slate-900">Clear Old Logs</h3>
@@ -227,7 +227,7 @@
             @csrf
             <div class="space-y-2">
                 <label for="daysSelect" class="block text-sm font-medium text-slate-700">Keep logs from last</label>
-                <select id="daysSelect" name="days" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200">
+                <select id="daysSelect" name="days" class="form-input w-full px-4 py-3 text-sm">
                     <option value="7">7 days</option>
                     <option value="30" selected>30 days</option>
                     <option value="90">90 days</option>
@@ -235,8 +235,8 @@
                 </select>
             </div>
             <div class="flex flex-col gap-3 sm:flex-row sm:justify-end">
-                <button type="button" onclick="closeClearModal()" class="rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50">Cancel</button>
-                <button type="submit" class="rounded-2xl bg-red-600 px-5 py-3 text-sm font-semibold text-white hover:bg-red-700">Clear logs</button>
+                <button type="button" onclick="closeClearModal()" class="btn-secondary rounded-2xl px-5 py-3 text-sm font-medium">Cancel</button>
+                <button type="submit" class="btn-accent rounded-2xl px-5 py-3 text-sm font-semibold">Clear logs</button>
             </div>
         </form>
     </div>

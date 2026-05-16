@@ -7,30 +7,30 @@
 @section('content')
 <div class="space-y-6">
     <div class="grid gap-6 xl:grid-cols-3">
-        <div class="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-            <h4 class="text-sm font-semibold uppercase tracking-[0.2em] text-indigo-600">Roles</h4>
-            <p class="mt-3 text-3xl font-semibold text-slate-900">{{ $roles->count() }}</p>
-            <p class="mt-2 text-sm text-gray-500">Total roles available for assignment.</p>
+        <div class="surface-card p-6">
+            <h4 class="text-sm font-semibold uppercase tracking-[0.2em] text-[#084A48]">Roles</h4>
+            <p class="mt-3 text-3xl font-semibold text-[#001722]">{{ $roles->count() }}</p>
+            <p class="mt-2 text-sm text-slate-500">Total roles available for assignment.</p>
         </div>
-        <div class="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-            <h4 class="text-sm font-semibold uppercase tracking-[0.2em] text-purple-600">Permissions</h4>
-            <p class="mt-3 text-3xl font-semibold text-slate-900">{{ $permissions->count() }}</p>
-            <p class="mt-2 text-sm text-gray-500">Global permissions configured for your system.</p>
+        <div class="surface-card p-6">
+            <h4 class="text-sm font-semibold uppercase tracking-[0.2em] text-[#084A48]">Permissions</h4>
+            <p class="mt-3 text-3xl font-semibold text-[#001722]">{{ $permissions->count() }}</p>
+            <p class="mt-2 text-sm text-slate-500">Global permissions configured for your system.</p>
         </div>
-        <div class="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-            <h4 class="text-sm font-semibold uppercase tracking-[0.2em] text-sky-600">Protected roles</h4>
-            <p class="mt-3 text-3xl font-semibold text-slate-900">4</p>
-            <p class="mt-2 text-sm text-gray-500">Core roles that cannot be deleted from the UI.</p>
+        <div class="surface-card p-6">
+            <h4 class="text-sm font-semibold uppercase tracking-[0.2em] text-[#FE580B]">Protected roles</h4>
+            <p class="mt-3 text-3xl font-semibold text-[#001722]">4</p>
+            <p class="mt-2 text-sm text-slate-500">Core roles that cannot be deleted from the UI.</p>
         </div>
     </div>
 
-    <div class="rounded-[32px] border border-gray-100 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 p-6 shadow-2xl text-white">
+    <div class="surface-card p-6">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-                <h2 class="text-2xl font-semibold">Role & Permission Center</h2>
-                <p class="mt-2 max-w-xl text-sm text-slate-300">Quickly search existing roles, update permissions, and keep system access organized.</p>
+                <h2 class="text-2xl font-semibold text-slate-900">Role & Permission Center</h2>
+                <p class="mt-2 max-w-xl text-sm text-slate-500">Quickly search existing roles, update permissions, and keep system access organized.</p>
             </div>
-            <button onclick="openCreateRoleModal()" class="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-lg transition hover:bg-slate-100">
+            <button onclick="openCreateRoleModal()" class="btn-primary px-5 py-3 inline-flex items-center gap-2 text-sm font-semibold">
                 <i class="fas fa-plus"></i>
                 New Role
             </button>
@@ -44,7 +44,7 @@
                         <p class="mt-1 text-sm text-slate-400">Filter the role list instantly by name.</p>
                     </div>
                     <div class="w-full sm:w-72">
-                        <input id="roleSearch" oninput="filterRoles()" type="search" placeholder="Search roles..." class="w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm text-white outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30" />
+                        <input id="roleSearch" oninput="filterRoles()" type="search" placeholder="Search roles..." class="w-full rounded-2xl form-input bg-[#F5FFFE] px-4 py-3 text-sm text-[#0e3433] outline-none focus:border-[#6BCFCB] focus:ring-2 focus:ring-[#6BCFCB]/30" />
                     </div>
                 </div>
             </div>
@@ -62,13 +62,13 @@
     </div>
 
     <div class="grid gap-6 xl:grid-cols-[1.4fr_0.9fr]">
-        <section class="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
+        <section class="surface-card p-6">
             <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
                     <h3 class="text-xl font-semibold text-slate-900">Roles overview</h3>
                     <p class="mt-1 text-sm text-slate-500">Manage roles and adjust permissions safely.</p>
                 </div>
-                <button onclick="openCreateRoleModal()" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-sky-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-sky-200/25 transition hover:from-sky-700 hover:to-indigo-700">
+                <button onclick="openCreateRoleModal()" class="btn-primary inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold">
                     <i class="fas fa-plus"></i>
                     Add Role
                 </button>
@@ -76,7 +76,7 @@
 
             <div class="mt-6 overflow-x-auto">
                 <table class="min-w-full divide-y divide-slate-200 text-left text-sm text-slate-700">
-                    <thead class="bg-slate-50 text-xs uppercase tracking-[0.2em] text-slate-500">
+                    <thead class="bg-[#001722]/10 text-xs uppercase tracking-[0.2em] text-slate-500">
                         <tr>
                             <th class="px-4 py-3">Role</th>
                             <th class="px-4 py-3">Permissions</th>
@@ -86,7 +86,7 @@
                     </thead>
                     <tbody id="rolesTableBody" class="divide-y divide-slate-200">
                         @forelse($roles as $role)
-                            <tr class="group hover:bg-slate-50 transition-colors" data-role-name="{{ strtolower($role->name) }}">
+                            <tr class="group hover:bg-[#001722]/10 transition-colors" data-role-name="{{ strtolower($role->name) }}">
                                 <td class="px-4 py-4">
                                     <div class="flex items-center gap-3">
                                         <span class="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-700">{{ strtoupper(substr($role->name, 0, 1)) }}</span>
@@ -134,13 +134,13 @@
             </div>
         </section>
 
-        <section class="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
+        <section class="surface-card p-6">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h3 class="text-xl font-semibold text-slate-900">System permissions</h3>
                     <p class="mt-1 text-sm text-slate-500">Review, add, or remove permissions used by roles.</p>
                 </div>
-                <button onclick="openCreatePermissionModal()" class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-purple-600 shadow-sm shadow-purple-100 transition hover:bg-purple-50">
+                <button onclick="openCreatePermissionModal()" class="btn-secondary inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold">
                     <i class="fas fa-plus"></i>
                     Add Permission
                 </button>
@@ -148,14 +148,14 @@
 
             <div class="mt-6 grid gap-3 sm:grid-cols-2">
                 @forelse($permissions as $permission)
-                    <div class="flex items-center justify-between rounded-3xl border border-slate-100 bg-slate-50 px-4 py-3 shadow-sm">
+                    <div class="surface-card p-4 flex items-center justify-between">
                         <span class="text-sm text-slate-700">{{ $permission->name }}</span>
                         <button type="button" onclick="deletePermission({{ $permission->id }})" class="text-red-600 transition hover:text-red-800" aria-label="Delete permission">
                             <i class="fas fa-trash-alt"></i>
                         </button>
                     </div>
                 @empty
-                    <div class="col-span-full rounded-3xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+                    <div class="col-span-full rounded-3xl border border-dashed border-slate-200 bg-[#F5FFFE] px-4 py-6 text-center text-sm text-slate-500">
                         No permissions configured yet.
                     </div>
                 @endforelse
@@ -165,7 +165,7 @@
 </div>
 
 <div id="roleModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50 p-4">
-    <div class="w-full max-w-2xl overflow-hidden rounded-3xl bg-white shadow-2xl">
+    <div class="surface-card max-w-2xl w-full mx-auto overflow-hidden">
         <div class="flex items-center justify-between border-b border-slate-200 px-6 py-5">
             <div>
                 <h3 id="roleModalTitle" class="text-xl font-semibold text-slate-900">Create Role</h3>
@@ -180,11 +180,11 @@
             <div class="grid gap-6 lg:grid-cols-2">
                 <div>
                     <label for="roleName" class="mb-2 block text-sm font-medium text-slate-700">Role Name</label>
-                    <input type="text" id="roleName" name="name" required class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" />
+                    <input type="text" id="roleName" name="name" required class="form-input w-full px-4 py-3" />
                 </div>
                 <div class="lg:col-span-2">
                     <label class="mb-3 block text-sm font-medium text-slate-700">Permissions</label>
-                    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 rounded-3xl border border-slate-200 bg-slate-50 p-4 max-h-72 overflow-y-auto">
+                    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 rounded-3xl border border-slate-200 bg-[#F5FFFE] p-4 max-h-72 overflow-y-auto">
                         @foreach($permissions as $permission)
                             <label class="flex cursor-pointer items-center gap-3 rounded-2xl border border-transparent bg-white px-3 py-2 text-sm transition hover:border-slate-300">
                                 <input type="checkbox" name="permissions[]" value="{{ $permission->id }}" class="permission-checkbox h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
@@ -195,8 +195,8 @@
                 </div>
             </div>
             <div class="flex flex-col gap-3 sm:flex-row sm:justify-end">
-                <button type="button" onclick="closeRoleModal()" class="rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50">Cancel</button>
-                <button type="submit" class="rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-700 to-sky-600 px-5 py-3 text-sm font-semibold text-white hover:from-slate-800 hover:to-sky-700">Save Role</button>
+                <button type="button" onclick="closeRoleModal()" class="btn-secondary rounded-2xl px-5 py-3 text-sm font-medium">Cancel</button>
+                <button type="submit" class="btn-primary rounded-2xl px-5 py-3 text-sm font-semibold inline-flex items-center justify-center gap-2">Save Role</button>
             </div>
         </form>
     </div>
@@ -286,7 +286,7 @@
         modal.id = 'permissionModal';
         modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4';
         modal.innerHTML = `
-            <div class="w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-2xl">
+            <div class="surface-card max-w-lg w-full mx-auto overflow-hidden">
                 <div class="flex items-center justify-between border-b border-slate-200 px-6 py-5">
                     <div>
                         <h3 class="text-xl font-semibold text-slate-900">Add Permission</h3>
@@ -298,10 +298,10 @@
                     @csrf
                     <div>
                         <label class="mb-2 block text-sm font-medium text-slate-700">Permission Name</label>
-                        <input name="name" type="text" required class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 shadow-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200" />
+                        <input name="name" type="text" required class="form-input w-full px-4 py-3" />
                     </div>
                     <div class="flex justify-end gap-3">
-                        <button type="button" onclick="closePermissionModal()" class="rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50">Cancel</button>
+                        <button type="button" onclick="closePermissionModal()" class="btn-secondary rounded-2xl px-5 py-3 text-sm font-medium">Cancel</button>
                         <button type="submit" class="rounded-2xl bg-purple-600 px-5 py-3 text-sm font-semibold text-white hover:bg-purple-700">Create Permission</button>
                     </div>
                 </form>

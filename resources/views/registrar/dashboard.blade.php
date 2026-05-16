@@ -7,61 +7,61 @@
 @section('content')
 <div class="space-y-6">
     <!-- Welcome Section -->
-    <div class="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl shadow-xl p-6 text-white">
+    <div class="surface-card p-6">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-3xl font-bold mb-2">Welcome, {{ auth()->user()->name }}!</h1>
-                <p class="text-purple-100">Registrar Office - Manage and finalize student clearances</p>
+                <h1 class="text-3xl font-bold mb-2 text-slate-900">Welcome, {{ auth()->user()->name }}!</h1>
+                <p class="text-slate-500">Registrar Office - Manage and finalize student clearances</p>
             </div>
             <div class="text-right">
-                <div class="text-4xl font-bold">{{ date('F j, Y') }}</div>
-                <div class="text-purple-100">{{ date('l') }}</div>
+                <div class="text-4xl font-bold text-slate-900">{{ date('F j, Y') }}</div>
+                <div class="text-slate-500">{{ date('l') }}</div>
             </div>
         </div>
     </div>
     
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-white rounded-xl shadow-lg p-6 card-hover transition">
+        <div class="surface-card p-6 card-hover transition">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-gray-500 text-sm">Total Requests</p>
-                    <p class="text-3xl font-bold text-gray-800">{{ $stats['total_requests'] }}</p>
+                    <p class="text-slate-500 text-sm">Total Requests</p>
+                    <p class="text-3xl font-bold text-slate-900">{{ $stats['total_requests'] }}</p>
                 </div>
-                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <i class="fas fa-file-alt text-blue-600 text-xl"></i>
+                <div class="w-12 h-12 bg-[#6BCFCB] bg-opacity-20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-file-alt text-[#6BCFCB] text-xl"></i>
                 </div>
             </div>
         </div>
         
-        <div class="bg-white rounded-xl shadow-lg p-6 card-hover transition">
+        <div class="surface-card p-6 card-hover transition">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-gray-500 text-sm">Pending Review</p>
-                    <p class="text-3xl font-bold text-yellow-600">{{ $stats['pending'] + $stats['in_progress'] }}</p>
+                    <p class="text-slate-500 text-sm">Pending Review</p>
+                    <p class="text-3xl font-bold text-[#FE580B]">{{ $stats['pending'] + $stats['in_progress'] }}</p>
                 </div>
-                <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                    <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                <div class="w-12 h-12 bg-[#FE580B] bg-opacity-20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-clock text-[#FE580B] text-xl"></i>
                 </div>
             </div>
         </div>
         
-        <div class="bg-white rounded-xl shadow-lg p-6 card-hover transition">
+        <div class="surface-card p-6 card-hover transition">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-gray-500 text-sm">Awaiting Final</p>
-                    <p class="text-3xl font-bold text-purple-600">{{ $stats['awaiting_final'] }}</p>
+                    <p class="text-slate-500 text-sm">Awaiting Final</p>
+                    <p class="text-3xl font-bold text-[#084A48]">{{ $stats['awaiting_final'] }}</p>
                 </div>
-                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                    <i class="fas fa-check-double text-purple-600 text-xl"></i>
+                <div class="w-12 h-12 bg-[#084A48] bg-opacity-20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-check-double text-[#084A48] text-xl"></i>
                 </div>
             </div>
         </div>
         
-        <div class="bg-white rounded-xl shadow-lg p-6 card-hover transition">
+        <div class="surface-card p-6 card-hover transition">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-gray-500 text-sm">Completed</p>
+                    <p class="text-slate-500 text-sm">Completed</p>
                     <p class="text-3xl font-bold text-green-600">{{ $stats['completed'] }}</p>
                 </div>
                 <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
@@ -72,56 +72,56 @@
     </div>
     
     <!-- Monthly Trends Chart -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
-        <h3 class="font-semibold text-gray-800 mb-4">Monthly Clearance Trends</h3>
+    <div class="surface-card p-6">
+        <h3 class="font-semibold text-slate-900 mb-4">Monthly Clearance Trends</h3>
         <canvas id="monthlyChart" height="100"></canvas>
     </div>
     
     <!-- Recent Requests -->
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-            <h3 class="font-semibold text-gray-800">Recent Clearance Requests</h3>
-            <a href="{{ route('registrar.clearance.index') }}" class="text-sm text-purple-600 hover:text-purple-800">
+    <div class="surface-card overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+            <h3 class="font-semibold text-slate-900">Recent Clearance Requests</h3>
+            <a href="{{ route('registrar.clearance.index') }}" class="text-sm text-[#084A48] hover:text-[#001722]">
                 View All <i class="fas fa-arrow-right ml-1"></i>
             </a>
         </div>
         
         <div class="overflow-x-auto">
             <table class="w-full">
-                <thead class="bg-gray-50">
+                <thead class="bg-slate-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ref No</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submitted</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase">Ref No</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase">Student</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase">Type</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase">Submitted</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase">Action</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
+                <tbody class="divide-y divide-slate-200">
                     @forelse($recentRequests as $request)
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-6 py-4 text-sm font-mono text-gray-900">{{ $request->reference_no }}</td>
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="px-6 py-4 text-sm font-mono text-slate-900">{{ $request->reference_no }}</td>
                         <td class="px-6 py-4">
                             <div>
-                                <p class="text-sm font-medium text-gray-900">{{ $request->student->full_name }}</p>
-                                <p class="text-xs text-gray-500">{{ $request->student->student_id }}</p>
+                                <p class="text-sm font-medium text-slate-900">{{ $request->student->full_name }}</p>
+                                <p class="text-xs text-slate-500">{{ $request->student->student_id }}</p>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">{{ ucfirst(str_replace('_', ' ', $request->type)) }}</td>
-                        <td class="px-6 py-4 text-sm text-gray-600">{{ $request->created_at->format('M d, Y') }}</td>
+                        <td class="px-6 py-4 text-sm text-slate-600">{{ ucfirst(str_replace('_', ' ', $request->type)) }}</td>
+                        <td class="px-6 py-4 text-sm text-slate-600">{{ $request->created_at->format('M d, Y') }}</td>
                         <td class="px-6 py-4">
                             @include('components.status-badge', ['status' => $request->status])
                         </td>
                         <td class="px-6 py-4">
-                            <a href="{{ route('registrar.clearance.show', $request->id) }}" class="text-purple-600 hover:text-purple-800">
+                            <a href="{{ route('registrar.clearance.show', $request->id) }}" class="text-[#084A48] hover:text-[#001722]">
                                 <i class="fas fa-eye"></i> View
                             </a>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                        <td colspan="6" class="px-6 py-12 text-center text-slate-500">
                             <i class="fas fa-inbox text-4xl mb-2"></i>
                             <p>No clearance requests found</p>
                         </td>
@@ -134,8 +134,8 @@
     
     <!-- Graduation Statistics -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-white rounded-xl shadow-lg p-6">
-            <h3 class="font-semibold text-gray-800 mb-4">Graduation Statistics {{ date('Y') }}</h3>
+        <div class="surface-card p-6">
+            <h3 class="font-semibold text-slate-900 mb-4">Graduation Statistics {{ date('Y') }}</h3>
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Total Graduations</span>
@@ -160,8 +160,8 @@
             </div>
         </div>
         
-        <div class="bg-white rounded-xl shadow-lg p-6">
-            <h3 class="font-semibold text-gray-800 mb-4">Quick Actions</h3>
+        <div class="surface-card p-6">
+            <h3 class="font-semibold text-slate-900 mb-4">Quick Actions</h3>
             <div class="space-y-3">
                 <a href="{{ route('registrar.reports.index') }}" class="flex items-center p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
                     <i class="fas fa-chart-line text-blue-600 text-xl mr-3"></i>

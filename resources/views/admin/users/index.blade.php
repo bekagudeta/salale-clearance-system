@@ -8,50 +8,50 @@
 <div class="space-y-6">
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div class="bg-white rounded-xl shadow-lg p-4">
-            <p class="text-gray-500 text-sm">Total Users</p>
-            <p class="text-2xl font-bold">{{ $stats['total'] }}</p>
+        <div class="surface-card p-4">
+            <p class="text-slate-500 text-sm">Total Users</p>
+            <p class="text-2xl font-bold text-[#001722]">{{ $stats['total'] }}</p>
         </div>
-        <div class="bg-blue-50 rounded-xl shadow-lg p-4">
-            <p class="text-blue-600 text-sm">Students</p>
-            <p class="text-2xl font-bold text-blue-700">{{ $stats['students'] }}</p>
+        <div class="surface-card p-4">
+            <p class="text-[#084A48] text-sm">Students</p>
+            <p class="text-2xl font-bold text-[#084A48]">{{ $stats['students'] }}</p>
         </div>
-        <div class="bg-green-50 rounded-xl shadow-lg p-4">
-            <p class="text-green-600 text-sm">Officers</p>
-            <p class="text-2xl font-bold text-green-700">{{ $stats['officers'] }}</p>
+        <div class="surface-card p-4">
+            <p class="text-[#084A48] text-sm">Officers</p>
+            <p class="text-2xl font-bold text-[#084A48]">{{ $stats['officers'] }}</p>
         </div>
-        <div class="bg-purple-50 rounded-xl shadow-lg p-4">
-            <p class="text-purple-600 text-sm">Registrars</p>
-            <p class="text-2xl font-bold text-purple-700">{{ $stats['registrars'] }}</p>
+        <div class="surface-card p-4">
+            <p class="text-[#084A48] text-sm">Registrars</p>
+            <p class="text-2xl font-bold text-[#084A48]">{{ $stats['registrars'] }}</p>
         </div>
-        <div class="bg-red-50 rounded-xl shadow-lg p-4">
-            <p class="text-red-600 text-sm">Admins</p>
-            <p class="text-2xl font-bold text-red-700">{{ $stats['admins'] }}</p>
+        <div class="surface-card p-4">
+            <p class="text-[#FE580B] text-sm">Admins</p>
+            <p class="text-2xl font-bold text-[#084A48]">{{ $stats['admins'] }}</p>
         </div>
     </div>
     
     <!-- Actions Bar -->
-    <div class="bg-white rounded-xl shadow-lg p-4">
+    <div class="surface-card p-4">
         <div class="flex flex-wrap justify-between items-center gap-4">
             <div class="flex space-x-3">
-                <a href="{{ route('admin.users.create') }}" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition">
-                    <i class="fas fa-plus mr-2"></i> Add User
+                <a href="{{ route('admin.users.create') }}" class="btn-primary px-4 py-2 inline-flex items-center gap-2">
+                    <i class="fas fa-plus"></i> Add User
                 </a>
-                <button onclick="confirmBulkDelete()" class="border border-red-600 text-red-600 px-4 py-2 rounded-lg hover:bg-red-50 transition">
-                    <i class="fas fa-trash mr-2"></i> Bulk Delete
+                <button onclick="confirmBulkDelete()" class="btn-accent px-4 py-2 inline-flex items-center gap-2">
+                    <i class="fas fa-trash"></i> Bulk Delete
                 </button>
             </div>
             
             <form method="GET" class="flex gap-2">
-                <select name="role" class="px-3 py-2 border border-gray-300 rounded-lg">
+                <select name="role" class="form-input px-3 py-2">
                     <option value="all">All Roles</option>
                     <option value="student" {{ request('role') == 'student' ? 'selected' : '' }}>Students</option>
                     <option value="department_officer" {{ request('role') == 'department_officer' ? 'selected' : '' }}>Officers</option>
                     <option value="registrar" {{ request('role') == 'registrar' ? 'selected' : '' }}>Registrars</option>
                 </select>
                 <input type="text" name="search" placeholder="Search users..." value="{{ request('search') }}"
-                    class="px-3 py-2 border border-gray-300 rounded-lg w-64">
-                <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700">
+                    class="form-input px-3 py-2 w-64">
+                <button type="submit" class="btn-primary px-4 py-2 inline-flex items-center justify-center">
                     <i class="fas fa-search"></i>
                 </button>
             </form>
@@ -59,13 +59,13 @@
     </div>
     
     <!-- Users Table -->
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+    <div class="surface-card overflow-hidden">
         <form id="bulkDeleteForm" action="{{ route('admin.users.bulk-delete') }}" method="POST">
             @csrf
             @method('DELETE')
             <div class="overflow-x-auto">
                 <table class="w-full">
-                    <thead class="bg-gray-50">
+                    <thead class="bg-[#001722]/10">
                         <tr>
                             <th class="px-4 py-3 text-left">
                                 <input type="checkbox" id="selectAll" class="rounded border-gray-300">
@@ -79,7 +79,7 @@
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         @forelse($users as $user)
-                        <tr class="hover:bg-gray-50">
+                        <tr class="hover:bg-[#001722]/10 transition">
                             <td class="px-4 py-3">
                                 @if(!$user->hasRole('super_admin'))
                                     <input type="checkbox" name="user_ids[]" value="{{ $user->id }}" class="user-checkbox rounded border-gray-300">
@@ -87,7 +87,7 @@
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                                    <div class="w-10 h-10 rounded-full bg-[#084A48] flex items-center justify-center text-white font-bold">
                                         {{ substr($user->name, 0, 2) }}
                                     </div>
                                     <div class="ml-3">
@@ -167,7 +167,7 @@
 
 <!-- Delete User Modal -->
 <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
+    <div class="surface-card max-w-md w-full mx-4">
         <div class="p-6">
             <h3 class="text-lg font-semibold text-gray-800 mb-4">Delete User</h3>
             <p class="text-gray-600 mb-6">Are you sure you want to delete this user? This action cannot be undone.</p>
@@ -175,7 +175,7 @@
                 @csrf
                 @method('DELETE')
                 <div class="flex justify-end space-x-3">
-                    <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                    <button type="button" onclick="closeDeleteModal()" class="btn-secondary px-4 py-2 inline-flex items-center justify-center gap-2">
                         Cancel
                     </button>
                     <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
