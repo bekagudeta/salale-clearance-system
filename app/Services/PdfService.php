@@ -13,7 +13,8 @@ class PdfService
      */
     public function generateClearanceCertificate($clearance)
     {
-        $qrCode = base64_encode(QrCode::format('png')->size(200)->generate($clearance->reference_no));
+        $qrSvg = QrCode::format('svg')->size(200)->generate($clearance->reference_no);
+        $qrCode = base64_encode($qrSvg);
         
         $pdf = Pdf::loadView('pdf.clearance-certificate', [
             'clearance' => $clearance,
@@ -117,7 +118,7 @@ class PdfService
      */
     public function generateQrCode($text, $size = 200)
     {
-        return base64_encode(QrCode::format('png')->size($size)->generate($text));
+        return base64_encode(QrCode::format('svg')->size($size)->generate($text));
     }
 
     /**

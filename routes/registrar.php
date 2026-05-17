@@ -22,6 +22,7 @@ Route::middleware(['auth', 'is.registrar'])->prefix('registrar')->name('registra
     Route::prefix('clearance')->name('clearance.')->group(function () {
         Route::get('/', [ClearanceController::class, 'index'])->name('index');
         Route::get('/{id}', [ClearanceController::class, 'show'])->name('show');
+        Route::post('/{id}/approve', [ClearanceController::class, 'approve'])->name('approve');
         Route::post('/{id}/finalize', [ClearanceController::class, 'finalize'])->name('finalize');
         Route::post('/{id}/reopen', [ClearanceController::class, 'reopen'])->name('reopen');
         Route::get('/{id}/print', [ClearanceController::class, 'print'])->name('print');
@@ -51,5 +52,5 @@ Route::middleware(['auth', 'is.registrar'])->prefix('registrar')->name('registra
     });
     
     // Verification
-    Route::get('/verify/{reference}', [CertificateController::class, 'verify'])->name('verify');
+    Route::get('/verify/{reference}', [CertificateController::class, 'verify'])->where('reference', '.*')->name('verify');
 });

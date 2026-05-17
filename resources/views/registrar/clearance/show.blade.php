@@ -7,8 +7,8 @@
 @section('content')
 <div class="max-w-5xl mx-auto space-y-6">
     <!-- Header Card -->
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div class="bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-4">
+    <div class="surface-card overflow-hidden">
+        <div style="background: linear-gradient(90deg, var(--deep-green), var(--pearl-aqua)); padding: 1rem 1.5rem;">
             <div class="flex justify-between items-center">
                 <div>
                     <h3 class="text-white font-semibold text-lg">Clearance Request Details</h3>
@@ -138,19 +138,29 @@
     </div>
     
     <!-- Action Buttons -->
-    <div class="flex justify-between">
+    <div class="flex flex-col lg:flex-row lg:justify-between gap-4">
         <a href="{{ route('registrar.clearance.index') }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
             <i class="fas fa-arrow-left mr-2"></i> Back to List
         </a>
-        
-        @if($allApproved && $clearance->status == 'approved')
-            <form action="{{ route('registrar.clearance.finalize', $clearance->id) }}" method="POST" onsubmit="return confirm('Finalize this clearance? This will generate the certificate and cannot be undone.')">
-                @csrf
-                <button type="submit" class="px-6 py-2 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-lg hover:from-green-700 hover:to-teal-700 transition shadow-md">
-                    <i class="fas fa-check-double mr-2"></i> Finalize Clearance
-                </button>
-            </form>
-        @endif
+        <div class="flex items-center gap-3">
+            @if($canApproveRegistrar)
+                <form action="{{ route('registrar.clearance.approve', $clearance->id) }}" method="POST" onsubmit="return confirm('Approve this request as registrar?')">
+                    @csrf
+                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-md">
+                        <i class="fas fa-check mr-2"></i> Approve as Registrar
+                    </button>
+                </form>
+            @endif
+
+            @if($allApproved && $clearance->status == 'approved')
+                <form action="{{ route('registrar.clearance.finalize', $clearance->id) }}" method="POST" onsubmit="return confirm('Finalize this clearance? This will generate the certificate and cannot be undone.')">
+                    @csrf
+                    <button type="submit" class="px-6 py-2 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-lg hover:from-green-700 hover:to-teal-700 transition shadow-md">
+                        <i class="fas fa-check-double mr-2"></i> Finalize Clearance
+                    </button>
+                </form>
+            @endif
+        </div>
     </div>
 </div>
 @endsection

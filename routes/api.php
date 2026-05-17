@@ -12,11 +12,14 @@ use App\Http\Controllers\Public\VerifyController;
 |--------------------------------------------------------------------------
 */
 
+// Non-versioned public routes
+Route::get('/verify/{reference}', [VerifyController::class, 'apiVerify'])->name('api.verify');
+
 // Public API Routes (no authentication required)
 Route::prefix('v1')->group(function () {
     
     // Verification endpoints
-    Route::get('/verify/{reference}', [VerifyController::class, 'apiVerify'])->name('api.verify');
+    Route::get('/verify/{reference}', [VerifyController::class, 'apiVerify'])->name('api.v1.verify');
     Route::get('/check-status/{reference}', [ClearanceApiController::class, 'checkStatus'])->name('api.check-status');
     
     // Public information

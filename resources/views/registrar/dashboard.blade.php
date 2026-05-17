@@ -49,8 +49,8 @@
         <div class="surface-card p-6 card-hover transition">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-slate-500 text-sm">Awaiting Final</p>
-                    <p class="text-3xl font-bold text-[#084A48]">{{ $stats['awaiting_final'] }}</p>
+                    <p class="text-slate-500 text-sm">Awaiting Registrar Approval</p>
+                    <p class="text-3xl font-bold text-[#084A48]">{{ $stats['awaiting_registrar'] }}</p>
                 </div>
                 <div class="w-12 h-12 bg-[#084A48] bg-opacity-20 rounded-full flex items-center justify-center">
                     <i class="fas fa-check-double text-[#084A48] text-xl"></i>
@@ -114,9 +114,19 @@
                             @include('components.status-badge', ['status' => $request->status])
                         </td>
                         <td class="px-6 py-4">
-                            <a href="{{ route('registrar.clearance.show', $request->id) }}" class="text-[#084A48] hover:text-[#001722]">
-                                <i class="fas fa-eye"></i> View
-                            </a>
+                            <div class="flex items-center space-x-2">
+                                <a href="{{ route('registrar.clearance.show', $request->id) }}" class="text-[#084A48] hover:text-[#001722]">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                @if($request->status === 'approved')
+                                    <form action="{{ route('registrar.clearance.finalize', $request->id) }}" method="POST" onsubmit="return confirm('Approve and finalize this clearance request? This will generate the certificate.')">
+                                        @csrf
+                                        <button type="submit" class="text-green-600 hover:text-green-800 text-sm">
+                                            <i class="fas fa-check-double"></i> Approve
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                     @empty
@@ -124,6 +134,59 @@
                         <td colspan="6" class="px-6 py-12 text-center text-slate-500">
                             <i class="fas fa-inbox text-4xl mb-2"></i>
                             <p>No clearance requests found</p>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Awaiting Registrar Approval -->
+    <div class="surface-card overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+            <h3 class="font-semibold text-slate-900">Awaiting Registrar Approval</h3>
+            <a href="{{ route('registrar.clearance.index', ['status' => 'approved']) }}" class="text-sm text-[#084A48] hover:text-[#001722]">
+                View Approved Requests <i class="fas fa-arrow-right ml-1"></i>
+            </a>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-slate-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase">Ref No</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase">Student</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase">Type</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase">Submitted</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                    @forelse($awaitingRegistrar as $request)
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="px-6 py-4 text-sm font-mono text-slate-900">{{ $request->reference_no }}</td>
+                        <td class="px-6 py-4">
+                            <div>
+                                <p class="text-sm font-medium text-slate-900">{{ $request->student->full_name }}</p>
+                                <p class="text-xs text-slate-500">{{ $request->student->student_id }}</p>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-slate-600">{{ ucfirst(str_replace('_', ' ', $request->type)) }}</td>
+                        <td class="px-6 py-4 text-sm text-slate-600">{{ $request->created_at->format('M d, Y') }}</td>
+                        <td class="px-6 py-4">
+                            <form action="{{ route('registrar.clearance.approve', $request->id) }}" method="POST" onsubmit="return confirm('Approve this request as registrar?')">
+                                @csrf
+                                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                                    <i class="fas fa-check-double mr-2"></i> Approve
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="px-6 py-12 text-center text-slate-500">
+                            <i class="fas fa-inbox text-4xl mb-2"></i>
+                            <p>No requests are awaiting registrar approval</p>
                         </td>
                     </tr>
                     @endforelse

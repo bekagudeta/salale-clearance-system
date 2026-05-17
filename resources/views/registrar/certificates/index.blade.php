@@ -7,21 +7,21 @@
 @section('content')
 <div class="space-y-6">
     <!-- Search -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
+    <div class="surface-card p-6">
         <form method="GET" action="{{ route('registrar.certificates.index') }}" class="flex gap-4">
             <div class="flex-1">
                 <input type="text" name="search" placeholder="Search by Reference No, Student Name or ID..." 
                     value="{{ request('search') }}"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
             </div>
-            <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition">
+            <button type="submit" class="btn-primary px-6 py-2">
                 <i class="fas fa-search mr-2"></i> Search
             </button>
         </form>
     </div>
     
     <!-- Certificates Table -->
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+    <div class="surface-card overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead class="bg-gray-50">
@@ -58,17 +58,14 @@
                         <td class="px-6 py-4">
                             <div class="flex space-x-3">
                                 @if($certificate->certificate_path)
-                                    <a href="{{ Storage::url($certificate->certificate_path) }}" target="_blank" 
-                                       class="text-blue-600 hover:text-blue-800">
+                                    <a href="{{ Storage::url($certificate->certificate_path) }}" target="_blank" class="btn-secondary px-3 py-1">
                                         <i class="fas fa-download"></i> Download
                                     </a>
                                 @endif
-                                <button onclick="regenerateCertificate({{ $certificate->id }})" 
-                                        class="text-purple-600 hover:text-purple-800">
+                                <button onclick="regenerateCertificate({{ $certificate->id }})" class="btn-secondary px-3 py-1">
                                     <i class="fas fa-sync-alt"></i> Regenerate
                                 </button>
-                                <button onclick="verifyCertificate('{{ $certificate->reference_no }}')" 
-                                        class="text-green-600 hover:text-green-800">
+                                <button onclick="verifyCertificate('{{ $certificate->reference_no }}')" class="btn-accent px-3 py-1">
                                     <i class="fas fa-qrcode"></i> Verify
                                 </button>
                             </div>
@@ -96,7 +93,7 @@
 
 <!-- Verify Modal -->
 <div id="verifyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
+    <div class="surface-card-soft max-w-md w-full mx-4">
         <div class="p-6">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-semibold">Verify Certificate</h3>
@@ -116,9 +113,34 @@
 
 @push('scripts')
 <script>
-    function regenerateCertificate(id) {
-        if (confirm('Regenerate certificate? This will create a new PDF.')) {
-            window.location.href = '/registrar/certificates/' + id + '/regenerate';
+    async function regenerateCertificate(id) {
+        if (!confirm('Regenerate certificate? This will create a new PDF.')) return;
+
+        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        try {
+            const res = await fetch('/registrar/certificates/' + id + '/regenerate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token,
+                    'Accept': 'application/json'
+                },
+                credentials: 'same-origin'
+            });
+
+            if (!res.ok) {
+                const text = await res.text();
+                console.error('Regenerate failed', res.status, text);
+                alert('Failed to regenerate certificate. See console for details.');
+                return;
+            }
+
+            // Refresh to show flash message and updated state
+            location.reload();
+        } catch (err) {
+            console.error('Regenerate error', err);
+            alert('An error occurred while regenerating the certificate.');
         }
     }
     
@@ -132,19 +154,29 @@
         resultDiv.innerHTML = '<div class="animate-pulse"><i class="fas fa-spinner fa-spin text-4xl text-purple-600 mb-3"></i><p>Verifying...</p></div>';
         
         try {
-            const response = await fetch('/api/verify/' + referenceNo);
+            const response = await fetch('/api/verify/' + encodeURIComponent(referenceNo));
             const data = await response.json();
             
             if (data.valid) {
+                let approvalsHtml = '<div class="mt-3 text-left text-sm"><strong>Approvals:</strong><ul class="mt-2 space-y-1">';
+                if (data.approvals && data.approvals.length > 0) {
+                    data.approvals.forEach(approval => {
+                        approvalsHtml += `<li class="text-xs text-gray-600">✓ ${approval.department} - ${approval.status}</li>`;
+                    });
+                }
+                approvalsHtml += '</ul></div>';
+
                 resultDiv.innerHTML = `
                     <div class="text-center">
                         <i class="fas fa-check-circle text-green-500 text-5xl mb-3"></i>
                         <h4 class="font-semibold text-green-800 mb-2">Valid Certificate</h4>
-                        <p class="text-gray-600 text-sm">This certificate is authentic and valid.</p>
-                        <div class="mt-4 p-3 bg-gray-50 rounded-lg text-left">
-                            <p class="text-sm"><strong>Student:</strong> ${data.student}</p>
-                            <p class="text-sm"><strong>Reference:</strong> ${data.reference_no}</p>
+                        <p class="text-gray-600 text-sm mb-3">This certificate is authentic and valid.</p>
+                        <div class="mt-3 p-3 bg-gray-50 rounded-lg text-left">
+                            <p class="text-sm"><strong>Student:</strong> ${data.student_name}</p>
+                            <p class="text-sm"><strong>ID:</strong> ${data.student_id}</p>
+                            <p class="text-sm"><strong>Type:</strong> ${data.type}</p>
                             <p class="text-sm"><strong>Completed:</strong> ${data.completed_date}</p>
+                            ${approvalsHtml}
                         </div>
                         <button onclick="closeVerifyModal()" class="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg">Close</button>
                     </div>
@@ -154,7 +186,7 @@
                     <div class="text-center">
                         <i class="fas fa-times-circle text-red-500 text-5xl mb-3"></i>
                         <h4 class="font-semibold text-red-800 mb-2">Invalid Certificate</h4>
-                        <p class="text-gray-600 text-sm">This certificate is not valid or has been revoked.</p>
+                        <p class="text-gray-600 text-sm">${data.message || 'This certificate is not valid or has been revoked.'}</p>
                         <button onclick="closeVerifyModal()" class="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg">Close</button>
                     </div>
                 `;
@@ -168,6 +200,7 @@
                     <button onclick="closeVerifyModal()" class="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg">Close</button>
                 </div>
             `;
+            console.error('Verification error:', error);
         }
     }
     

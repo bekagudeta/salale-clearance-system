@@ -7,7 +7,7 @@
 @section('content')
 <div class="space-y-6">
     <!-- Report Generation Form -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
+    <div class="surface-card p-6">
         <h3 class="font-semibold text-gray-800 mb-4">Generate Report</h3>
         
         <form action="{{ route('registrar.reports.generate') }}" method="POST" target="_blank">
@@ -62,7 +62,7 @@
             </div>
             
             <div class="mt-6">
-                <button type="submit" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 transition">
+                <button type="submit" class="btn-primary px-6 py-2">
                     <i class="fas fa-chart-line mr-2"></i> Generate Report
                 </button>
             </div>
@@ -71,7 +71,7 @@
     
     <!-- Quick Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white rounded-xl shadow-lg p-6">
+        <div class="surface-card p-6">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="font-semibold text-gray-800">This Month</h3>
                 <i class="fas fa-calendar-alt text-purple-600 text-2xl"></i>
@@ -92,7 +92,7 @@
             </div>
         </div>
         
-        <div class="bg-white rounded-xl shadow-lg p-6">
+        <div class="surface-card p-6">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="font-semibold text-gray-800">This Year</h3>
                 <i class="fas fa-chart-line text-purple-600 text-2xl"></i>
@@ -109,7 +109,7 @@
             </div>
         </div>
         
-        <div class="bg-white rounded-xl shadow-lg p-6">
+        <div class="surface-card p-6">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="font-semibold text-gray-800">Department Performance</h3>
                 <i class="fas fa-building text-purple-600 text-2xl"></i>
@@ -126,7 +126,7 @@
     </div>
     
     <!-- Export Options -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
+    <div class="surface-card p-6">
         <h3 class="font-semibold text-gray-800 mb-4">Quick Export</h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <a href="{{ route('registrar.reports.export', ['type' => 'clearances', 'format' => 'csv']) }}" class="flex items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition">

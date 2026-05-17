@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\ClearanceRequest;
 use App\Models\ClearanceApproval;
 use App\Models\Student;
+use App\Models\Department;
 use App\Repositories\Interfaces\ReportRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
@@ -125,6 +126,130 @@ class ReportService
             )
             ->groupBy('departments.id', 'departments.name')
             ->get();
+    }
+
+    /**
+     * Export clearances for CSV
+     */
+    public function exportClearances()
+    {
+        return ClearanceRequest::with('student')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($record) {
+                return [
+                    'Reference No' => $record->reference_no,
+                    'Student Name' => optional($record->student)->full_name,
+                    'Student ID' => optional($record->student)->student_id,
+                    'Type' => ucfirst(str_replace('_', ' ', $record->type)),
+                    'Reason' => $record->reason,
+                    'Status' => ucfirst($record->status),
+                    'Submitted At' => optional($record->created_at)->toDateTimeString(),
+                    'Completed At' => optional($record->completed_at)->toDateTimeString(),
+                ];
+            });
+    }
+
+    /**
+     * Export students for CSV
+     */
+    public function exportStudents()
+    {
+        return Student::with('user')
+            ->orderBy('full_name')
+            ->get()
+            ->map(function ($record) {
+                return [
+                    'Student ID' => $record->student_id,
+                    'Full Name' => $record->full_name,
+                    'Faculty' => $record->faculty,
+                    'Department' => $record->department,
+                    'Year' => $record->year,
+                    'Semester' => $record->semester,
+                    'Phone' => $record->phone,
+                    'Gender' => ucfirst($record->gender),
+                    'Email' => optional($record->user)->email,
+                ];
+            });
+    }
+
+    /**
+     * Export departments for CSV
+     */
+    public function exportDepartments()
+    {
+        return Department::with('officer')
+            ->orderBy('name')
+            ->get()
+            ->map(function ($record) {
+                return [
+                    'Department Name' => $record->name,
+                    'Slug' => $record->slug,
+                    'Officer Name' => optional($record->officer)->name,
+                    'Officer Email' => optional($record->officer)->email,
+                    'Priority Order' => $record->priority_order,
+                    'Active' => $record->is_active ? 'Yes' : 'No',
+                ];
+            });
+    }
+
+    /**
+     * Format report data for PDF export
+     */
+    public function formatReportRows($type, $data)
+    {
+        switch ($type) {
+            case 'cleared_students':
+                return $data->map(function ($record) {
+                    return [
+                        'Reference No' => $record->reference_no,
+                        'Student Name' => optional($record->student)->full_name,
+                        'Student ID' => optional($record->student)->student_id,
+                        'Type' => ucfirst(str_replace('_', ' ', $record->type)),
+                        'Reason' => $record->reason,
+                        'Status' => ucfirst($record->status),
+                        'Submitted At' => optional($record->created_at)->toDateTimeString(),
+                        'Completed At' => optional($record->completed_at)->toDateTimeString(),
+                    ];
+                });
+
+            case 'rejected_requests':
+                return $data->map(function ($record) {
+                    return [
+                        'Reference No' => $record->reference_no,
+                        'Student Name' => optional($record->student)->full_name,
+                        'Student ID' => optional($record->student)->student_id,
+                        'Type' => ucfirst(str_replace('_', ' ', $record->type)),
+                        'Status' => ucfirst($record->status),
+                        'Rejected At' => optional($record->updated_at)->toDateTimeString(),
+                        'Reason' => $record->reason,
+                    ];
+                });
+
+            case 'department_delays':
+                return $data->flatMap(function ($group, $department) {
+                    return collect($group)->map(function ($record) use ($department) {
+                        return [
+                            'Department' => $department,
+                            'Request Reference' => optional($record->request)->reference_no,
+                            'Student Name' => optional(optional($record->request)->student)->full_name,
+                            'Pending Since' => optional($record->created_at)->toDateTimeString(),
+                        ];
+                    });
+                });
+
+            case 'graduation_stats':
+                return collect([[
+                    'Total Graduations' => $data['total_graduations'] ?? 0,
+                    'Completed Graduations' => $data['completed_graduations'] ?? 0,
+                    'Rejected Graduations' => $data['rejected_graduations'] ?? 0,
+                ]]);
+
+            default:
+                return collect($data)->map(function ($record) {
+                    return is_object($record) ? $record->toArray() : (array) $record;
+                });
+        }
     }
 
     /**

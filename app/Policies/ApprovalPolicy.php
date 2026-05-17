@@ -16,6 +16,10 @@ class ApprovalPolicy
         if ($user->hasRole('department_officer')) {
             return $user->assignedDepartments->contains($approval->department_id);
         }
+
+        if ($user->hasRole('registrar')) {
+            return $approval->department->slug === 'registrar-office';
+        }
         
         return false;
     }

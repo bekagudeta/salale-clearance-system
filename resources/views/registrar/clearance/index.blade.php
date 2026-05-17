@@ -7,11 +7,11 @@
 @section('content')
 <div class="space-y-6">
     <!-- Filters -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
+    <div class="surface-card p-6">
         <form method="GET" action="{{ route('registrar.clearance.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                <select name="status" class="form-input">
                     <option value="all">All Status</option>
                     <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                     <option value="in_progress" {{ request('status') == 'in_progress' ? 'selected' : '' }}>In Progress</option>
@@ -23,7 +23,7 @@
             
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Clearance Type</label>
-                <select name="type" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                <select name="type" class="form-input">
                     <option value="all">All Types</option>
                     <option value="graduation" {{ request('type') == 'graduation' ? 'selected' : '' }}>Graduation</option>
                     <option value="withdrawal" {{ request('type') == 'withdrawal' ? 'selected' : '' }}>Withdrawal</option>
@@ -34,12 +34,11 @@
             
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
-                <input type="text" name="search" placeholder="Reference, Name or ID" value="{{ request('search') }}"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                <input type="text" name="search" placeholder="Reference, Name or ID" value="{{ request('search') }}" class="form-input">
             </div>
             
             <div class="flex items-end">
-                <button type="submit" class="w-full bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
+                <button type="submit" class="btn-primary w-full">
                     <i class="fas fa-search mr-2"></i> Filter
                 </button>
             </div>
@@ -47,7 +46,7 @@
     </div>
     
     <!-- Clearance Table -->
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+    <div class="surface-card overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead class="bg-gray-50">
@@ -93,17 +92,18 @@
                             @include('components.status-badge', ['status' => $clearance->status])
                         </td>
                         <td class="px-6 py-4">
-                            <div class="flex space-x-2">
+                            <div class="flex items-center space-x-2">
                                 <a href="{{ route('registrar.clearance.show', $clearance->id) }}" 
-                                   class="text-purple-600 hover:text-purple-800">
+                                   class="btn-secondary px-2 py-1">
                                     <i class="fas fa-eye"></i>
                                 </a>
                                 @if($clearance->status == 'approved')
-                                    <a href="{{ route('registrar.clearance.finalize', $clearance->id) }}" 
-                                       onclick="return confirm('Finalize this clearance? This will generate the certificate.')"
-                                       class="text-green-600 hover:text-green-800">
-                                        <i class="fas fa-check-double"></i>
-                                    </a>
+                                    <form action="{{ route('registrar.clearance.finalize', $clearance->id) }}" method="POST" onsubmit="return confirm('Approve and finalize this clearance? This will generate the certificate.')">
+                                        @csrf
+                                        <button type="submit" class="btn-accent">
+                                            <i class="fas fa-check-double"></i>
+                                        </button>
+                                    </form>
                                 @endif
                             </div>
                         </td>

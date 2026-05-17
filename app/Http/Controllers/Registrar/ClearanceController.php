@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Registrar;
 
 use App\Http\Controllers\Controller;
+use App\Models\ClearanceApproval;
 use App\Models\ClearanceRequest;
+use App\Models\Department;
+use App\Services\ApprovalService;
 use App\Services\ClearanceService;
-use App\Services\PdfService;
 use App\Services\NotificationService;
+use App\Services\PdfService;
 use App\Events\ClearanceCompleted;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,15 +17,18 @@ use Illuminate\Support\Facades\DB;
 class ClearanceController extends Controller
 {
     protected $clearanceService;
+    protected $approvalService;
     protected $pdfService;
     protected $notificationService;
 
     public function __construct(
         ClearanceService $clearanceService,
+        ApprovalService $approvalService,
         PdfService $pdfService,
         NotificationService $notificationService
     ) {
         $this->clearanceService = $clearanceService;
+        $this->approvalService = $approvalService;
         $this->pdfService = $pdfService;
         $this->notificationService = $notificationService;
     }
@@ -65,8 +71,31 @@ class ClearanceController extends Controller
         $allApproved = $clearance->approvals->every(function($approval) {
             return $approval->status === 'approved';
         });
+
+        $registrarApproval = $clearance->approvals->first(function($approval) {
+            return $approval->department->slug === 'registrar-office';
+        });
+
+        $canApproveRegistrar = $registrarApproval && $registrarApproval->status === 'pending';
         
-        return view('registrar.clearance.show', compact('clearance', 'allApproved'));
+        return view('registrar.clearance.show', compact('clearance', 'allApproved', 'registrarApproval', 'canApproveRegistrar'));
+    }
+
+    public function approve($id)
+    {
+        $clearance = ClearanceRequest::with(['approvals.department', 'student.user'])->findOrFail($id);
+        $registrarApproval = $clearance->approvals->first(function($approval) {
+            return $approval->department->slug === 'registrar-office';
+        });
+
+        if (!$registrarApproval || $registrarApproval->status !== 'pending') {
+            return redirect()->back()->with('error', 'No pending registrar approval found for this clearance.');
+        }
+
+        $this->approvalService->approve($registrarApproval->id);
+
+        return redirect()->route('registrar.clearance.show', $clearance->id)
+            ->with('success', 'Registrar approval recorded. The clearance is now ready for finalization.');
     }
 
     public function finalize($id)

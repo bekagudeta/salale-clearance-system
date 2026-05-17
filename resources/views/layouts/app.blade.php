@@ -22,79 +22,106 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
     <style>
+        :root{
+            --rich-black: #001722;
+            --deep-green: #084A48;
+            --pearl-aqua: #6BCFCB;
+            --orange: #FE580B;
+            --muted-light: #e8f8f5;
+            --card-bg: #ffffff;
+            --card-text: #0b2624;
+        }
+
         * {
             font-family: 'Inter', sans-serif;
         }
+
         body {
-            background: linear-gradient(135deg, #001722 0%, #084A48 100%);
+            background: linear-gradient(135deg, var(--rich-black) 0%, var(--deep-green) 100%);
             min-height: 100vh;
-            color: #e8f8f5;
+            color: var(--muted-light);
         }
         .sidebar-transition {
             transition: all 0.3s ease;
         }
         .surface-card {
-            background: rgba(255, 255, 255, 0.94);
-            border: 1px solid rgba(107, 207, 203, 0.18);
-            box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.18);
-            border-radius: 28px;
+            background: var(--card-bg);
+            color: var(--card-text);
+            border: 1px solid rgba(6, 72, 66, 0.08);
+            box-shadow: 0 18px 36px -18px rgba(0, 0, 0, 0.25);
+            border-radius: 18px;
         }
         .surface-card-soft {
-            background: rgba(255, 255, 255, 0.88);
-            border: 1px solid rgba(107, 207, 203, 0.12);
+            background: #fbffff;
+            color: var(--card-text);
+            border: 1px solid rgba(107, 207, 203, 0.08);
             box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
-            border-radius: 28px;
+            border-radius: 16px;
         }
         .btn-primary {
-            background: #084A48;
+            background: var(--deep-green);
             color: #ffffff;
             border-radius: 9999px;
-            transition: background 0.2s ease;
+            transition: background 0.15s ease;
+            box-shadow: 0 6px 18px rgba(8, 74, 72, 0.18);
         }
         .btn-primary:hover {
-            background: #0f6c5d;
+            background: #0b6f61;
         }
         .btn-accent {
-            background: #FE580B;
+            background: var(--orange);
             color: #ffffff;
             border-radius: 9999px;
-            transition: background 0.2s ease;
+            transition: background 0.15s ease;
+            box-shadow: 0 6px 18px rgba(254, 88, 11, 0.18);
         }
         .btn-accent:hover {
             background: #ff6f2c;
         }
         .btn-secondary {
-            background: rgba(107, 207, 203, 0.17);
-            color: #001722;
+            background: rgba(107, 207, 203, 0.14);
+            color: var(--rich-black);
             border-radius: 9999px;
-            transition: background 0.2s ease;
+            transition: background 0.15s ease;
         }
         .btn-secondary:hover {
-            background: rgba(107, 207, 203, 0.28);
+            background: rgba(107, 207, 203, 0.24);
         }
         .form-input {
-            background: #f5fffe;
-            border: 1px solid #bce9e1;
-            color: #0e3433;
-            border-radius: 1rem;
+            background: #f7ffff;
+            border: 1px solid rgba(11, 34, 34, 0.06);
+            color: var(--card-text);
+            border-radius: 0.75rem;
+            padding: .5rem .75rem;
         }
         .form-input:focus {
             outline: none;
-            border-color: #6bcfcb;
-            box-shadow: 0 0 0 4px rgba(107, 207, 203, 0.18);
+            border-color: var(--pearl-aqua);
+            box-shadow: 0 0 0 6px rgba(107, 207, 203, 0.12);
         }
         .badge-teal {
             background: rgba(107, 207, 203, 0.18);
-            color: #084A48;
+            color: var(--deep-green);
         }
         .badge-accent {
-            background: rgba(254, 88, 11, 0.15);
+            background: rgba(254, 88, 11, 0.12);
             color: #7f2f00;
         }
         .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+            transform: translateY(-4px);
+            box-shadow: 0 18px 30px -10px rgba(0, 0, 0, 0.18), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
         }
+
+        /* Sidebar and navigation tweaks for better contrast */
+        aside a { color: rgba(200,232,226,0.95); }
+        aside a:hover { background: rgba(11,34,34,0.28); color: #ffffff; }
+        aside a.bg-gray-700 { background: var(--deep-green) !important; color: #ffffff !important; }
+        nav h2 { color: var(--pearl-aqua); }
+
+        /* Table and card link colors */
+        .surface-card a { color: var(--deep-green); }
+        table thead th { color: var(--deep-green); font-weight:600; border-bottom: 1px solid rgba(6,72,66,0.06); }
+        table tbody td { color: var(--card-text); }
         .animate-pulse-slow {
             animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }

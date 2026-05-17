@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use App\Models\ClearanceRequest;
 use App\Models\Department;
+use App\Models\ClearanceApproval;
 use App\Models\ActivityLog;
 use Illuminate\Support\Facades\DB;
 
@@ -92,10 +93,20 @@ class DashboardService
      */
     public function getRegistrarStats()
     {
+        $registrarDepartment = Department::where('slug', 'registrar-office')->first();
+
+        $awaitingRegistrar = 0;
+        if ($registrarDepartment) {
+            $awaitingRegistrar = ClearanceApproval::where('department_id', $registrarDepartment->id)
+                ->where('status', 'pending')
+                ->count();
+        }
+
         return [
             'total_requests' => ClearanceRequest::count(),
             'pending' => ClearanceRequest::whereIn('status', ['pending', 'in_progress'])->count(),
             'awaiting_final' => ClearanceRequest::where('status', 'approved')->count(),
+            'awaiting_registrar' => $awaitingRegistrar,
             'completed_this_month' => ClearanceRequest::where('status', 'completed')
                 ->whereMonth('completed_at', now()->month)
                 ->count(),

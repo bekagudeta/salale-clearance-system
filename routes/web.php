@@ -16,7 +16,9 @@ Route::get('/about', [HomeController::class, 'about'])->name('about');
 
 // Verification Routes
 Route::get('/verify', [VerifyController::class, 'index'])->name('verify');
+Route::get('/verify/{reference}', [VerifyController::class, 'show'])->where('reference', '.*');
 Route::post('/verify/check', [VerifyController::class, 'check'])->name('verify.check');
+Route::get('/api/verify/{reference}', [VerifyController::class, 'apiVerify'])->where('reference', '.*')->name('api.verify');
 
 // Include authentication routes
 require __DIR__.'/auth.php';

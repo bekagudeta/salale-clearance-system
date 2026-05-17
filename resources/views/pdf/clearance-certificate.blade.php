@@ -171,7 +171,7 @@
         <div class="footer">
             <div class="qr-code">
                 @if(isset($qrCode))
-                    <img src="data:image/png;base64,{{ $qrCode }}" width="100" height="100" alt="QR Code">
+                    <img src="data:image/svg+xml;base64,{{ $qrCode }}" width="100" height="100" alt="QR Code">
                 @endif
                 <p class="verification-text">Scan to verify</p>
             </div>

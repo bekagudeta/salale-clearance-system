@@ -10,7 +10,8 @@ class PdfHelper
 {
     public static function generateClearanceCertificate($clearance)
     {
-        $qrCode = base64_encode(QrCode::format('png')->size(200)->generate($clearance->reference_no));
+        $qrSvg = QrCode::format('svg')->size(200)->generate($clearance->reference_no);
+        $qrCode = base64_encode($qrSvg);
         
         $pdf = Pdf::loadView('pdf.clearance-certificate', [
             'clearance' => $clearance,
@@ -40,8 +41,14 @@ class PdfHelper
             'title' => $title,
             'generatedDate' => now()->format('F d, Y H:i:s'),
         ]);
+
+        $pdf->setPaper('A4', 'landscape');
         
-        $filename = "report_{$title}_{date('Ymd_His')}.pdf";
+        $safeTitle = preg_replace('/[^A-Za-z0-9\-_]/', '_', $title);
+        $safeTitle = preg_replace('/_+/', '_', $safeTitle);
+        $safeTitle = trim($safeTitle, '_');
+        
+        $filename = "report_{$safeTitle}_" . now()->format('Ymd_His') . ".pdf";
         $path = "reports/{$filename}";
         
         Storage::disk('public')->put($path, $pdf->output());
