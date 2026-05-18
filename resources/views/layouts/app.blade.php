@@ -22,14 +22,17 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
     <style>
-        :root{
+        :root {
             --rich-black: #001722;
-            --deep-green: #084A48;
+            --deep-jungle: #084A48;
             --pearl-aqua: #6BCFCB;
-            --orange: #FE580B;
-            --muted-light: #e8f8f5;
-            --card-bg: #ffffff;
-            --card-text: #0b2624;
+            --accent-orange: #FE580B;
+            --soft-cyan: #E5FCF9;
+            --surface: rgba(255, 255, 255, 0.96);
+            --surface-soft: rgba(243, 252, 251, 0.96);
+            --text-default: #0c2622;
+            --text-muted: #627f7c;
+            --border-soft: rgba(8, 74, 72, 0.12);
         }
 
         * {
@@ -37,111 +40,164 @@
         }
 
         body {
-            background: linear-gradient(135deg, var(--rich-black) 0%, var(--deep-green) 100%);
+            background: radial-gradient(circle at top left, rgba(107, 207, 203, 0.14), transparent 30%),
+                linear-gradient(135deg, rgba(0, 23, 34, 0.94) 0%, rgba(8, 74, 72, 0.96) 45%, rgba(9, 61, 63, 0.96) 100%);
             min-height: 100vh;
-            color: var(--muted-light);
+            color: var(--soft-cyan);
         }
-        .sidebar-transition {
-            transition: all 0.3s ease;
+
+        button,
+        input,
+        textarea,
+        select {
+            font: inherit;
         }
+
         .surface-card {
-            background: var(--card-bg);
-            color: var(--card-text);
-            border: 1px solid rgba(6, 72, 66, 0.08);
-            box-shadow: 0 18px 36px -18px rgba(0, 0, 0, 0.25);
-            border-radius: 18px;
+            background: var(--surface);
+            color: var(--text-default);
+            border: 1px solid var(--border-soft);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.12);
+            border-radius: 28px;
         }
+
         .surface-card-soft {
-            background: #fbffff;
-            color: var(--card-text);
-            border: 1px solid rgba(107, 207, 203, 0.08);
-            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
-            border-radius: 16px;
+            background: var(--surface-soft);
+            color: var(--text-default);
+            border: 1px solid rgba(107, 207, 203, 0.18);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+            border-radius: 22px;
         }
+
         .btn-primary {
-            background: var(--deep-green);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--deep-jungle), var(--pearl-aqua));
             color: #ffffff;
             border-radius: 9999px;
-            transition: background 0.15s ease;
-            box-shadow: 0 6px 18px rgba(8, 74, 72, 0.18);
+            padding: 0.85rem 1.6rem;
+            transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 14px 32px rgba(8, 74, 72, 0.2);
         }
+
         .btn-primary:hover {
-            background: #0b6f61;
+            transform: translateY(-1px);
+            filter: brightness(1.05);
         }
+
         .btn-accent {
-            background: var(--orange);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--accent-orange), var(--deep-jungle));
             color: #ffffff;
             border-radius: 9999px;
-            transition: background 0.15s ease;
-            box-shadow: 0 6px 18px rgba(254, 88, 11, 0.18);
+            padding: 0.85rem 1.6rem;
+            transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 14px 32px rgba(254, 88, 11, 0.22);
         }
+
         .btn-accent:hover {
-            background: #ff6f2c;
+            transform: translateY(-1px);
+            filter: brightness(1.05);
         }
+
         .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             background: rgba(107, 207, 203, 0.14);
             color: var(--rich-black);
             border-radius: 9999px;
-            transition: background 0.15s ease;
+            padding: 0.85rem 1.6rem;
+            transition: background 0.2s ease;
         }
+
         .btn-secondary:hover {
-            background: rgba(107, 207, 203, 0.24);
+            background: rgba(107, 207, 203, 0.25);
         }
+
         .form-input {
-            background: #f7ffff;
-            border: 1px solid rgba(11, 34, 34, 0.06);
-            color: var(--card-text);
-            border-radius: 0.75rem;
-            padding: .5rem .75rem;
+            background: #fbffff;
+            border: 1px solid rgba(11, 34, 34, 0.08);
+            color: var(--text-default);
+            border-radius: 1rem;
+            padding: 0.75rem 1rem;
+            width: 100%;
         }
+
         .form-input:focus {
             outline: none;
             border-color: var(--pearl-aqua);
-            box-shadow: 0 0 0 6px rgba(107, 207, 203, 0.12);
+            box-shadow: 0 0 0 8px rgba(107, 207, 203, 0.14);
         }
+
         .badge-teal {
             background: rgba(107, 207, 203, 0.18);
-            color: var(--deep-green);
+            color: var(--deep-jungle);
         }
+
         .badge-accent {
-            background: rgba(254, 88, 11, 0.12);
+            background: rgba(254, 88, 11, 0.16);
             color: #7f2f00;
         }
+
         .badge-danger {
             background: rgba(238, 62, 67, 0.12);
             color: #981b1e;
         }
-        .badge-warning {
-            background: rgba(255, 196, 92, 0.16);
-            color: #8f5800;
-        }
+
         .card-hover:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 18px 30px -10px rgba(0, 0, 0, 0.18), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+            transform: translateY(-5px);
+            box-shadow: 0 24px 44px rgba(0, 0, 0, 0.12), 0 12px 24px rgba(0, 0, 0, 0.08);
         }
 
-        /* Sidebar and navigation tweaks for better contrast */
-        aside a { color: rgba(200,232,226,0.95); }
-        aside a:hover { background: rgba(11,34,34,0.28); color: #ffffff; }
-        aside a.bg-gray-700 { background: var(--deep-green) !important; color: #ffffff !important; }
-        nav h2 { color: var(--pearl-aqua); }
+        aside a {
+            color: rgba(232, 249, 245, 0.92);
+        }
 
-        /* Table and card link colors */
-        .surface-card a { color: var(--deep-green); }
-        table thead th { color: var(--deep-green); font-weight:600; border-bottom: 1px solid rgba(6,72,66,0.06); }
-        table tbody td { color: var(--card-text); }
-        .animate-pulse-slow {
-            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        aside a:hover {
+            background: rgba(11, 34, 34, 0.28);
+            color: #ffffff;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        aside a.bg-current {
+            background: rgba(107, 207, 203, 0.16) !important;
+            color: #ffffff !important;
         }
+
+        nav h2 {
+            color: var(--pearl-aqua);
+        }
+
+        .surface-card a {
+            color: var(--deep-jungle);
+        }
+
+        table thead th {
+            color: var(--rich-black);
+            font-weight: 700;
+            border-bottom: 1px solid rgba(8, 74, 72, 0.06);
+        }
+
+        table tbody td {
+            color: var(--text-default);
+        }
+
         .fade-in {
-            animation: fadeIn 0.5s ease-out;
+            animation: fadeIn 0.55s ease-out;
         }
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
     

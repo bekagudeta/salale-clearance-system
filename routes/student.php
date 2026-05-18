@@ -24,6 +24,7 @@ Route::middleware(['auth', 'is.student'])->prefix('student')->name('student.')->
         Route::post('/', [ClearanceController::class, 'store'])->name('store');
         Route::get('/history', [ClearanceController::class, 'history'])->name('history');
         Route::get('/{id}', [ClearanceController::class, 'show'])->name('show')->whereNumber('id');
+        Route::get('/{id}/download', [ClearanceController::class, 'download'])->name('download')->whereNumber('id');
         Route::post('/{id}/cancel', [ClearanceController::class, 'cancel'])->name('cancel')->whereNumber('id');
     });
     

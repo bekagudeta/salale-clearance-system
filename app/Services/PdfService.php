@@ -27,7 +27,8 @@ class PdfService
         
         $pdf->setPaper('A4', 'portrait');
         
-        $filename = "clearance_{$clearance->reference_no}_{$clearance->student->student_id}.pdf";
+$safeReference = preg_replace('/[^A-Za-z0-9_\-]/', '_', $clearance->reference_no);
+        $filename = "clearance_{$safeReference}_{$clearance->student->student_id}.pdf";
         $path = "clearances/{$filename}";
         
         Storage::disk('public')->put($path, $pdf->output());

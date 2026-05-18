@@ -5,90 +5,103 @@
 
 @section('content')
 <div class="max-w-3xl mx-auto">
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4">
-            <h3 class="text-white font-semibold text-lg">Clearance Application Form</h3>
-            <p class="text-blue-100 text-sm">Please fill out all required information</p>
+    <div class="surface-card overflow-hidden rounded-[28px] border border-[#084A48]/10 shadow-xl">
+        <div class="bg-gradient-to-r from-[#084A48] via-[#6BCFCB] to-[#001722] px-6 py-5">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h3 class="text-2xl font-semibold text-white">Clearance Application Form</h3>
+                    <p class="mt-1 text-sm text-[#E5FCF9]">Please complete the fields below to submit your clearance request.</p>
+                </div>
+                <div class="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-semibold text-white shadow-sm backdrop-blur-sm">
+                    <i class="fas fa-file-signature"></i>
+                    New Request
+                </div>
+            </div>
         </div>
-        
+
         <form action="{{ route('student.clearance.store') }}" method="POST" class="p-6 space-y-6">
             @csrf
-            
-            <!-- Student Information (Read-only) -->
-            <div class="bg-gray-50 rounded-lg p-4">
-                <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
-                    <i class="fas fa-user-graduate mr-2 text-blue-600"></i>
-                    Student Information
-                </h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Full Name</label>
-                        <p class="mt-1 text-gray-900">{{ auth()->user()->name }}</p>
+
+            <!-- Student Information -->
+            <div class="rounded-[22px] border border-[#6BCFCB]/15 bg-[#F5FFFE] p-5 shadow-sm">
+                <div class="flex items-center gap-3 text-[#001722] mb-4">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-3xl bg-[#6BCFCB]/15 text-[#084A48] text-xl shadow-inner">
+                        <i class="fas fa-user-graduate"></i>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Student ID</label>
-                        <p class="mt-1 text-gray-900">{{ auth()->user()->student->student_id }}</p>
+                        <p class="text-sm uppercase tracking-[0.2em] text-[#084A48]">Student Information</p>
+                        <p class="text-xs text-slate-500">Read-only details are automatically filled from your profile.</p>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Faculty</label>
-                        <p class="mt-1 text-gray-900">{{ auth()->user()->student->faculty }}</p>
+                </div>
+
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <div class="space-y-1">
+                        <p class="text-xs uppercase tracking-[0.2em] text-[#084A48]">Full Name</p>
+                        <p class="text-sm font-semibold text-[#001722]">{{ auth()->user()->name }}</p>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Department</label>
-                        <p class="mt-1 text-gray-900">{{ auth()->user()->student->department }}</p>
+                    <div class="space-y-1">
+                        <p class="text-xs uppercase tracking-[0.2em] text-[#084A48]">Student ID</p>
+                        <p class="text-sm font-semibold text-[#001722]">{{ auth()->user()->student->student_id }}</p>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-xs uppercase tracking-[0.2em] text-[#084A48]">Faculty</p>
+                        <p class="text-sm font-semibold text-[#001722]">{{ auth()->user()->student->faculty }}</p>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-xs uppercase tracking-[0.2em] text-[#084A48]">Department</p>
+                        <p class="text-sm font-semibold text-[#001722]">{{ auth()->user()->student->department }}</p>
                     </div>
                 </div>
             </div>
-            
+
             <!-- Clearance Details -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Clearance Type <span class="text-red-500">*</span>
-                </label>
-                <select name="type" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option value="">Select clearance type</option>
-                    <option value="graduation">🎓 Graduation</option>
-                    <option value="withdrawal">🚪 Withdrawal</option>
-                    <option value="transfer">🔄 Transfer</option>
-                    <option value="dismissal">⚠️ Dismissal</option>
-                    <option value="temporary_leave">📚 Temporary Leave</option>
-                    <option value="semester_completion">✅ Semester Completion</option>
-                </select>
-                @error('type')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-[#001722] mb-2">Clearance Type <span class="text-[#FE580B]">*</span></label>
+                    <select name="type" required class="w-full rounded-[18px] border border-[#084A48]/15 bg-white px-4 py-3 text-sm text-[#001722] outline-none transition focus:border-[#6BCFCB] focus:ring-2 focus:ring-[#6BCFCB]/30">
+                        <option value="">Select clearance type</option>
+                        <option value="graduation">Graduation</option>
+                        <option value="withdrawal">Withdrawal</option>
+                        <option value="transfer">Transfer</option>
+                        <option value="dismissal">Dismissal</option>
+                        <option value="temporary_leave">Temporary Leave</option>
+                        <option value="semester_completion">Semester Completion</option>
+                    </select>
+                    @error('type')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-[#001722] mb-2">Reason for Clearance</label>
+                    <textarea name="reason" rows="5" class="w-full rounded-[18px] border border-[#084A48]/15 bg-white px-4 py-3 text-sm text-[#001722] outline-none transition focus:border-[#6BCFCB] focus:ring-2 focus:ring-[#6BCFCB]/30" placeholder="Please provide any additional information or reason for this clearance request..."></textarea>
+                    @error('reason')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
-            
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Reason for Clearance</label>
-                <textarea name="reason" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Please provide any additional information or reason for this clearance request..."></textarea>
-                @error('reason')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
-            
+
             <!-- Important Notice -->
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-info-circle text-yellow-400"></i>
+            <div class="rounded-[20px] border border-[#FE580B]/20 bg-[#FE580B]/10 p-4">
+                <div class="flex items-start gap-3">
+                    <div class="mt-1 flex h-10 w-10 items-center justify-center rounded-2xl bg-[#FE580B]/15 text-[#FE580B]">
+                        <i class="fas fa-info"></i>
                     </div>
-                    <div class="ml-3">
-                        <p class="text-sm text-yellow-700">
-                            <strong>Important Notice:</strong> Once submitted, your clearance request will be sent to all departments for approval. 
-                            You will receive notifications as each department processes your request.
-                        </p>
+                    <div>
+                        <p class="font-semibold text-[#001722]">Important Notice</p>
+                        <p class="mt-2 text-sm text-[#33403d]">Once submitted, your clearance request will be routed to the relevant departments for approval. You will be notified as each department updates your request.</p>
                     </div>
                 </div>
             </div>
-            
+
             <!-- Form Actions -->
-            <div class="flex justify-end space-x-3 pt-4">
-                <a href="{{ route('student.dashboard') }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+            <div class="flex flex-col gap-3 sm:flex-row sm:justify-end">
+                <a href="{{ route('student.dashboard') }}" class="inline-flex items-center justify-center rounded-full border border-[#084A48]/15 px-5 py-3 text-sm font-semibold text-[#084A48] transition hover:bg-[#084A48]/10">
                     Cancel
                 </a>
-                <button type="submit" class="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition shadow-md">
-                    <i class="fas fa-paper-plane mr-2"></i> Submit Request
+                <button type="submit" class="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#FE580B] to-[#084A48] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#084A48]/20 transition hover:brightness-105">
+                    <i class="fas fa-paper-plane mr-2"></i>
+                    Submit Request
                 </button>
             </div>
         </form>

@@ -197,8 +197,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div>
-                    <h1 class="text-5xl font-bold mb-6 leading-tight">Salale University Digital Clearance Portal</h1>
-                    <p class="text-xl mb-8 text-[#6BCFCB] leading-relaxed">Track, approve, and manage student clearance digitally across departments in real time.</p>
+                    <h1 class="text-5xl font-bold mb-6 leading-tight">Salale University Clearance Management System</h1>
+                    <p class="text-xl mb-8 text-[#6BCFCB] leading-relaxed">A secure, unified platform for student clearance requests, department approvals, and certificate delivery.</p>
                     <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                         <a href="{{ route('login') }}" class="px-8 py-4 bg-[#FE580B] text-white rounded-lg font-semibold hover:shadow-xl transition transform hover:scale-105 text-center">
                             Sign In <i class="fas fa-arrow-right ml-2"></i>
@@ -213,18 +213,18 @@
                         <!-- Stats Card -->
                         <div class="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-300">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-lg font-semibold text-white">System Stats</h3>
+                                <h3 class="text-lg font-semibold text-white">Operational Overview</h3>
                                 <div class="w-12 h-12 bg-gradient-to-br from-[#FE580B] to-[#6BCFCB] rounded-lg flex items-center justify-center">
                                     <i class="fas fa-chart-bar text-white text-lg"></i>
                                 </div>
                             </div>
                             <div class="space-y-3">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-[#6BCFCB]/80">Pending Clearances</span>
+                                    <span class="text-[#6BCFCB]/80">Requests in Progress</span>
                                     <span class="text-2xl font-bold text-white">1,247</span>
                                 </div>
                                 <div class="w-full bg-white/10 rounded-full h-2">
-                                    <div class="bg-gradient-to-r from-[#FE580B] to-[#6BCFCB] h-2 rounded-full" style="width: 68%"></div>
+                                    <div class="bg-gradient-to-r from-[#FE580B] to-[#6BCFCB] h-2 rounded-full" style="width: 78%"></div>
                                 </div>
                             </div>
                         </div>
@@ -311,7 +311,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h2 class="text-3xl font-bold text-gray-800 mb-4">Key Features</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto">Our system provides a seamless experience for students, department officers, and administrators</p>
+                <p class="text-gray-600 max-w-2xl mx-auto">A modern clearance solution designed for student efficiency, department collaboration, and administration control.</p>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -319,48 +319,48 @@
                     <div class="w-16 h-16 bg-[#6BCFCB]/20 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-file-alt text-[#084A48] text-2xl"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Easy Application</h3>
-                    <p class="text-gray-600">Submit clearance requests online from anywhere, anytime</p>
+                    <h3 class="text-xl font-semibold mb-2">Online Clearance Requests</h3>
+                    <p class="text-gray-600">Submit clearance requests digitally, eliminating paper forms and manual follow-up.</p>
                 </div>
                 
                 <div class="feature-card bg-white p-6 rounded-xl shadow-lg text-center">
                     <div class="w-16 h-16 bg-[#084A48]/20 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-tachometer-alt text-[#084A48] text-2xl"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Real-time Tracking</h3>
-                    <p class="text-gray-600">Track your clearance progress in real-time</p>
+                    <h3 class="text-xl font-semibold mb-2">Live Progress Tracking</h3>
+                    <p class="text-gray-600">Monitor request status and approval stages with real-time visibility.</p>
                 </div>
                 
                 <div class="feature-card bg-white p-6 rounded-xl shadow-lg text-center">
                     <div class="w-16 h-16 bg-[#FE580B]/20 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-bell text-[#FE580B] text-2xl"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Instant Notifications</h3>
-                    <p class="text-gray-600">Get email and in-app notifications for updates</p>
+                    <h3 class="text-xl font-semibold mb-2">Automated Notifications</h3>
+                    <p class="text-gray-600">Receive timely email and in-app alerts for approvals, rejects, and updates.</p>
                 </div>
                 
                 <div class="feature-card bg-white p-6 rounded-xl shadow-lg text-center">
                     <div class="w-16 h-16 bg-[#084A48]/20 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-chart-line text-[#084A48] text-2xl"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Analytics & Reports</h3>
-                    <p class="text-gray-600">Comprehensive reports and analytics dashboard</p>
+                    <h3 class="text-xl font-semibold mb-2">Advanced Reporting</h3>
+                    <p class="text-gray-600">Generate actionable reports for clearance activity and departmental performance.</p>
                 </div>
                 
                 <div class="feature-card bg-white p-6 rounded-xl shadow-lg text-center">
                     <div class="w-16 h-16 bg-[#6BCFCB]/20 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-qrcode text-[#084A48] text-2xl"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">QR Verification</h3>
-                    <p class="text-gray-600">Secure QR codes for certificate verification</p>
+                    <h3 class="text-xl font-semibold mb-2">Certificate Verification</h3>
+                    <p class="text-gray-600">Securely verify clearance certificates using QR-enabled authentication.</p>
                 </div>
                 
                 <div class="feature-card bg-white p-6 rounded-xl shadow-lg text-center">
                     <div class="w-16 h-16 bg-[#001722]/10 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-shield-alt text-[#001722] text-2xl"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Secure & Reliable</h3>
-                    <p class="text-gray-600">Bank-level security for your data</p>
+                    <h3 class="text-xl font-semibold mb-2">Secure Data Management</h3>
+                    <p class="text-gray-600">Protect student records with secure storage, access control, and audit trails.</p>
                 </div>
             </div>
         </div>
@@ -380,15 +380,15 @@
                         <i class="fas fa-user-graduate text-[#084A48] text-2xl"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Student</h3>
-                    <p class="text-gray-600 text-sm">Submit clearance requests and track progress in real-time</p>
+                    <p class="text-gray-600 text-sm">Create requests, view approval stages, and download certificates from a single portal.</p>
                 </div>
                 
                 <div class="feature-card bg-white p-6 rounded-xl shadow-lg text-center">
                     <div class="w-16 h-16 bg-[#084A48]/20 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-building text-[#084A48] text-2xl"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Department</h3>
-                    <p class="text-gray-600 text-sm">Review and approve clearance requests for your department</p>
+                    <h3 class="text-xl font-semibold mb-2">Department Officer</h3>
+                    <p class="text-gray-600 text-sm">Manage approvals, validate requirements, and communicate status updates efficiently.</p>
                 </div>
                 
                 <div class="feature-card bg-white p-6 rounded-xl shadow-lg text-center">
@@ -396,15 +396,15 @@
                         <i class="fas fa-certificate text-[#FE580B] text-2xl"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Registrar</h3>
-                    <p class="text-gray-600 text-sm">Final approval and clearance certificate generation</p>
+                    <p class="text-gray-600 text-sm">Perform final clearance approvals and publish official certificates securely.</p>
                 </div>
                 
                 <div class="feature-card bg-white p-6 rounded-xl shadow-lg text-center">
                     <div class="w-16 h-16 bg-[#001722]/10 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-user-shield text-[#001722] text-2xl"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Super Admin</h3>
-                    <p class="text-gray-600 text-sm">Full system control and user management</p>
+                    <h3 class="text-xl font-semibold mb-2">Administrator</h3>
+                    <p class="text-gray-600 text-sm">Configure system settings, manage users, and oversee clearance workflows.</p>
                 </div>
             </div>
         </div>
@@ -415,32 +415,32 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h2 class="text-3xl font-bold text-gray-800 mb-4">Clearance Workflow</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto">Streamlined 4-step process for efficient student clearance management</p>
+                <p class="text-gray-600 max-w-2xl mx-auto">Streamlined 4-step clearance workflow built for speed, transparency, and compliance.</p>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="text-center relative">
                     <div class="w-20 h-20 bg-[#084A48] text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">1</div>
                     <h3 class="font-semibold mb-2 text-gray-800">Student Submits Request</h3>
-                    <p class="text-gray-500 text-sm">Student initiates clearance process by submitting request online</p>
+                    <p class="text-gray-500 text-sm">Students submit clearance requests securely through the online portal.</p>
                     <div class="hidden md:block absolute top-10 left-full w-full h-0.5 bg-gradient-to-r from-[#084A48] to-[#6BCFCB]"></div>
                 </div>
                 <div class="text-center relative">
                     <div class="w-20 h-20 bg-[#6BCFCB] text-[#001722] rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">2</div>
-                    <h3 class="font-semibold mb-2 text-gray-800">Departments Verify</h3>
-                    <p class="text-gray-500 text-sm">Each department reviews and approves their specific requirements</p>
+                    <h3 class="font-semibold mb-2 text-gray-800">Departments Review</h3>
+                    <p class="text-gray-500 text-sm">Department officers validate clearance requirements and approve requests online.</p>
                     <div class="hidden md:block absolute top-10 left-full w-full h-0.5 bg-gradient-to-r from-[#6BCFCB] to-[#FE580B]"></div>
                 </div>
                 <div class="text-center relative">
                     <div class="w-20 h-20 bg-[#FE580B] text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">3</div>
-                    <h3 class="font-semibold mb-2 text-gray-800">Registrar Approves</h3>
-                    <p class="text-gray-500 text-sm">Registrar performs final review and grants approval</p>
+                    <h3 class="font-semibold mb-2 text-gray-800">Registrar Finalizes</h3>
+                    <p class="text-gray-500 text-sm">Registrar completes final verification and authorizes the clearance certificate.</p>
                     <div class="hidden md:block absolute top-10 left-full w-full h-0.5 bg-gradient-to-r from-[#FE580B] to-[#084A48]"></div>
                 </div>
                 <div class="text-center">
                     <div class="w-20 h-20 bg-[#001722] text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">4</div>
-                    <h3 class="font-semibold mb-2 text-gray-800">Certificate Generated</h3>
-                    <p class="text-gray-500 text-sm">Clearance certificate is generated and available for download</p>
+                    <h3 class="font-semibold mb-2 text-gray-800">Certificate Delivered</h3>
+                    <p class="text-gray-500 text-sm">Official certificate is generated digitally and made available for secure download.</p>
                 </div>
             </div>
         </div>
@@ -450,7 +450,7 @@
     <section class="bg-gradient-to-r from-[#084A48] to-[#001722] text-white py-16">
         <div class="max-w-7xl mx-auto px-4 text-center">
             <h2 class="text-3xl font-bold mb-4">Ready to Get Started?</h2>
-            <p class="text-xl mb-8 text-[#6BCFCB]">Contact your institution administrator to request access to the clearance system</p>
+            <p class="text-xl mb-8 text-[#6BCFCB]">Request access from your institution administrator and start managing clearances with confidence.</p>
             <a href="{{ route('login') }}" class="px-8 py-3 bg-[#FE580B] text-white rounded-lg font-semibold hover:shadow-xl transition inline-block">
                 Sign In Now <i class="fas fa-arrow-right ml-2"></i>
             </a>

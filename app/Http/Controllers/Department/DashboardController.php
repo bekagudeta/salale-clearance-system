@@ -48,4 +48,17 @@ class DashboardController extends Controller
         
         return view('department.dashboard', compact('department', 'pendingCount', 'recentApprovals', 'stats'));
     }
+
+    public function statistics()
+    {
+        $department = Auth::user()->assignedDepartments->first();
+
+        if (!$department) {
+            return redirect()->route('home')->with('error', 'No department assigned.');
+        }
+
+        $stats = $this->approvalService->getDepartmentStats($department->id);
+
+        return view('department.statistics', compact('department', 'stats'));
+    }
 }

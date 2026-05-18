@@ -4,115 +4,153 @@
 @section('page-title', 'Clearance Details')
 
 @section('content')
-<div class="max-w-5xl mx-auto">
-    <!-- Header -->
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
-        <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4">
-            <div class="flex justify-between items-center">
+<div class="max-w-5xl mx-auto space-y-6">
+    @php
+        $statusColors = [
+            'pending' => 'bg-[#FE580B]/15 text-[#7f3f08] border border-[#FE580B]/20',
+            'in_progress' => 'bg-[#6BCFCB]/15 text-[#084A48] border border-[#6BCFCB]/20',
+            'approved' => 'bg-[#084A48]/15 text-[#084A48] border border-[#084A48]/20',
+            'rejected' => 'bg-[#FF4D4D]/15 text-[#B52B2B] border border-[#FF4D4D]/20',
+            'completed' => 'bg-[#001722]/10 text-[#001722] border border-[#001722]/10',
+        ];
+        $total = $clearance->approvals->count();
+        $approved = $clearance->approvals->where('status', 'approved')->count();
+        $percentage = $total > 0 ? ($approved / $total) * 100 : 0;
+    @endphp
+
+    <div class="surface-card overflow-hidden shadow-xl">
+        <div class="bg-gradient-to-r from-[#084A48] via-[#6BCFCB] to-[#001722] px-6 py-5">
+            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h3 class="text-white font-semibold text-lg">Clearance Request #{{ $clearance->reference_no }}</h3>
-                    <p class="text-blue-100 text-sm">Submitted on {{ $clearance->created_at->format('F d, Y H:i') }}</p>
+                    <p class="text-xs uppercase tracking-[0.3em] text-[#E5FCF9]/90">Clearance request overview</p>
+                    <h1 class="mt-3 text-2xl font-semibold text-white">Request #{{ $clearance->reference_no }}</h1>
+                    <p class="mt-1 text-sm text-[#E5FCF9]/90">Submitted on {{ $clearance->created_at->format('F d, Y H:i') }}</p>
                 </div>
-                @php
-                    $statusColors = [
-                        'pending' => 'bg-yellow-500',
-                        'in_progress' => 'bg-blue-500',
-                        'approved' => 'bg-green-500',
-                        'rejected' => 'bg-red-500',
-                        'completed' => 'bg-purple-500',
-                    ];
-                @endphp
-                <span class="px-4 py-2 {{ $statusColors[$clearance->status] }} text-white rounded-full text-sm font-semibold">
+                <div class="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white shadow-sm">
+                    <span class="inline-flex h-2.5 w-2.5 rounded-full bg-[#FE580B]"></span>
                     {{ strtoupper(str_replace('_', ' ', $clearance->status)) }}
-                </span>
+                </div>
             </div>
         </div>
-        
-        <!-- Progress Bar -->
-        <div class="p-6 border-b">
-            <h4 class="font-semibold text-gray-800 mb-3">Approval Progress</h4>
-            @php
-                $total = $clearance->approvals->count();
-                $approved = $clearance->approvals->where('status', 'approved')->count();
-                $percentage = $total > 0 ? ($approved / $total) * 100 : 0;
-            @endphp
-            <div class="relative pt-1">
-                <div class="flex mb-2 items-center justify-between">
-                    <div>
-                        <span class="text-xs font-semibold inline-block text-blue-600">
-                            {{ $approved }} of {{ $total }} departments approved
-                        </span>
+
+        <div class="grid gap-6 p-6 md:grid-cols-[2fr_1fr]">
+            <div class="space-y-6">
+                <div class="rounded-[24px] border border-[#084A48]/10 bg-[#F5FFFE] p-5 shadow-sm">
+                    <div class="flex items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-lg font-semibold text-[#001722]">Approval Progress</h2>
+                            <p class="mt-2 text-sm text-[#627f7c]">{{ $approved }} of {{ $total }} departments have approved this request.</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-semibold text-[#084A48]">{{ round($percentage) }}%</div>
+                        </div>
                     </div>
-                    <div class="text-right">
-                        <span class="text-xs font-semibold inline-block text-blue-600">
-                            {{ round($percentage) }}%
-                        </span>
+                    <div class="mt-4">
+                        <div class="h-3 overflow-hidden rounded-full bg-[#d9f3f0]">
+                            <div class="h-full rounded-full bg-gradient-to-r from-[#6BCFCB] to-[#084A48] transition-all duration-500" style="width: {{ $percentage }}%"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="overflow-hidden h-3 text-xs flex rounded-full bg-gray-200">
-                    <div style="width: {{ $percentage }}%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-blue-500 to-purple-600 transition-all duration-500"></div>
+
+                <div class="rounded-[24px] border border-[#084A48]/10 bg-white p-5 shadow-sm">
+                    <div class="flex flex-col gap-4">
+                        <div class="grid gap-4 sm:grid-cols-2">
+                            <div class="rounded-3xl bg-[#E6FAF8] p-4">
+                                <p class="text-xs uppercase tracking-[0.3em] text-[#084A48]">Clearance type</p>
+                                <p class="mt-2 font-semibold text-[#001722]">{{ ucfirst(str_replace('_', ' ', $clearance->type)) }}</p>
+                            </div>
+                            <div class="rounded-3xl bg-[#FFF5EA] p-4">
+                                <p class="text-xs uppercase tracking-[0.3em] text-[#FE580B]">Status</p>
+                                <p class="mt-2 font-semibold text-[#7f3f08]">{{ ucfirst(str_replace('_', ' ', $clearance->status)) }}</p>
+                            </div>
+                        </div>
+                        <div class="rounded-3xl bg-[#F5FFFE] p-4">
+                            <p class="text-xs uppercase tracking-[0.3em] text-[#084A48]">Reason</p>
+                            <p class="mt-2 text-sm text-[#627f7c]">{{ $clearance->reason ?? 'No reason provided.' }}</p>
+                        </div>
+                    </div>
                 </div>
+            </div>
+
+            <div class="rounded-[24px] border border-[#084A48]/10 bg-[#F5FFFE] p-5 shadow-sm">
+                <p class="text-sm uppercase tracking-[0.3em] text-[#084A48]">Request details</p>
+                <dl class="mt-4 space-y-4 text-sm text-[#627f7c]">
+                    <div class="flex items-center justify-between rounded-3xl bg-white p-4 shadow-sm">
+                        <dt class="text-[#001722] font-medium">Submitted by</dt>
+                        <dd>{{ auth()->user()->name }}</dd>
+                    </div>
+                    <div class="flex items-center justify-between rounded-3xl bg-white p-4 shadow-sm">
+                        <dt class="text-[#001722] font-medium">Student ID</dt>
+                        <dd>{{ auth()->user()->student->student_id }}</dd>
+                    </div>
+                    <div class="flex items-center justify-between rounded-3xl bg-white p-4 shadow-sm">
+                        <dt class="text-[#001722] font-medium">Faculty</dt>
+                        <dd>{{ auth()->user()->student->faculty }}</dd>
+                    </div>
+                    <div class="flex items-center justify-between rounded-3xl bg-white p-4 shadow-sm">
+                        <dt class="text-[#001722] font-medium">Department</dt>
+                        <dd>{{ auth()->user()->student->department }}</dd>
+                    </div>
+                </dl>
             </div>
         </div>
     </div>
-    
-    <!-- Department Approvals -->
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-            <h3 class="font-semibold text-gray-800">Department Approvals</h3>
+
+    <div class="surface-card overflow-hidden shadow-xl">
+        <div class="px-6 py-5 border-b border-[#084A48]/10 bg-[#F5FFFE]">
+            <h3 class="text-lg font-semibold text-[#001722]">Department Approvals</h3>
         </div>
-        
-        <div class="divide-y divide-gray-200">
+        <div class="divide-y divide-[#E5F7F6]">
             @foreach($clearance->approvals->sortBy('department.priority_order') as $approval)
-            <div class="p-6 hover:bg-gray-50 transition">
-                <div class="flex items-center justify-between">
-                    <div class="flex-1">
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-3">
-                                <i class="fas fa-building text-gray-600"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-gray-800">{{ $approval->department->name }}</h4>
-                                @if($approval->status == 'approved')
-                                    <p class="text-sm text-green-600">Approved by {{ $approval->officer->name ?? 'System' }} on {{ $approval->approved_at->format('M d, Y H:i') }}</p>
-                                @elseif($approval->status == 'rejected')
-                                    <p class="text-sm text-red-600">Rejected: {{ $approval->remarks }}</p>
-                                @else
-                                    <p class="text-sm text-gray-500">Pending review</p>
-                                @endif
-                            </div>
+                <div class="flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between hover:bg-[#F5FFFE] transition">
+                    <div class="flex items-start gap-4">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-3xl bg-[#E8F9F6] text-[#084A48] shadow-sm">
+                            <i class="fas fa-building text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-base font-semibold text-[#001722]">{{ $approval->department->name }}</h4>
+                            @if($approval->status == 'approved')
+                                <p class="mt-1 text-sm text-[#084A48]">Approved by {{ $approval->officer->name ?? 'System' }} on {{ $approval->approved_at->format('M d, Y H:i') }}</p>
+                            @elseif($approval->status == 'rejected')
+                                <p class="mt-1 text-sm text-[#B52B2B]">Rejected: {{ $approval->remarks }}</p>
+                            @else
+                                <p class="mt-1 text-sm text-[#627f7c]">Pending review</p>
+                            @endif
                         </div>
                     </div>
                     <div>
                         @if($approval->status == 'approved')
-                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                                <i class="fas fa-check-circle mr-1"></i> Approved
+                            <span class="inline-flex items-center gap-2 rounded-full border border-[#084A48]/15 bg-[#084A48]/10 px-4 py-2 text-sm font-semibold text-[#084A48]">
+                                <i class="fas fa-check-circle"></i>
+                                Approved
                             </span>
                         @elseif($approval->status == 'rejected')
-                            <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm">
-                                <i class="fas fa-times-circle mr-1"></i> Rejected
+                            <span class="inline-flex items-center gap-2 rounded-full border border-[#FF4D4D]/15 bg-[#FF4D4D]/10 px-4 py-2 text-sm font-semibold text-[#B52B2B]">
+                                <i class="fas fa-times-circle"></i>
+                                Rejected
                             </span>
                         @else
-                            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">
-                                <i class="fas fa-clock mr-1"></i> Pending
+                            <span class="inline-flex items-center gap-2 rounded-full border border-[#FE580B]/15 bg-[#FE580B]/10 px-4 py-2 text-sm font-semibold text-[#7f3f08]">
+                                <i class="fas fa-clock"></i>
+                                Pending
                             </span>
                         @endif
                     </div>
                 </div>
-            </div>
             @endforeach
         </div>
     </div>
-    
-    <!-- Action Buttons -->
-    <div class="mt-6 flex justify-between">
-        <a href="{{ route('student.clearance.history') }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
-            <i class="fas fa-arrow-left mr-2"></i> Back to History
+
+    <div class="flex flex-col gap-3 md:flex-row md:justify-between">
+        <a href="{{ route('student.clearance.history') }}" class="inline-flex items-center justify-center rounded-full border border-[#084A48]/15 bg-white px-6 py-3 text-sm font-semibold text-[#084A48] transition hover:bg-[#F5FFFE]">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Back to History
         </a>
-        
+
         @if($clearance->status == 'completed')
-            <a href="{{ route('registrar.clearance.download', $clearance->id) }}" class="px-6 py-2 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-lg hover:from-green-700 hover:to-teal-700 transition shadow-md">
-                <i class="fas fa-download mr-2"></i> Download Certificate
+            <a href="{{ route('student.clearance.download', $clearance->id) }}" class="btn-primary inline-flex items-center justify-center gap-2">
+                <i class="fas fa-download"></i>
+                Download Certificate
             </a>
         @endif
     </div>
