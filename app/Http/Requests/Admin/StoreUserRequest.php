@@ -35,7 +35,7 @@ class StoreUserRequest extends FormRequest
             $rules['year'] = 'required|integer|min:1|max:6';
             $rules['semester'] = 'required|string|in:First,Second,Summer';
             $rules['phone'] = 'nullable|string|max:20';
-            $rules['gender'] = 'nullable|in:male,female';
+            $rules['gender'] = 'nullable|in:male,female,other';
         }
 
         return $rules;
@@ -65,7 +65,7 @@ class StoreUserRequest extends FormRequest
             'year.required' => 'Year of study is required for student role.',
             'semester.required' => 'Semester is required for student role.',
             'semester.in' => 'Semester must be First, Second, or Summer.',
-            'gender.in' => 'Gender must be male or female.',
+            'gender.in' => 'Gender must be male, female, or other.',
         ];
     }
 

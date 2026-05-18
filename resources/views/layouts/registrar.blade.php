@@ -21,3 +21,6 @@
         <span>Certificates</span>
     </a>
 @endsection
+
+@section('profile-link', route('registrar.profile.edit'))
+@section('settings-link', route('registrar.settings.edit'))

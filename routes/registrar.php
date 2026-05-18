@@ -5,6 +5,7 @@ use App\Http\Controllers\Registrar\DashboardController;
 use App\Http\Controllers\Registrar\ClearanceController;
 use App\Http\Controllers\Registrar\ReportController;
 use App\Http\Controllers\Registrar\CertificateController;
+use App\Http\Controllers\Registrar\SettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +50,18 @@ Route::middleware(['auth', 'is.registrar'])->prefix('registrar')->name('registra
         Route::post('/{id}/regenerate', [CertificateController::class, 'regenerate'])->name('regenerate');
         Route::get('/{id}/download', [CertificateController::class, 'download'])->name('download');
         Route::post('/bulk-generate', [CertificateController::class, 'bulkGenerate'])->name('bulk-generate');
+    });
+
+    // Profile
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/edit', [App\Http\Controllers\Registrar\ProfileController::class, 'edit'])->name('edit');
+        Route::put('/update', [App\Http\Controllers\Registrar\ProfileController::class, 'update'])->name('update');
+    });
+
+    // Settings
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('/', [SettingsController::class, 'edit'])->name('edit');
+        Route::put('/', [SettingsController::class, 'update'])->name('update');
     });
     
     // Verification

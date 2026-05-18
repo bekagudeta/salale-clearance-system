@@ -36,7 +36,7 @@ class UpdateProfileRequest extends FormRequest
             'year' => 'required|integer|min:1|max:6',
             'semester' => 'required|string|in:First,Second,Summer',
             'phone' => 'nullable|string|max:20|regex:/^([0-9\s\-\+\(\)]*)$/',
-            'gender' => 'nullable|in:male,female',
+            'gender' => 'nullable|in:male,female,other',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
         ];
     }

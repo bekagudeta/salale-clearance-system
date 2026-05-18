@@ -107,6 +107,14 @@
             background: rgba(254, 88, 11, 0.12);
             color: #7f2f00;
         }
+        .badge-danger {
+            background: rgba(238, 62, 67, 0.12);
+            color: #981b1e;
+        }
+        .badge-warning {
+            background: rgba(255, 196, 92, 0.16);
+            color: #8f5800;
+        }
         .card-hover:hover {
             transform: translateY(-4px);
             box-shadow: 0 18px 30px -10px rgba(0, 0, 0, 0.18), 0 8px 10px -6px rgba(0, 0, 0, 0.03);

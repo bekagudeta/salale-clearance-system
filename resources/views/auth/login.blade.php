@@ -59,6 +59,11 @@
 
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
+                        @if(session('error'))
+                            <div class="mb-5 rounded-3xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                                {{ session('error') }}
+                            </div>
+                        @endif
                         <div class="mb-5">
                             <label class="mb-2 block text-sm font-medium text-slate-700">Email Address</label>
                             <div class="input-group relative rounded-3xl border border-slate-200 bg-white shadow-sm">

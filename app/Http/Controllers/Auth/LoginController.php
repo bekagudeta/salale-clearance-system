@@ -28,6 +28,13 @@ class LoginController extends Controller
             $request->session()->regenerate();
             
             $user = Auth::user();
+
+            if ($user->hasRole('student') && !$user->student) {
+                Auth::logout();
+                return back()->withInput($request->only('email', 'remember'))
+                    ->with('error', 'Your account is assigned as a student but your student profile is missing. Please contact the administrator.');
+            }
+
             $redirectRoute = $this->getDashboardRoute($user);
             $intendedUrl = $request->session()->pull('url.intended');
 

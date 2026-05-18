@@ -22,10 +22,17 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $student = Auth::user()->student;
+        $user = Auth::user();
+        $student = $user?->student;
+
+        if (!$user || !$student) {
+            Auth::logout();
+            return redirect()->route('login')->with('error', 'Your session or student profile could not be validated. Please sign in again or contact support.');
+        }
+
         $stats = $this->clearanceService->getStudentStats($student->id);
         $recentClearances = $this->clearanceService->getStudentClearances($student->id)->take(5);
-        $unreadNotifications = Auth::user()->notifications()->where('is_read', false)->count();
+        $unreadNotifications = $user->notifications()->where('is_read', false)->count();
         
         return view('student.dashboard', compact('stats', 'recentClearances', 'unreadNotifications'));
     }

@@ -90,6 +90,7 @@ class UserController extends Controller
                 'department' => 'required|string',
                 'year' => 'required|integer|min:1|max:6',
                 'semester' => 'required|string',
+                'gender' => 'nullable|in:male,female,other',
                 'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
             
@@ -164,6 +165,7 @@ class UserController extends Controller
                 'department' => 'required|string',
                 'year' => 'required|integer|min:1|max:6',
                 'semester' => 'required|string',
+                'gender' => 'nullable|in:male,female,other',
                 'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
 

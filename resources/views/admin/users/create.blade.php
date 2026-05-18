@@ -154,9 +154,9 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
                             <select name="gender" class="form-input w-full px-4 py-2 @error('gender') border-red-500 @enderror">
                                 <option value="">-- Select Gender --</option>
-                                <option value="M" {{ old('gender') == 'M' ? 'selected' : '' }}>Male</option>
-                                <option value="F" {{ old('gender') == 'F' ? 'selected' : '' }}>Female</option>
-                                <option value="Other" {{ old('gender') == 'Other' ? 'selected' : '' }}>Other</option>
+                                <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>Male</option>
+                                <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>Female</option>
+                                <option value="other" {{ old('gender') == 'other' ? 'selected' : '' }}>Other</option>
                             </select>
                             @error('gender')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>

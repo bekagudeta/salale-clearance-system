@@ -129,7 +129,7 @@
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     @if(!$user->hasRole('super_admin') && $user->id !== auth()->id())
-                                        <button onclick="deleteUser({{ $user->id }})" class="text-red-600 hover:text-red-800">
+                                        <button type="button" onclick="deleteUser({{ $user->id }})" class="text-red-600 hover:text-red-800">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     @endif
@@ -192,7 +192,8 @@
     function deleteUser(id) {
         const modal = document.getElementById('deleteModal');
         const form = document.getElementById('deleteForm');
-        form.action = '/admin/users/' + id;
+        const actionTemplate = '{{ route('admin.users.destroy', ':id') }}';
+        form.action = actionTemplate.replace(':id', id);
         modal.classList.remove('hidden');
         modal.classList.add('flex');
     }

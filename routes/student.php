@@ -13,7 +13,7 @@ use App\Http\Controllers\Student\NotificationController;
 | All routes in this group require authentication and student role
 */
 
-Route::middleware(['auth'])->prefix('student')->name('student.')->group(function () {
+Route::middleware(['auth', 'is.student'])->prefix('student')->name('student.')->group(function () {
     
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
