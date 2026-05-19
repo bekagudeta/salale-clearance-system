@@ -1,59 +1,113 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Salale Clearance System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel-based Clearance Management System that streamlines student clearance workflows across departments. The application provides request submission, multi-stage approvals, PDF generation, email notifications, scheduled reminders, and a lightweight API for integrations.
 
-## About Laravel
+## Key Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Centralized clearance request submission and tracking
+- Departmental approvals with flexible approval rules
+- Role-based access control using `spatie/laravel-permission`
+- Automatic PDF generation for completed clearances (`barryvdh/laravel-dompdf`)
+- Asynchronous jobs and notifications (email, queued jobs)
+- QR-code support for clearance verification (`simplesoftwareio/simple-qrcode`)
+- RESTful API endpoints for integration with other systems
+- Activity logging and notification records
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Technology Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Framework: Laravel (see `composer.json`) — this project targets PHP ^8.2 and Laravel ^12
+- Queue: Laravel queues (database/Redis) for background jobs
+- Database: MySQL / MariaDB (or SQLite for local testing)
+- PDF: barryvdh/laravel-dompdf
+- Permissions: spatie/laravel-permission
+- QR Codes: simplesoftwareio/simple-qrcode
 
-## Learning Laravel
+## Requirements
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- PHP 8.2 or newer
+- Composer
+- Node.js and npm (for frontend assets)
+- A supported database (MySQL, MariaDB, or SQLite)
+- Optional: Redis for queue/ cache
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Quick Start
 
-## Laravel Sponsors
+1. Clone the repository:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+git clone https://github.com/bekagudeta/salale-clearance-system.git
+cd salale-clearance-system
+```
 
-### Premium Partners
+2. Install PHP dependencies and build assets:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+```
+
+3. Configure your `.env` database and mail settings, then run migrations and seeders:
+
+```bash
+php artisan migrate --seed
+php artisan storage:link
+```
+
+4. Install and build frontend assets:
+
+```bash
+npm install
+npm run build   # or `npm run dev` for local development
+```
+
+5. Start the application and queue workers (development):
+
+```bash
+php artisan serve
+php artisan queue:work --tries=3
+```
+
+Tip: A convenient project setup command is defined in `composer.json` as `composer run setup`.
+
+## Configuration & Common Tasks
+
+- Environment: update `.env` for DB, mail, and queue driver
+- Cron / Scheduler: add the Laravel scheduler to your server's cron:
+
+```cron
+* * * * * cd /path-to-project && php artisan schedule:run >> /dev/null 2>&1
+```
+
+- Queues: use `php artisan queue:work` (or a supervisor) for background jobs
+
+## API
+
+API routes are defined under `routes/api.php`. Use API tokens or the configured auth guards to interact with endpoints. See the `app/Http/Controllers/Api` folder for available controllers and request contracts.
+
+## Testing
+
+Run the test suite with:
+
+```bash
+composer test
+```
+
+Or run PHPUnit directly:
+
+```bash
+php artisan test
+```
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Contributions, bug reports, and feature requests are welcome. Please open issues or submit pull requests and follow the repository's contribution guidelines.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is licensed under the MIT License. See the `LICENSE` file for details.
+
+## Maintainers / Support
+
+For questions or support, open an issue in this repository. Include environment details and reproduction steps.
+
