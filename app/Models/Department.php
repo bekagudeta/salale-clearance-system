@@ -36,6 +36,6 @@ class Department extends Model
 
     public function allStaff()
     {
-        return $this->staff()->where('can_approve', true);
+        return $this->staff()->wherePivot('can_approve', true)->get();
     }
 }

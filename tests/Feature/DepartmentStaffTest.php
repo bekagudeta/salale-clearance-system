@@ -5,13 +5,14 @@ namespace Tests\Feature;
 use App\Models\Department;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class DepartmentStaffTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function it_assigns_multiple_staff_to_department()
     {
         // Department has 3 staff members
@@ -30,7 +31,7 @@ class DepartmentStaffTest extends TestCase
         $this->assertEquals('head', $department->staff->first()->pivot->position);
     }
 
-    /** @test */
+    #[Test]
     public function it_gets_all_approvable_staff_in_department()
     {
         $department = Department::factory()->create();
@@ -52,7 +53,7 @@ class DepartmentStaffTest extends TestCase
         $this->assertCount(2, $department->fresh()->allStaff());
     }
 
-    /** @test */
+    #[Test]
     public function it_identifies_staff_by_department()
     {
         $dept1 = Department::factory()->create();

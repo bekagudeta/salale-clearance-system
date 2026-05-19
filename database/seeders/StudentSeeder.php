@@ -6,6 +6,8 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Student;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use RuntimeException;
 
 class StudentSeeder extends Seeder
 {
@@ -14,6 +16,8 @@ class StudentSeeder extends Seeder
      */
     public function run(): void
     {
+        $studentPassword = $this->seedPassword('SEED_STUDENT_PASSWORD');
+
         // Sample students data
         $students = [
             [
@@ -74,25 +78,44 @@ class StudentSeeder extends Seeder
         ];
 
         foreach ($students as $studentData) {
-            $user = User::create([
-                'name' => $studentData['name'],
-                'email' => $studentData['email'],
-                'password' => Hash::make('Student@123'),
-            ]);
+            $user = User::firstOrCreate(
+                ['email' => $studentData['email']],
+                [
+                    'name' => $studentData['name'],
+                    'password' => Hash::make($studentPassword),
+                ]
+            );
             
             $user->assignRole('student');
             
-            Student::create([
-                'user_id' => $user->id,
-                'student_id' => $studentData['student_id'],
-                'full_name' => $studentData['name'],
-                'faculty' => $studentData['faculty'],
-                'department' => $studentData['department'],
-                'year' => $studentData['year'],
-                'semester' => $studentData['semester'],
-                'phone' => $studentData['phone'],
-                'gender' => $studentData['gender'],
-            ]);
+            Student::updateOrCreate(
+                ['student_id' => $studentData['student_id']],
+                [
+                    'user_id' => $user->id,
+                    'full_name' => $studentData['name'],
+                    'faculty' => $studentData['faculty'],
+                    'department' => $studentData['department'],
+                    'year' => $studentData['year'],
+                    'semester' => $studentData['semester'],
+                    'phone' => $studentData['phone'],
+                    'gender' => $studentData['gender'],
+                ]
+            );
         }
+    }
+
+    private function seedPassword(string $envKey): string
+    {
+        $password = env($envKey);
+
+        if (is_string($password) && trim($password) !== '') {
+            return $password;
+        }
+
+        if (app()->environment('production')) {
+            throw new RuntimeException("Missing required {$envKey} environment variable for production seeding.");
+        }
+
+        return Str::random(32);
     }
 }

@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use RuntimeException;
 
 class AdminSeeder extends Seeder
 {
@@ -13,22 +15,26 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
+        $superAdminPassword = $this->seedPassword('SEED_SUPER_ADMIN_PASSWORD');
+        $registrarPassword = $this->seedPassword('SEED_REGISTRAR_PASSWORD');
+        $officerPassword = $this->seedPassword('SEED_DEPARTMENT_OFFICER_PASSWORD');
+
         // Create or Update Super Admin
-        $superAdmin = User::updateOrCreate(
+        $superAdmin = User::firstOrCreate(
             ['email' => 'admin@salale.edu.et'],
             [
                 'name' => 'Super Administrator',
-                'password' => Hash::make('Admin@123'),
+                'password' => Hash::make($superAdminPassword),
             ]
         );
         $superAdmin->assignRole('super_admin');
 
         // Create or Update Registrar
-        $registrar = User::updateOrCreate(
+        $registrar = User::firstOrCreate(
             ['email' => 'registrar@salale.edu.et'],
             [
                 'name' => 'Registrar Office',
-                'password' => Hash::make('Registrar@123'),
+                'password' => Hash::make($registrarPassword),
             ]
         );
         $registrar->assignRole('registrar');
@@ -48,11 +54,11 @@ class AdminSeeder extends Seeder
         ];
 
         foreach ($officers as $officer) {
-            $user = User::updateOrCreate(
+            $user = User::firstOrCreate(
                 ['email' => $officer['email']],
                 [
                     'name' => $officer['name'],
-                    'password' => Hash::make('Officer@123'),
+                    'password' => Hash::make($officerPassword),
                 ]
             );
             $user->assignRole('department_officer');
@@ -88,5 +94,20 @@ class AdminSeeder extends Seeder
                 $department->update(['officer_user_id' => $user->id]);
             }
         }
+    }
+
+    private function seedPassword(string $envKey): string
+    {
+        $password = env($envKey);
+
+        if (is_string($password) && trim($password) !== '') {
+            return $password;
+        }
+
+        if (app()->environment('production')) {
+            throw new RuntimeException("Missing required {$envKey} environment variable for production seeding.");
+        }
+
+        return Str::random(32);
     }
 }

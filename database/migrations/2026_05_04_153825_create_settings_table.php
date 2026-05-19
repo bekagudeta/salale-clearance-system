@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -14,6 +15,17 @@ return new class extends Migration
             $table->text('value')->nullable();
             $table->timestamps();
         });
+
+        DB::table('settings')->insert([
+            ['key' => 'mail_mailer', 'value' => 'smtp', 'created_at' => now(), 'updated_at' => now()],
+            ['key' => 'mail_host', 'value' => 'smtp.gmail.com', 'created_at' => now(), 'updated_at' => now()],
+            ['key' => 'mail_port', 'value' => '587', 'created_at' => now(), 'updated_at' => now()],
+            ['key' => 'mail_username', 'value' => null, 'created_at' => now(), 'updated_at' => now()],
+            ['key' => 'mail_password', 'value' => null, 'created_at' => now(), 'updated_at' => now()],
+            ['key' => 'mail_encryption', 'value' => 'tls', 'created_at' => now(), 'updated_at' => now()],
+            ['key' => 'mail_from_address', 'value' => 'noreply@example.com', 'created_at' => now(), 'updated_at' => now()],
+            ['key' => 'mail_from_name', 'value' => 'Salale Clearance System', 'created_at' => now(), 'updated_at' => now()],
+        ]);
     }
 
     public function down(): void

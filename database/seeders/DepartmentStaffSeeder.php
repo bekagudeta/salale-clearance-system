@@ -6,6 +6,8 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Department;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use RuntimeException;
 
 class DepartmentStaffSeeder extends Seeder
 {
@@ -14,6 +16,8 @@ class DepartmentStaffSeeder extends Seeder
      */
     public function run(): void
     {
+        $staffPassword = $this->seedPassword('SEED_DEPARTMENT_STAFF_PASSWORD');
+
         // Create sample staff users for each department
         $departments = [
             'school-department' => ['Dr. John Smith', 'Mrs. Sarah Wilson'],
@@ -44,7 +48,7 @@ class DepartmentStaffSeeder extends Seeder
                     ['email' => $email],
                     [
                         'name' => $staffName,
-                        'password' => Hash::make('password123'),
+                        'password' => Hash::make($staffPassword),
                     ]
                 );
 
@@ -64,5 +68,20 @@ class DepartmentStaffSeeder extends Seeder
                 }
             }
         }
+    }
+
+    private function seedPassword(string $envKey): string
+    {
+        $password = env($envKey);
+
+        if (is_string($password) && trim($password) !== '') {
+            return $password;
+        }
+
+        if (app()->environment('production')) {
+            throw new RuntimeException("Missing required {$envKey} environment variable for production seeding.");
+        }
+
+        return Str::random(32);
     }
 }

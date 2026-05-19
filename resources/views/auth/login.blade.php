@@ -116,16 +116,6 @@
                         <a href="{{ route('register') }}" class="font-semibold text-[#084A48] hover:text-[#0b3e34] transition">Register</a>
                     </div>
                 </div>
-
-                <div class="border-t border-slate-200 bg-slate-50 px-8 py-5 text-center text-xs text-slate-500">
-                    <p class="font-semibold text-slate-700">Demo Credentials</p>
-                    <div class="mt-2 space-y-1">
-                        <p><span class="font-medium text-slate-900">Student:</span> student1@salale.edu.et / Student@123</p>
-                        <p><span class="font-medium text-slate-900">Officer:</span> library@salale.edu.et / Officer@123</p>
-                        <p><span class="font-medium text-slate-900">Registrar:</span> registrar@salale.edu.et / Registrar@123</p>
-                        <p><span class="font-medium text-slate-900">Admin:</span> admin@salale.edu.et / Admin@123</p>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

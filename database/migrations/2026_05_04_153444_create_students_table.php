@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('year');
             $table->string('semester');
             $table->string('phone')->nullable();
-            $table->enum('gender', ['male', 'female'])->nullable();
+            $table->enum('gender', ['male', 'female', 'other'])->nullable();
             $table->string('photo')->nullable();
             $table->timestamps();
         });
