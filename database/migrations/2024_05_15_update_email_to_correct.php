@@ -12,8 +12,8 @@ return new class extends Migration
     {
         // Update email settings with correct email
         $settings = [
-            ['key' => 'mail_username', 'value' => '[REDACTED_EMAIL]'],
-            ['key' => 'mail_from_address', 'value' => '[REDACTED_EMAIL]'],
+            ['key' => 'mail_username', 'value' => 'noreply@example.com'],
+            ['key' => 'mail_from_address', 'value' => 'noreply@example.com'],
         ];
 
         foreach ($settings as $setting) {
