@@ -112,10 +112,6 @@ class StudentSeeder extends Seeder
             return $password;
         }
 
-        if (app()->environment('production')) {
-            throw new RuntimeException("Missing required {$envKey} environment variable for production seeding.");
-        }
-
-        return Str::random(32);
+        throw new RuntimeException("Missing required {$envKey} environment variable for seeding. Set it in your local .env before running db seed.");
     }
 }

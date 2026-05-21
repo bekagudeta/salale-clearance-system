@@ -44,7 +44,7 @@ class DepartmentStaffSeeder extends Seeder
                 // Create user with email based on name
                 $email = strtolower(str_replace(' ', '.', $staffName)) . '@salale.edu';
                 
-                $user = User::firstOrCreate(
+                $user = User::updateOrCreate(
                     ['email' => $email],
                     [
                         'name' => $staffName,
@@ -78,10 +78,6 @@ class DepartmentStaffSeeder extends Seeder
             return $password;
         }
 
-        if (app()->environment('production')) {
-            throw new RuntimeException("Missing required {$envKey} environment variable for production seeding.");
-        }
-
-        return Str::random(32);
+        throw new RuntimeException("Missing required {$envKey} environment variable for seeding. Set it in your local .env before running db seed.");
     }
 }

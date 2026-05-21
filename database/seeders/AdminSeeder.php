@@ -19,8 +19,8 @@ class AdminSeeder extends Seeder
         $registrarPassword = $this->seedPassword('SEED_REGISTRAR_PASSWORD');
         $officerPassword = $this->seedPassword('SEED_DEPARTMENT_OFFICER_PASSWORD');
 
-        // Create or Update Super Admin
-        $superAdmin = User::firstOrCreate(
+        // Create or update Super Admin
+        $superAdmin = User::updateOrCreate(
             ['email' => 'admin@salale.edu.et'],
             [
                 'name' => 'Super Administrator',
@@ -29,8 +29,8 @@ class AdminSeeder extends Seeder
         );
         $superAdmin->assignRole('super_admin');
 
-        // Create or Update Registrar
-        $registrar = User::firstOrCreate(
+        // Create or update Registrar
+        $registrar = User::updateOrCreate(
             ['email' => 'registrar@salale.edu.et'],
             [
                 'name' => 'Registrar Office',
@@ -54,7 +54,7 @@ class AdminSeeder extends Seeder
         ];
 
         foreach ($officers as $officer) {
-            $user = User::firstOrCreate(
+            $user = User::updateOrCreate(
                 ['email' => $officer['email']],
                 [
                     'name' => $officer['name'],
@@ -104,10 +104,6 @@ class AdminSeeder extends Seeder
             return $password;
         }
 
-        if (app()->environment('production')) {
-            throw new RuntimeException("Missing required {$envKey} environment variable for production seeding.");
-        }
-
-        return Str::random(32);
+        throw new RuntimeException("Missing required {$envKey} environment variable for seeding. Set it in your local .env before running db seed.");
     }
 }
