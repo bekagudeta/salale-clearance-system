@@ -36,7 +36,8 @@ class ApprovalService
             $isAuthorized = ($approval->department->officer_user_id === auth()->id())
                 || auth()->user()->departments()->wherePivot('can_approve', true)
                     ->where('departments.id', $approval->department_id)
-                    ->exists();
+                    ->exists()
+                || (auth()->user()->hasRole('registrar') && $approval->department->slug === 'registrar-office');
 
             if (! $isAuthorized) {
                 throw new \Exception('You are not authorized to process this approval.');
@@ -83,7 +84,8 @@ class ApprovalService
             $isAuthorized = ($approval->department->officer_user_id === auth()->id())
                 || auth()->user()->departments()->wherePivot('can_approve', true)
                     ->where('departments.id', $approval->department_id)
-                    ->exists();
+                    ->exists()
+                || (auth()->user()->hasRole('registrar') && $approval->department->slug === 'registrar-office');
 
             if (! $isAuthorized) {
                 throw new \Exception('You are not authorized to process this approval.');
@@ -225,6 +227,11 @@ class ApprovalService
                     ->where('departments.id', $approval->department_id);
             })->exists();
 
-        return ($assignedViaPrimary || $assignedViaPivot) && $approval->status === 'pending';
+        $assignedViaRegistrar = \App\Models\User::where('id', $userId)
+            ->whereHas('roles', function($q) {
+                $q->where('name', 'registrar');
+            })->exists() && $approval->department->slug === 'registrar-office';
+
+        return ($assignedViaPrimary || $assignedViaPivot || $assignedViaRegistrar) && $approval->status === 'pending';
     }
 }

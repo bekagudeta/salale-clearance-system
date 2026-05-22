@@ -12,20 +12,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(
-            \App\Repositories\Interfaces\ClearanceRepositoryInterface::class,
-            \App\Repositories\ClearanceRepository::class
-        );
-        
-        $this->app->bind(
-            \App\Repositories\Interfaces\ReportRepositoryInterface::class,
-            \App\Repositories\ReportRepository::class
-        );
-        
-        $this->app->bind(
-            \App\Repositories\Interfaces\UserRepositoryInterface::class,
-            \App\Repositories\UserRepository::class
-        );
+        // Repository bindings are provided by RepositoryServiceProvider to avoid duplication.
     }
 
     /**

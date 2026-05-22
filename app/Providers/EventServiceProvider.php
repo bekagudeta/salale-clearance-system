@@ -21,20 +21,16 @@ class EventServiceProvider extends ServiceProvider
         ],
         ClearanceSubmitted::class => [
             NotifyDepartments::class,
-            LogClearanceActivity::class,
         ],
-        ClearanceApproved::class => [
-            NotifyStudent::class,
-            LogClearanceActivity::class,
-        ],
-        ClearanceRejected::class => [
-            NotifyStudent::class,
-            LogClearanceActivity::class,
-        ],
-        ClearanceCompleted::class => [
-            NotifyStudent::class,
-            LogClearanceActivity::class,
-        ],
+    ];
+
+    /**
+     * Subscriber classes.
+     * These listeners use the subscriber pattern (subscribe method).
+     */
+    protected $subscribe = [
+        LogClearanceActivity::class,
+        NotifyStudent::class,
     ];
 
     public function boot(): void
