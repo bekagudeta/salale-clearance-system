@@ -17,6 +17,7 @@ class ClearanceRequest extends Model
         'status',
         'requested_date',
         'completed_at',
+        'certificate_path',
     ];
 
     protected $casts = [

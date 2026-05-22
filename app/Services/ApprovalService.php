@@ -32,6 +32,10 @@ class ApprovalService
     {
         return DB::transaction(function () use ($approvalId, $remarks) {
             $approval = ClearanceApproval::with(['request.student.user', 'department'])->findOrFail($approvalId);
+
+            if ($approval->department->officer_user_id !== auth()->id()) {
+                throw new \Exception('You are not authorized to process this approval.');
+            }
             
             // Check if already approved or rejected
             if ($approval->status !== 'pending') {
@@ -59,13 +63,6 @@ class ApprovalService
             // Dispatch event
             Event::dispatch(new ClearanceApproved($approval));
             
-            // Send notification
-            $this->notificationService->notifyApproval(
-                $approval->request->student->user,
-                $approval->request,
-                $approval->department
-            );
-            
             return $approval;
         });
     }
@@ -77,6 +74,10 @@ class ApprovalService
     {
         return DB::transaction(function () use ($approvalId, $remarks) {
             $approval = ClearanceApproval::with(['request.student.user', 'department'])->findOrFail($approvalId);
+
+            if ($approval->department->officer_user_id !== auth()->id()) {
+                throw new \Exception('You are not authorized to process this approval.');
+            }
             
             // Check if already approved or rejected
             if ($approval->status !== 'pending') {
@@ -103,14 +104,6 @@ class ApprovalService
             
             // Dispatch event
             Event::dispatch(new ClearanceRejected($approval));
-            
-            // Send notification
-            $this->notificationService->notifyRejection(
-                $approval->request->student->user,
-                $approval->request,
-                $approval->department,
-                $remarks
-            );
             
             return $approval;
         });

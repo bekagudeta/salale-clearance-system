@@ -134,7 +134,7 @@ class ClearanceController extends Controller
             ->with('success', 'Clearance finalized successfully. Certificate generated.');
     }
 
-    public function downloadCertificate($id)
+    public function print($id)
     {
         $clearance = ClearanceRequest::with(['student'])->findOrFail($id);
         

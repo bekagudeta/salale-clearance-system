@@ -45,6 +45,15 @@ class ClearanceController extends Controller
         return view('student.clearance.show', compact('clearance'));
     }
 
+    public function cancel($id)
+    {
+        $student = Auth::user()->student;
+        $this->clearanceService->cancelClearance($id, $student->id);
+
+        return redirect()->route('student.clearance.history')
+            ->with('success', 'Clearance request cancelled.');
+    }
+
     public function download($id)
     {
         $clearance = $this->clearanceService->getClearanceDetails($id);

@@ -115,8 +115,9 @@ class ClearanceApiController extends Controller
 
     public function getPendingApprovals(Request $request)
     {
-        $departmentId = Auth::user()->assignedDepartments->first()->id ?? null;
-        
+        $department = Auth::user()->assignedDepartments->first() ?? Auth::user()->departments()->wherePivot('can_approve', true)->first();
+        $departmentId = $department->id ?? null;
+
         if (!$departmentId) {
             return response()->json([
                 'success' => false,

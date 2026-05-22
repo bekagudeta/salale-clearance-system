@@ -42,7 +42,7 @@ class DepartmentStaffSeeder extends Seeder
 
             foreach ($staffNames as $index => $staffName) {
                 // Create user with email based on name
-                $email = strtolower(str_replace(' ', '.', $staffName)) . '@salale.edu';
+                $email = strtolower(str_replace(' ', '.', $staffName)) . '@salale.edu.et';
                 
                 $user = User::updateOrCreate(
                     ['email' => $email],

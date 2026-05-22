@@ -17,7 +17,7 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $department = Auth::user()->assignedDepartments->first();
+        $department = Auth::user()->assignedDepartments->first() ?? Auth::user()->departments()->wherePivot('can_approve', true)->first();
         
         if (!$department) {
             return redirect()->route('home')->with('error', 'No department assigned.');
@@ -51,7 +51,7 @@ class DashboardController extends Controller
 
     public function statistics()
     {
-        $department = Auth::user()->assignedDepartments->first();
+        $department = Auth::user()->assignedDepartments->first() ?? Auth::user()->departments()->wherePivot('can_approve', true)->first();
 
         if (!$department) {
             return redirect()->route('home')->with('error', 'No department assigned.');

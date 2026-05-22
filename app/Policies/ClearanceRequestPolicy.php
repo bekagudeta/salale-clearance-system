@@ -22,7 +22,10 @@ class ClearanceRequestPolicy
         }
         
         if ($user->hasRole('department_officer')) {
-            $departments = $user->assignedDepartments->pluck('id');
+            $assigned = $user->assignedDepartments->pluck('id')->toArray();
+            $pivot = $user->departments()->wherePivot('can_approve', true)->pluck('departments.id')->toArray();
+            $departments = array_unique(array_merge($assigned, $pivot));
+
             return $clearance->approvals()->whereIn('department_id', $departments)->exists();
         }
         

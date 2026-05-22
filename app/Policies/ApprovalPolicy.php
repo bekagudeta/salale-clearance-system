@@ -14,7 +14,12 @@ class ApprovalPolicy
         }
         
         if ($user->hasRole('department_officer')) {
-            return $user->assignedDepartments->contains($approval->department_id);
+            $hasAssigned = $user->assignedDepartments->contains($approval->department_id)
+                || $user->departments()->wherePivot('can_approve', true)
+                    ->where('departments.id', $approval->department_id)
+                    ->exists();
+
+            return $hasAssigned;
         }
 
         if ($user->hasRole('registrar')) {
@@ -44,7 +49,12 @@ class ApprovalPolicy
         }
         
         if ($user->hasRole('department_officer')) {
-            return $user->assignedDepartments->contains($approval->department_id);
+            $hasAssigned = $user->assignedDepartments->contains($approval->department_id)
+                || $user->departments()->wherePivot('can_approve', true)
+                    ->where('departments.id', $approval->department_id)
+                    ->exists();
+
+            return $hasAssigned;
         }
         
         return false;

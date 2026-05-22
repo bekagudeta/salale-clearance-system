@@ -24,7 +24,7 @@ class NotifyDepartments implements ShouldQueue
         
         foreach ($departments as $department) {
             // Get all staff members in this department who can approve
-            $staff = $department->allStaff;
+            $staff = $department->allStaff();
             
             foreach ($staff as $person) {
                 $this->notificationService->createDatabaseNotification(

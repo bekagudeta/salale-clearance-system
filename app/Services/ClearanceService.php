@@ -42,6 +42,18 @@ class ClearanceService
             ];
             
             $clearance = $this->clearanceRepository->create($clearanceData);
+
+            $departments = \App\Models\Department::where('is_active', true)
+                ->orderBy('priority_order')
+                ->get();
+
+            foreach ($departments as $department) {
+                ClearanceApproval::create([
+                    'clearance_request_id' => $clearance->id,
+                    'department_id' => $department->id,
+                    'status' => 'pending',
+                ]);
+            }
             
             // Log activity
             $this->logActivity(

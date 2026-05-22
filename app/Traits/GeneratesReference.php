@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Models\ClearanceRequest;
+use Illuminate\Support\Facades\DB;
 
 trait GeneratesReference
 {
@@ -15,19 +16,41 @@ trait GeneratesReference
         $year = date('Y');
         $month = date('m');
         $prefix = 'SAL';
-        
-        $lastRequest = ClearanceRequest::whereYear('created_at', $year)
-            ->orderBy('id', 'desc')
-            ->first();
-        
-        if ($lastRequest) {
-            $lastNumber = intval(substr($lastRequest->reference_no, -5));
-            $newNumber = str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
-        } else {
-            $newNumber = '00001';
+
+        $maxAttempts = 5;
+        $attempt = 0;
+
+        while (true) {
+            try {
+                return DB::transaction(function () use ($year, $month, $prefix) {
+                    $lastRequest = DB::table('clearance_requests')
+                        ->whereYear('created_at', $year)
+                        ->orderBy('id', 'desc')
+                        ->lockForUpdate()
+                        ->first();
+
+                    if ($lastRequest && isset($lastRequest->reference_no) && preg_match('/(\d{5})$/', $lastRequest->reference_no, $m)) {
+                        $lastNumber = intval($m[1]);
+                        $newNumber = str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
+                    } else {
+                        $newNumber = '00001';
+                    }
+
+                    return "{$prefix}/{$year}/{$month}/{$newNumber}";
+                });
+            } catch (\Throwable $e) {
+                $attempt++;
+                if ($attempt >= $maxAttempts) {
+                    // Fallback: produce a low-collision random suffix to avoid blocking the request
+                    $rand = strtoupper(substr(md5(uniqid((string) microtime(true), true)), 0, 5));
+                    return "{$prefix}/{$year}/{$month}/{$rand}";
+                }
+
+                // Exponential-ish backoff (in microseconds)
+                usleep(100000 * $attempt);
+                continue;
+            }
         }
-        
-        return "{$prefix}/{$year}/{$month}/{$newNumber}";
     }
 
     /**
@@ -35,11 +58,30 @@ trait GeneratesReference
      */
     protected function generateSequentialNumber($prefix, $length = 5)
     {
-        $lastRecord = ClearanceRequest::orderBy('id', 'desc')->first();
-        $lastId = $lastRecord ? $lastRecord->id : 0;
-        $newId = $lastId + 1;
-        
-        return $prefix . str_pad($newId, $length, '0', STR_PAD_LEFT);
+        $maxAttempts = 5;
+        $attempt = 0;
+
+        while (true) {
+            try {
+                return DB::transaction(function () use ($prefix, $length) {
+                    $lastRecord = DB::table('clearance_requests')->lockForUpdate()->orderBy('id', 'desc')->first();
+                    $lastId = $lastRecord ? $lastRecord->id : 0;
+                    $newId = $lastId + 1;
+
+                    return $prefix . str_pad($newId, $length, '0', STR_PAD_LEFT);
+                });
+            } catch (\Throwable $e) {
+                $attempt++;
+                if ($attempt >= $maxAttempts) {
+                    // Fallback to a random-seeming identifier
+                    $rand = strtoupper(substr(md5(uniqid((string) microtime(true), true)), 0, $length));
+                    return $prefix . $rand;
+                }
+
+                usleep(100000 * $attempt);
+                continue;
+            }
+        }
     }
 
     /**

@@ -11,7 +11,7 @@ class HistoryController extends Controller
 {
     public function index(Request $request)
     {
-        $department = Auth::user()->assignedDepartments->first();
+        $department = Auth::user()->assignedDepartments->first() ?? Auth::user()->departments()->wherePivot('can_approve', true)->first();
         
         if (!$department) {
             return redirect()->route('home')->with('error', 'No department assigned.');
@@ -55,7 +55,7 @@ class HistoryController extends Controller
     
     public function show($id)
     {
-        $department = Auth::user()->assignedDepartments->first();
+        $department = Auth::user()->assignedDepartments->first() ?? Auth::user()->departments()->wherePivot('can_approve', true)->first();
         
         $approval = ClearanceApproval::where('department_id', $department->id)
             ->where('id', $id)

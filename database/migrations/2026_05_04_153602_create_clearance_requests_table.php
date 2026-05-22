@@ -17,6 +17,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'in_progress', 'approved', 'rejected', 'completed', 'cancelled'])->default('pending');
             $table->date('requested_date');
             $table->timestamp('completed_at')->nullable();
+            $table->string('certificate_path')->nullable();
             $table->timestamps();
         });
     }

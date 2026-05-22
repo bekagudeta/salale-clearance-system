@@ -61,7 +61,7 @@ $safeReference = preg_replace('/[^A-Za-z0-9_\-]/', '_', $clearance->reference_no
         
         $pdf->setPaper('A4', 'landscape');
         
-        $filename = "report_{$title}_{date('Ymd_His')}.pdf";
+        $filename = "report_{$title}_" . date('Ymd_His') . ".pdf";
         $path = "reports/{$filename}";
         
         Storage::disk('public')->put($path, $pdf->output());

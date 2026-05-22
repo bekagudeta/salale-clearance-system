@@ -25,8 +25,11 @@ class IsOfficer
             abort(403, 'Access denied. Department officer access required.');
         }
 
-        // Check if officer is assigned to a department
-        if (Auth::user()->assignedDepartments->isEmpty()) {
+        // Check if officer is assigned to a department (direct assignment or via pivot with can_approve)
+        $hasAssignment = Auth::user()->assignedDepartments->isNotEmpty()
+            || Auth::user()->departments()->wherePivot('can_approve', true)->exists();
+
+        if (! $hasAssignment) {
             abort(403, 'No department assigned. Please contact administrator.');
         }
 

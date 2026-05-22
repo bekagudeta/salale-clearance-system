@@ -78,7 +78,7 @@ class StudentSeeder extends Seeder
         ];
 
         foreach ($students as $studentData) {
-            $user = User::firstOrCreate(
+            $user = User::updateOrCreate(
                 ['email' => $studentData['email']],
                 [
                     'name' => $studentData['name'],

@@ -19,7 +19,7 @@ class ApprovalController extends Controller
 
     public function index()
     {
-        $department = Auth::user()->assignedDepartments->first();
+        $department = Auth::user()->assignedDepartments->first() ?? Auth::user()->departments()->wherePivot('can_approve', true)->first();
         $pendingApprovals = $this->approvalService->getDepartmentPendingApprovals($department->id);
         
         return view('department.approvals.index', compact('pendingApprovals'));
