@@ -33,7 +33,12 @@ class ApprovalService
         return DB::transaction(function () use ($approvalId, $remarks) {
             $approval = ClearanceApproval::with(['request.student.user', 'department'])->findOrFail($approvalId);
 
-            if ($approval->department->officer_user_id !== auth()->id()) {
+            $isAuthorized = ($approval->department->officer_user_id === auth()->id())
+                || auth()->user()->departments()->wherePivot('can_approve', true)
+                    ->where('departments.id', $approval->department_id)
+                    ->exists();
+
+            if (! $isAuthorized) {
                 throw new \Exception('You are not authorized to process this approval.');
             }
             
@@ -75,7 +80,12 @@ class ApprovalService
         return DB::transaction(function () use ($approvalId, $remarks) {
             $approval = ClearanceApproval::with(['request.student.user', 'department'])->findOrFail($approvalId);
 
-            if ($approval->department->officer_user_id !== auth()->id()) {
+            $isAuthorized = ($approval->department->officer_user_id === auth()->id())
+                || auth()->user()->departments()->wherePivot('can_approve', true)
+                    ->where('departments.id', $approval->department_id)
+                    ->exists();
+
+            if (! $isAuthorized) {
                 throw new \Exception('You are not authorized to process this approval.');
             }
             
@@ -208,6 +218,13 @@ class ApprovalService
     public function canApprove($approvalId, $userId)
     {
         $approval = ClearanceApproval::with('department')->findOrFail($approvalId);
-        return $approval->department->officer_user_id === $userId && $approval->status === 'pending';
+        $assignedViaPrimary = $approval->department->officer_user_id === $userId;
+        $assignedViaPivot = \App\Models\User::where('id', $userId)
+            ->whereHas('departments', function($q) use ($approval) {
+                $q->wherePivot('can_approve', true)
+                    ->where('departments.id', $approval->department_id);
+            })->exists();
+
+        return ($assignedViaPrimary || $assignedViaPivot) && $approval->status === 'pending';
     }
 }

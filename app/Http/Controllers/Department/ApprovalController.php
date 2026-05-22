@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Department\ApprovalRequest;
 use App\Services\ApprovalService;
 use App\Models\Department;
+use App\Models\ClearanceApproval;
 use Illuminate\Support\Facades\Auth;
 
 class ApprovalController extends Controller
@@ -27,15 +28,21 @@ class ApprovalController extends Controller
 
     public function approve(ApprovalRequest $request, $id)
     {
+        $approval = ClearanceApproval::findOrFail($id);
+        $this->authorize('approve', $approval);
+
         $this->approvalService->approve($id, $request->remarks);
-        
+
         return redirect()->back()->with('success', 'Clearance approved successfully.');
     }
 
     public function reject(ApprovalRequest $request, $id)
     {
+        $approval = ClearanceApproval::findOrFail($id);
+        $this->authorize('reject', $approval);
+
         $this->approvalService->reject($id, $request->remarks);
-        
+
         return redirect()->back()->with('success', 'Clearance rejected successfully.');
     }
 }
