@@ -66,6 +66,7 @@
                         $total = $clearance->approvals->count();
                         $approved = $clearance->approvals->where('status', 'approved')->count();
                         $progress = $total > 0 ? round(($approved / $total) * 100) : 0;
+                        $clearanceFullyApproved = $total > 0 && $approved === $total;
                     @endphp
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-4">
@@ -97,7 +98,7 @@
                                    class="btn-secondary px-2 py-1">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                @if($clearance->status == 'approved')
+                                @if($clearanceFullyApproved && $clearance->status !== 'completed')
                                     <form action="{{ route('registrar.clearance.finalize', $clearance->id) }}" method="POST" onsubmit="return confirm('Approve and finalize this clearance? This will generate the certificate.')">
                                         @csrf
                                         <button type="submit" class="btn-accent">

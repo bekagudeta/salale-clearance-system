@@ -152,7 +152,7 @@
                 </form>
             @endif
 
-            @if($allApproved && $clearance->status == 'approved')
+            @if($allApproved && $clearance->status !== 'completed')
                 <form action="{{ route('registrar.clearance.finalize', $clearance->id) }}" method="POST" onsubmit="return confirm('Finalize this clearance? This will generate the certificate and cannot be undone.')">
                     @csrf
                     <button type="submit" class="px-6 py-2 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-lg hover:from-green-700 hover:to-teal-700 transition shadow-md">

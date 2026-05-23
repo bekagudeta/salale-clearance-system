@@ -27,7 +27,6 @@ class DepartmentStaffSeeder extends Seeder
             'housing' => ['Mr. Peter Okoro', 'Ms. Grace Okafor'],
             'store-keeper' => ['Mr. Kofi Mensah'],
             'campus-security' => ['Mr. Samuel Osei', 'Mr. Marcus Kwesi', 'Mr. Amos Amoah'],
-            'registrar-office' => ['Mrs. Abigail Mensah', 'Mr. Benjamin Owusu'],
             'ict-center' => ['Dr. Kwame Asante', 'Mr. Robert Boateng'],
             'finance-office' => ['Mr. Stephen Agyeman', 'Ms. Elizabeth Darko'],
             'clinic' => ['Dr. Nana Agyeman', 'Ms. Comfort Adeyemi'],

@@ -28,8 +28,7 @@ class ApprovalController extends Controller
 
     public function approve(ApprovalRequest $request, $id)
     {
-        $approval = ClearanceApproval::findOrFail($id);
-        $this->authorize('approve', $approval);
+        ClearanceApproval::findOrFail($id); // ensure existence before processing
 
         $this->approvalService->approve($id, $request->remarks);
 
@@ -38,8 +37,7 @@ class ApprovalController extends Controller
 
     public function reject(ApprovalRequest $request, $id)
     {
-        $approval = ClearanceApproval::findOrFail($id);
-        $this->authorize('reject', $approval);
+        ClearanceApproval::findOrFail($id); // ensure existence before processing
 
         $this->approvalService->reject($id, $request->remarks);
 

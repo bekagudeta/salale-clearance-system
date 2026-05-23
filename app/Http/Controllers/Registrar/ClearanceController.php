@@ -60,6 +60,11 @@ class ClearanceController extends Controller
         
         $clearances = $query->orderBy('created_at', 'desc')
             ->paginate(20);
+
+        // Ensure the clearance status is up to date before rendering
+        $clearances->getCollection()->each(function ($clearance) {
+            $clearance->updateStatusFromApprovals();
+        });
         
         return view('registrar.clearance.index', compact('clearances', 'request'));
     }
@@ -67,6 +72,8 @@ class ClearanceController extends Controller
     public function show($id)
     {
         $clearance = $this->clearanceService->getClearanceDetails($id);
+        $clearance->updateStatusFromApprovals();
+        $clearance->refresh();
         
         $allApproved = $clearance->approvals->every(function($approval) {
             return $approval->status === 'approved';
