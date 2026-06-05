@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Models\ClearanceRequest;
 use App\Models\ClearanceApproval;
 use App\Repositories\Interfaces\ClearanceRepositoryInterface;
-use Illuminate\Support\Facades\DB;
 
 class ClearanceRepository implements ClearanceRepositoryInterface
 {
@@ -29,21 +28,7 @@ class ClearanceRepository implements ClearanceRepositoryInterface
 
     public function create(array $data)
     {
-        return DB::transaction(function () use ($data) {
-            $clearance = ClearanceRequest::create($data);
-            
-            $departments = \App\Models\Department::where('is_active', true)->get();
-            
-            foreach ($departments as $department) {
-                ClearanceApproval::create([
-                    'clearance_request_id' => $clearance->id,
-                    'department_id' => $department->id,
-                    'status' => 'pending',
-                ]);
-            }
-            
-            return $clearance;
-        });
+        return ClearanceRequest::create($data);
     }
 
     public function updateStatus($id, $status)
