@@ -328,6 +328,18 @@
                     </div>
                 @endif
                 
+                @if(session('warning'))
+                    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 7000)" class="mb-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded shadow-md">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-triangle mr-3 text-yellow-600"></i>
+                            <p>{{ session('warning') }}</p>
+                            <button @click="show = false" class="ml-auto text-yellow-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                @endif
+                
                 @if(session('error'))
                     <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-md">
                         <div class="flex items-center">

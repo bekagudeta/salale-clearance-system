@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\StudentImportController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\SettingController;
@@ -24,6 +25,12 @@ Route::middleware(['auth', 'is.admin'])->prefix('admin')->name('admin.')->group(
     // User Management
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('/import', [StudentImportController::class, 'show'])->name('import');
+        Route::get('/import/template', [StudentImportController::class, 'template'])->name('import.template');
+        Route::post('/import/preview', [StudentImportController::class, 'preview'])->name('import.preview.submit');
+        Route::get('/import/preview', [StudentImportController::class, 'previewPage'])->name('import.preview');
+        Route::post('/import/process', [StudentImportController::class, 'process'])->name('import.process');
+        Route::post('/import/cancel', [StudentImportController::class, 'cancel'])->name('import.cancel');
         Route::get('/create', [UserController::class, 'create'])->name('create');
         Route::post('/', [UserController::class, 'store'])->name('store');
         Route::get('/{id}/edit', [UserController::class, 'edit'])->name('edit');

@@ -37,6 +37,9 @@
                 <a href="{{ route('admin.users.create') }}" class="btn-primary px-4 py-2 inline-flex items-center gap-2">
                     <i class="fas fa-plus"></i> Add User
                 </a>
+                <a href="{{ route('admin.users.import') }}" class="btn-secondary px-4 py-2 inline-flex items-center gap-2">
+                    <i class="fas fa-file-upload"></i> Bulk Import
+                </a>
                 <button onclick="confirmBulkDelete()" class="btn-accent px-4 py-2 inline-flex items-center gap-2">
                     <i class="fas fa-trash"></i> Bulk Delete
                 </button>

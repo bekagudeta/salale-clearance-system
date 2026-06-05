@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Student;
 use App\Models\Department;
 use App\Repositories\UserRepository;
+use App\Services\StudentProvisioningService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -16,8 +17,10 @@ class UserController extends Controller
 {
     protected $userRepository;
 
-    public function __construct(UserRepository $userRepository)
-    {
+    public function __construct(
+        UserRepository $userRepository,
+        protected StudentProvisioningService $studentProvisioning
+    ) {
         $this->userRepository = $userRepository;
     }
 
@@ -74,15 +77,7 @@ class UserController extends Controller
             'position' => 'nullable|string|max:50',
             'can_approve' => 'nullable|boolean',
         ]);
-        
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-        
-        $user->assignRole($request->role);
-        
+
         if ($request->role === 'student') {
             $request->validate([
                 'student_id' => 'required|string|unique:students',
@@ -93,25 +88,37 @@ class UserController extends Controller
                 'gender' => 'nullable|in:male,female,other',
                 'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
-            
-            $photoPath = null;
-            if ($request->hasFile('photo')) {
-                $photoPath = $request->file('photo')->store('students', 'public');
-            }
-            
-            Student::create([
-                'user_id' => $user->id,
+
+            $user = $this->studentProvisioning->createStudent([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => $request->password,
                 'student_id' => $request->student_id,
-                'full_name' => $request->name,
                 'faculty' => $request->faculty,
                 'department' => $request->department,
                 'year' => $request->year,
                 'semester' => $request->semester,
                 'phone' => $request->phone,
                 'gender' => $request->gender,
-                'photo' => $photoPath,
             ]);
+
+            if ($request->hasFile('photo')) {
+                $user->student->update([
+                    'photo' => $request->file('photo')->store('students', 'public'),
+                ]);
+            }
+
+            return redirect()->route('admin.users.index')
+                ->with('success', 'User created successfully.');
         }
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        $user->assignRole($request->role);
 
         if ($request->role === 'department_officer' && $request->department_id) {
             $user->departments()->syncWithoutDetaching([
