@@ -32,16 +32,17 @@ class ReportController extends Controller
                 $records = $this->reportService->exportClearances();
                 $filename = 'clearances_export_' . now()->format('Ymd_His') . '.csv';
                 $rows = [];
-                $rows[] = ['Reference No', 'Student Name', 'Student ID', 'Type', 'Status', 'Submitted At', 'Completed At'];
+                $rows[] = ['Reference No', 'Student Name', 'Student ID', 'Type', 'Reason', 'Status', 'Submitted At', 'Completed At'];
                 foreach ($records as $record) {
                     $rows[] = [
-                        $record->reference_no,
-                        optional($record->student)->full_name,
-                        optional($record->student)->student_id,
-                        ucfirst(str_replace('_', ' ', $record->type)),
-                        ucfirst($record->status),
-                        $record->created_at ? $record->created_at->toDateTimeString() : '',
-                        $record->completed_at ? $record->completed_at->toDateTimeString() : '',
+                        $record['Reference No'],
+                        $record['Student Name'],
+                        $record['Student ID'],
+                        $record['Type'],
+                        $record['Reason'],
+                        $record['Status'],
+                        $record['Submitted At'],
+                        $record['Completed At'],
                     ];
                 }
                 break;
@@ -53,15 +54,15 @@ class ReportController extends Controller
                 $rows[] = ['Student ID', 'Full Name', 'Faculty', 'Department', 'Year', 'Semester', 'Phone', 'Gender', 'Email'];
                 foreach ($records as $record) {
                     $rows[] = [
-                        $record->student_id,
-                        $record->full_name,
-                        $record->faculty,
-                        $record->department,
-                        $record->year,
-                        $record->semester,
-                        $record->phone,
-                        $record->gender,
-                        optional($record->user)->email,
+                        $record['Student ID'],
+                        $record['Full Name'],
+                        $record['Faculty'],
+                        $record['Department'],
+                        $record['Year'],
+                        $record['Semester'],
+                        $record['Phone'],
+                        $record['Gender'],
+                        $record['Email'],
                     ];
                 }
                 break;
@@ -73,12 +74,12 @@ class ReportController extends Controller
                 $rows[] = ['Department Name', 'Slug', 'Officer Name', 'Officer Email', 'Priority Order', 'Active'];
                 foreach ($records as $record) {
                     $rows[] = [
-                        $record->name,
-                        $record->slug,
-                        optional($record->officer)->name,
-                        optional($record->officer)->email,
-                        $record->priority_order,
-                        $record->is_active ? 'Yes' : 'No',
+                        $record['Department Name'],
+                        $record['Slug'],
+                        $record['Officer Name'],
+                        $record['Officer Email'],
+                        $record['Priority Order'],
+                        $record['Active'],
                     ];
                 }
                 break;

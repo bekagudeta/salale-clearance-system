@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Registrar;
 
 use App\Http\Controllers\Controller;
 use App\Models\ClearanceRequest;
+use App\Models\CertificateAudit;
 use App\Services\PdfService;
 use Illuminate\Http\Request;
 
@@ -37,6 +38,51 @@ class CertificateController extends Controller
         return view('registrar.certificates.index', compact('certificates'));
     }
 
+    public function download($id)
+    {
+        $clearance = ClearanceRequest::findOrFail($id);
+        
+        if ($clearance->status !== 'completed') {
+            abort(403, 'Certificate not available yet.');
+        }
+
+        if (!$clearance->certificate_path || !file_exists(storage_path("app/public/{$clearance->certificate_path}"))) {
+            $pdfData = $this->pdfService->generateClearanceCertificate($clearance);
+            $clearance->update(['certificate_path' => $pdfData['path']]);
+            
+            // Log certificate generation and save security info
+            CertificateAudit::create([
+                'clearance_id' => $clearance->id,
+                'user_id' => auth()->id(),
+                'ip_address' => request()->ip(),
+                'action' => 'generate',
+                'security_code' => $pdfData['security_code'],
+                'issued_date' => $pdfData['issued_date'],
+                'validity_date' => $pdfData['validity_date'],
+                'issued_by' => auth()->user()->name,
+                'timestamp' => now(),
+            ]);
+        } else {
+            $pdfData = [
+                'path' => $clearance->certificate_path,
+                'filename' => pathinfo($clearance->certificate_path, PATHINFO_BASENAME),
+            ];
+        }
+
+        $downloadName = pathinfo($pdfData['path'], PATHINFO_BASENAME);
+        
+        // Log certificate download
+        CertificateAudit::create([
+            'clearance_id' => $clearance->id,
+            'user_id' => auth()->id(),
+            'ip_address' => request()->ip(),
+            'action' => 'download',
+            'timestamp' => now(),
+        ]);
+
+        return response()->download(storage_path("app/public/{$pdfData['path']}"), $downloadName);
+    }
+
     public function regenerate($id)
     {
         $clearance = ClearanceRequest::findOrFail($id);
@@ -49,6 +95,19 @@ class CertificateController extends Controller
         
         $clearance->update(['certificate_path' => $pdfData['path']]);
         
+        // Log certificate regeneration
+        CertificateAudit::create([
+            'clearance_id' => $clearance->id,
+            'user_id' => auth()->id(),
+            'ip_address' => request()->ip(),
+            'action' => 'regenerate',
+            'security_code' => $pdfData['security_code'],
+            'issued_date' => $pdfData['issued_date'],
+            'validity_date' => $pdfData['validity_date'],
+            'issued_by' => auth()->user()->name,
+            'timestamp' => now(),
+        ]);
+        
         return redirect()->back()->with('success', 'Certificate regenerated successfully.');
     }
 
@@ -59,6 +118,16 @@ class CertificateController extends Controller
             ->firstOrFail();
         
         $isValid = $clearance->status === 'completed';
+        
+        // Log verification attempt
+        if ($isValid) {
+            CertificateAudit::create([
+                'clearance_id' => $clearance->id,
+                'ip_address' => request()->ip(),
+                'action' => 'verify',
+                'timestamp' => now(),
+            ]);
+        }
         
         return view('public.verify', compact('clearance', 'isValid'));
     }

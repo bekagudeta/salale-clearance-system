@@ -5,15 +5,30 @@ namespace App\Services;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Models\CertificateAudit;
+use Illuminate\Support\Str;
 
 class PdfService
 {
     /**
-     * Generate clearance certificate PDF
+     * Generate clearance certificate PDF with security features
      */
     public function generateClearanceCertificate($clearance)
     {
-        $qrSvg = QrCode::format('svg')->size(200)->generate($clearance->reference_no);
+        // Generate security code and timestamp
+        $securityCode = $this->generateSecurityCode($clearance);
+        $issuedDate = now();
+        $validityDate = now()->addYears(4); // Valid for 4 years
+        
+        // Generate QR code with embedded security information
+        $qrData = json_encode([
+            'reference' => $clearance->reference_no,
+            'security_code' => $securityCode,
+            'issued' => $issuedDate->toIso8601String(),
+            'student_id' => $clearance->student->student_id,
+        ]);
+        
+        $qrSvg = QrCode::format('svg')->size(200)->errorCorrection('H')->generate($qrData);
         $qrCode = base64_encode($qrSvg);
         
         $pdf = Pdf::loadView('pdf.clearance-certificate', [
@@ -22,12 +37,19 @@ class PdfService
             'approvals' => $clearance->approvals->load('department'),
             'qrCode' => $qrCode,
             'university_name' => $this->getUniversityName(),
-            'generated_date' => now()->format('F d, Y'),
+            'generated_date' => $issuedDate->format('F d, Y'),
+            'issued_datetime' => $issuedDate->format('F d, Y H:i:s'),
+            'validity_date' => $validityDate->format('F d, Y'),
+            'security_code' => $securityCode,
+            'document_hash' => $this->generateDocumentHash($clearance, $securityCode),
         ]);
         
         $pdf->setPaper('A4', 'portrait');
         
-$safeReference = preg_replace('/[^A-Za-z0-9_\-]/', '_', $clearance->reference_no);
+        // Set PDF security - password protect with owner password
+        $pdf->setEncryption(env('PDF_PASSWORD', 'SALALE_CERT_2026'), env('PDF_OWNER_PASSWORD', 'SALALE_UNIVERSITY_SECRET'));
+        
+        $safeReference = preg_replace('/[^A-Za-z0-9_\-]/', '_', $clearance->reference_no);
         $filename = "clearance_{$safeReference}_{$clearance->student->student_id}.pdf";
         $path = "clearances/{$filename}";
         
@@ -38,6 +60,9 @@ $safeReference = preg_replace('/[^A-Za-z0-9_\-]/', '_', $clearance->reference_no
             'filename' => $filename,
             'url' => Storage::disk('public')->url($path),
             'content' => $pdf->output(),
+            'security_code' => $securityCode,
+            'issued_date' => $issuedDate,
+            'validity_date' => $validityDate,
         ];
     }
 
@@ -157,5 +182,99 @@ $safeReference = preg_replace('/[^A-Za-z0-9_\-]/', '_', $clearance->reference_no
             'path' => $outputPath,
             'filename' => $outputFilename,
         ];
+    }
+
+    /**
+     * Generate unique security code for certificate
+     */
+    private function generateSecurityCode($clearance)
+    {
+        $timestamp = now()->format('YmdHis');
+        $referenceHash = substr(hash('sha256', $clearance->reference_no), 0, 8);
+        $randomCode = strtoupper(Str::random(6));
+        
+        return "{$timestamp}-{$referenceHash}-{$randomCode}";
+    }
+
+    /**
+     * Generate document hash for verification
+     */
+    private function generateDocumentHash($clearance, $securityCode)
+    {
+        $data = implode('|', [
+            $clearance->reference_no,
+            $clearance->student->student_id,
+            $clearance->type,
+            $clearance->status,
+            $securityCode,
+        ]);
+        
+        return strtoupper(substr(hash('sha256', $data), 0, 16));
+    }
+
+    /**
+     * Verify certificate integrity
+     */
+    public function verifyCertificate($referenceNo, $securityCode)
+    {
+        $clearance = \App\Models\ClearanceRequest::where('reference_no', $referenceNo)->first();
+        
+        if (!$clearance) {
+            return [
+                'valid' => false,
+                'message' => 'Certificate not found',
+            ];
+        }
+
+        if ($clearance->status !== 'completed') {
+            return [
+                'valid' => false,
+                'message' => 'Certificate not yet completed',
+            ];
+        }
+
+        // Get audit record
+        $audit = CertificateAudit::where('clearance_id', $clearance->id)
+            ->where('security_code', $securityCode)
+            ->first();
+
+        if (!$audit) {
+            return [
+                'valid' => false,
+                'message' => 'Invalid security code',
+            ];
+        }
+
+        // Check validity date
+        if ($audit->validity_date && $audit->validity_date->isPast()) {
+            return [
+                'valid' => false,
+                'message' => 'Certificate has expired',
+                'expired_date' => $audit->validity_date->format('F d, Y'),
+            ];
+        }
+
+        return [
+            'valid' => true,
+            'message' => 'Certificate is valid',
+            'clearance' => $clearance,
+            'issued_date' => $audit->issued_date,
+            'validity_date' => $audit->validity_date,
+            'issued_by' => $audit->issued_by,
+        ];
+    }
+
+    /**
+     * Log certificate download
+     */
+    public function logCertificateDownload($clearanceId, $userId, $ipAddress)
+    {
+        CertificateAudit::create([
+            'clearance_id' => $clearanceId,
+            'user_id' => $userId,
+            'ip_address' => $ipAddress,
+            'action' => 'download',
+            'timestamp' => now(),
+        ]);
     }
 }
