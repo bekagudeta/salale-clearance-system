@@ -3,75 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verification Result - Salale University</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Verification Result &mdash; {{ config('app.name', 'Salale University') }}</title>
+    <style>
+        :root { --teal:#084A48; --dark:#001722; --gold:#C9A227; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(160deg, #001722 0%, #084A48 100%);
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            padding: 24px; color: #1f2a2e;
+        }
+        .card { width: 100%; max-width: 560px; background: #fff; border-radius: 18px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,.35); }
+        .banner { padding: 30px 28px; text-align: center; color: #fff; }
+        .banner.ok { background: #0f766e; }
+        .banner.basic { background: #1d4ed8; }
+        .banner.warn { background: #b45309; }
+        .banner.bad { background: #b91c1c; }
+        .icon { width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,.18); margin: 0 auto 12px; line-height: 56px; font-size: 30px; font-weight: 700; }
+        .banner h1 { font-size: 21px; font-weight: 700; }
+        .banner p { margin-top: 6px; font-size: 13px; opacity: .92; }
+        .body { padding: 26px 28px; }
+        .row { display: flex; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid #eef2f2; font-size: 14px; }
+        .row:last-child { border-bottom: 0; }
+        .row .k { color: #6b7280; font-weight: 600; }
+        .row .v { color: #1f2a2e; text-align: right; }
+        .mono { font-family: monospace; }
+        .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+        .pill.ok { background: #d1fae5; color: #065f46; }
+        .section { margin-top: 20px; }
+        .section h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: var(--teal); margin-bottom: 8px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: var(--teal); color: #fff; text-align: left; padding: 8px 10px; font-size: 11px; text-transform: uppercase; }
+        td { padding: 8px 10px; border-bottom: 1px solid #eef2f2; font-size: 13px; }
+        .info { margin-top: 18px; padding: 12px 14px; border-radius: 10px; font-size: 13px; line-height: 1.5; }
+        .info.tip { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+        .info.muted { background: #f9fafb; color: #4b5563; border: 1px solid #e5e7eb; }
+        .actions { margin-top: 22px; text-align: center; }
+        .btn { display: inline-block; padding: 11px 22px; background: var(--teal); color: #fff; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: 600; }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-blue-900 to-purple-900 min-h-screen">
-    <div class="container mx-auto px-4 py-16">
-        <div class="max-w-2xl mx-auto">
-            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-                <div class="bg-gradient-to-r {{ $isValid ? 'from-green-600 to-teal-600' : 'from-red-600 to-pink-600' }} px-6 py-8 text-center">
-                    @if($isValid)
-                        <i class="fas fa-check-circle text-white text-5xl mb-3"></i>
-                        <h1 class="text-2xl font-bold text-white">Valid Certificate</h1>
-                        <p class="text-green-100 mt-2">This clearance certificate is authentic and valid</p>
-                    @else
-                        <i class="fas fa-times-circle text-white text-5xl mb-3"></i>
-                        <h1 class="text-2xl font-bold text-white">Invalid Certificate</h1>
-                        <p class="text-red-100 mt-2">This clearance certificate is not valid</p>
-                    @endif
+<body>
+    <div class="card">
+        @php
+            $banner = ['verified'=>'ok','basic'=>'basic','expired'=>'warn','invalid'=>'bad'][$state] ?? 'bad';
+            $glyph  = ['verified'=>'✓','basic'=>'i','expired'=>'!','invalid'=>'✕'][$state] ?? '✕';
+        @endphp
+
+        <div class="banner {{ $banner }}">
+            <div class="icon">{{ $glyph }}</div>
+            @switch($state)
+                @case('verified')
+                    <h1>Certificate Verified</h1>
+                    <p>This clearance certificate is authentic and valid.</p>
+                    @break
+                @case('basic')
+                    <h1>Certificate Found</h1>
+                    <p>A completed certificate exists for this reference number.</p>
+                    @break
+                @case('expired')
+                    <h1>Certificate Expired</h1>
+                    <p>This certificate was authentic but is no longer valid.</p>
+                    @break
+                @default
+                    <h1>Not Verified</h1>
+                    <p>This certificate could not be verified.</p>
+            @endswitch
+        </div>
+
+        <div class="body">
+            @if($state === 'verified')
+                <div class="row"><span class="k">Reference Number</span><span class="v mono">{{ $clearance->reference_no }}</span></div>
+                <div class="row"><span class="k">Student Name</span><span class="v">{{ $clearance->student->full_name }}</span></div>
+                <div class="row"><span class="k">Student ID</span><span class="v">{{ $clearance->student->student_id }}</span></div>
+                <div class="row"><span class="k">Clearance Type</span><span class="v">{{ ucfirst(str_replace('_', ' ', $clearance->type)) }}</span></div>
+                <div class="row"><span class="k">Completed</span><span class="v">{{ $clearance->completed_at ? $clearance->completed_at->format('F d, Y') : '—' }}</span></div>
+                <div class="row"><span class="k">Status</span><span class="v"><span class="pill ok">Verified</span></span></div>
+
+                <div class="section">
+                    <h2>Department Approvals</h2>
+                    <table>
+                        <thead><tr><th>Department</th><th>Date</th></tr></thead>
+                        <tbody>
+                            @foreach($clearance->approvals->where('status', 'approved') as $a)
+                                <tr><td>{{ $a->department->name }}</td><td>{{ $a->approved_at ? $a->approved_at->format('M d, Y') : '—' }}</td></tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-                
-                <div class="p-8">
-                    @if($isValid)
-                        <div class="space-y-4">
-                            <div class="flex justify-between pb-3 border-b">
-                                <span class="font-semibold text-gray-600">Reference Number:</span>
-                                <span class="font-mono text-gray-800">{{ $clearance->reference_no }}</span>
-                            </div>
-                            <div class="flex justify-between pb-3 border-b">
-                                <span class="font-semibold text-gray-600">Student Name:</span>
-                                <span class="text-gray-800">{{ $clearance->student->full_name }}</span>
-                            </div>
-                            <div class="flex justify-between pb-3 border-b">
-                                <span class="font-semibold text-gray-600">Student ID:</span>
-                                <span class="text-gray-800">{{ $clearance->student->student_id }}</span>
-                            </div>
-                            <div class="flex justify-between pb-3 border-b">
-                                <span class="font-semibold text-gray-600">Clearance Type:</span>
-                                <span class="text-gray-800">{{ ucfirst(str_replace('_', ' ', $clearance->type)) }}</span>
-                            </div>
-                            <div class="flex justify-between pb-3 border-b">
-                                <span class="font-semibold text-gray-600">Completed Date:</span>
-                                <span class="text-gray-800">{{ $clearance->completed_at ? $clearance->completed_at->format('F d, Y') : 'N/A' }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="font-semibold text-gray-600">Status:</span>
-                                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">Verified ✓</span>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-6 p-4 bg-green-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="fas fa-shield-alt text-green-600 mr-3"></i>
-                                <p class="text-sm text-green-800">This certificate has been digitally verified and is authentic.</p>
-                            </div>
-                        </div>
-                    @else
-                        <div class="text-center py-8">
-                            <i class="fas fa-exclamation-triangle text-red-500 text-6xl mb-4"></i>
-                            <p class="text-gray-600">The certificate you are trying to verify does not exist in our system or has been revoked.</p>
-                        </div>
-                    @endif
-                    
-                    <div class="mt-6 text-center">
-                        <a href="{{ route('verify') }}" class="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                            <i class="fas fa-redo mr-2"></i> Verify Another
-                        </a>
-                    </div>
+
+            @elseif($state === 'basic')
+                <div class="row"><span class="k">Reference Number</span><span class="v mono">{{ $clearance->reference_no }}</span></div>
+                <div class="row"><span class="k">Student</span><span class="v">{{ $maskedName }}</span></div>
+                <div class="row"><span class="k">Clearance Type</span><span class="v">{{ ucfirst(str_replace('_', ' ', $clearance->type)) }}</span></div>
+                <div class="row"><span class="k">Completed</span><span class="v">{{ $clearance->completed_at ? $clearance->completed_at->format('F d, Y') : '—' }}</span></div>
+                <div class="info tip">
+                    For privacy, full details are shown only with the security code. Enter the security code printed on the
+                    certificate, or scan its QR code, for complete verification.
                 </div>
+
+            @else
+                <div class="info muted">{{ $message }}</div>
+            @endif
+
+            <div class="actions">
+                <a class="btn" href="{{ route('verify') }}">Verify Another</a>
             </div>
         </div>
     </div>

@@ -15,27 +15,27 @@ class PdfService
      */
     public function generateClearanceCertificate($clearance)
     {
-        // Generate security code and timestamp
+        // Generate security code and timestamp. Anchor the issue date to when the
+        // clearance was completed so re-issued certificates keep their original date
+        // (falls back to now() for a fresh finalization where completed_at is set).
         $securityCode = $this->generateSecurityCode($clearance);
-        $issuedDate = now();
-        $validityDate = now()->addYears(4); // Valid for 4 years
+        $issuedDate = $clearance->completed_at ? $clearance->completed_at->copy() : now();
+        $validityDate = $issuedDate->copy()->addYears(4); // Valid for 4 years
         
-        // Generate QR code with embedded security information
-        $qrData = json_encode([
-            'reference' => $clearance->reference_no,
-            'security_code' => $securityCode,
-            'issued' => $issuedDate->toIso8601String(),
-            'student_id' => $clearance->student->student_id,
-        ]);
-        
-        $qrSvg = QrCode::format('svg')->size(200)->errorCorrection('H')->generate($qrData);
+        // Encode the QR as a verification URL carrying the security code, so a scan
+        // lands on the public verifier with full proof (not just the reference).
+        $verifyUrl = url('/verify/' . rawurlencode($clearance->reference_no) . '?code=' . urlencode($securityCode));
+
+        $qrSvg = QrCode::format('svg')->size(200)->errorCorrection('H')->generate($verifyUrl);
         $qrCode = base64_encode($qrSvg);
-        
+
         $pdf = Pdf::loadView('pdf.clearance-certificate', [
             'clearance' => $clearance,
             'student' => $clearance->student,
             'approvals' => $clearance->approvals->load('department'),
             'qrCode' => $qrCode,
+            'verify_url' => $verifyUrl,
+            'logo_path' => $this->getLogoPath(),
             'university_name' => $this->getUniversityName(),
             'generated_date' => $issuedDate->format('F d, Y'),
             'issued_datetime' => $issuedDate->format('F d, Y H:i:s'),
@@ -46,8 +46,15 @@ class PdfService
         
         $pdf->setPaper('A4', 'portrait');
         
-        // Set PDF security - password protect with owner password
-        $pdf->setEncryption(env('PDF_PASSWORD', 'SALALE_CERT_2026'), env('PDF_OWNER_PASSWORD', 'SALALE_UNIVERSITY_SECRET'));
+        // Certificate security:
+        //  - No open (user) password, so students and verifiers can open/print it freely.
+        //  - A strong owner password locks the document so it cannot be edited, annotated,
+        //    or have its text copied (only printing is permitted) — making it tamper-evident.
+        //  - Authenticity is proven by the QR code + public verification page, not a secret.
+        // The owner password is never shared; it falls back to an app-key-derived value so
+        // there is no hardcoded secret in source.
+        $ownerPassword = env('PDF_OWNER_PASSWORD') ?: hash('sha256', config('app.key') . '|certificate-owner');
+        $pdf->setEncryption('', $ownerPassword, ['print']);
         
         $safeReference = preg_replace('/[^A-Za-z0-9_\-]/', '_', $clearance->reference_no);
         $filename = "clearance_{$safeReference}_{$clearance->student->student_id}.pdf";
@@ -154,6 +161,26 @@ class PdfService
     {
         $setting = \App\Models\Setting::where('key', 'university_name')->first();
         return $setting ? $setting->value : 'Salale University';
+    }
+
+    /**
+     * University logo as a base64 data URI for safe embedding in the PDF, or null
+     * if none is configured / the file is missing. A data URI sidesteps DomPDF's
+     * file-path and remote-URL restrictions entirely.
+     */
+    private function getLogoPath()
+    {
+        $setting = \App\Models\Setting::where('key', 'university_logo')->first();
+
+        if ($setting && $setting->value) {
+            $path = Storage::disk('public')->path($setting->value);
+            if (is_file($path)) {
+                $mime = mime_content_type($path) ?: 'image/png';
+                return 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
+            }
+        }
+
+        return null;
     }
 
     /**

@@ -3,45 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Clearance Certificate - Salale University</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Verify Clearance Certificate &mdash; {{ config('app.name', 'Salale University') }}</title>
+    <style>
+        :root { --teal:#084A48; --dark:#001722; --gold:#C9A227; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(160deg, #001722 0%, #084A48 100%);
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            padding: 24px; color: #1f2a2e;
+        }
+        .card { width: 100%; max-width: 440px; background: #fff; border-radius: 18px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,.35); }
+        .card-head { background: var(--teal); padding: 34px 28px; text-align: center; color: #fff; }
+        .seal { width: 58px; height: 58px; line-height: 54px; margin: 0 auto 12px; border: 2px solid var(--gold); border-radius: 50%; font-size: 24px; font-weight: 700; }
+        .card-head h1 { font-size: 21px; font-weight: 700; }
+        .card-head p { color: #b9d4d2; font-size: 13px; margin-top: 6px; }
+        .card-body { padding: 28px; }
+        label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+        .hint { font-size: 12px; color: #9ca3af; font-weight: 400; }
+        input { width: 100%; padding: 12px 14px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 14px; font-family: monospace; }
+        input:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(8,74,72,.15); }
+        .field { margin-bottom: 18px; }
+        .err { color: #dc2626; font-size: 12px; margin-top: 6px; }
+        .flash { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; padding: 10px 12px; border-radius: 10px; font-size: 13px; margin-bottom: 18px; }
+        button { width: 100%; background: var(--teal); color: #fff; border: 0; padding: 13px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background .15s; }
+        button:hover { background: #06605d; }
+        .back { display: block; text-align: center; margin-top: 18px; color: var(--teal); text-decoration: none; font-size: 13px; }
+        .note { margin-top: 18px; font-size: 12px; color: #6b7280; text-align: center; line-height: 1.5; }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-blue-900 to-purple-900 min-h-screen">
-    <div class="container mx-auto px-4 py-16">
-        <div class="max-w-md mx-auto">
-            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-                <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-8 text-center">
-                    <i class="fas fa-qrcode text-white text-5xl mb-3"></i>
-                    <h1 class="text-2xl font-bold text-white">Verify Clearance</h1>
-                    <p class="text-blue-100 mt-2">Enter the reference number to verify</p>
+<body>
+    <div class="card">
+        <div class="card-head">
+            <div class="seal">{{ strtoupper(substr(config('app.name', 'Salale University'), 0, 1)) }}</div>
+            <h1>Verify Clearance Certificate</h1>
+            <p>Confirm the authenticity of an issued certificate</p>
+        </div>
+        <div class="card-body">
+            @if(session('error'))
+                <div class="flash">{{ session('error') }}</div>
+            @endif
+
+            <form action="{{ route('verify.check') }}" method="POST">
+                @csrf
+                <div class="field">
+                    <label for="reference_no">Reference Number</label>
+                    <input id="reference_no" type="text" name="reference_no" value="{{ old('reference_no') }}" required placeholder="SAL/2024/01/00001">
+                    @error('reference_no') <p class="err">{{ $message }}</p> @enderror
                 </div>
-                
-                <div class="p-8">
-                    <form action="{{ route('verify.check') }}" method="POST">
-                        @csrf
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Reference Number</label>
-                            <input type="text" name="reference_no" required placeholder="SAL/2024/01/00001"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-mono">
-                            @error('reference_no')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        
-                        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition">
-                            <i class="fas fa-search mr-2"></i> Verify Certificate
-                        </button>
-                    </form>
-                    
-                    <div class="mt-6 text-center">
-                        <a href="{{ route('home') }}" class="text-blue-600 hover:text-blue-800">
-                            <i class="fas fa-arrow-left mr-2"></i> Back to Home
-                        </a>
-                    </div>
+                <div class="field">
+                    <label for="security_code">Security Code <span class="hint">(optional &mdash; for full verification)</span></label>
+                    <input id="security_code" type="text" name="security_code" value="{{ old('security_code') }}" placeholder="Found on the certificate">
                 </div>
-            </div>
+                <button type="submit">Verify Certificate</button>
+            </form>
+
+            <p class="note">Tip: scanning the QR code on the certificate verifies it instantly with full details.</p>
+            <a class="back" href="{{ route('home') }}">&larr; Back to Home</a>
         </div>
     </div>
 </body>

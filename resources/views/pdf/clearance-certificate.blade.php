@@ -4,293 +4,205 @@
     <meta charset="UTF-8">
     <title>Clearance Certificate - {{ $clearance->reference_no }}</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        @page { margin: 0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'DejaVu Sans', 'Helvetica', 'Arial', sans-serif;
-            padding: 40px;
-            background: white;
+            font-family: 'DejaVu Sans', sans-serif;
+            color: #1f2a2e;
+            font-size: 12px;
+        }
+
+        .page { padding: 26px; }
+
+        /* Double frame */
+        .frame {
+            border: 2px solid #084A48;
+            padding: 4px;
+        }
+        .frame-inner {
+            border: 1px solid #C9A227;
+            padding: 30px 34px;
             position: relative;
         }
+
         .watermark {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 120px;
-            color: rgba(30, 58, 138, 0.08);
-            z-index: 0;
-            pointer-events: none;
-            font-weight: bold;
-            letter-spacing: 20px;
-        }
-        .certificate {
-            border: 3px solid #1e3a8a;
-            padding: 30px;
-            position: relative;
-            background: linear-gradient(135deg, #fff 0%, #f0f9ff 100%);
-            z-index: 10;
-            box-shadow: 0 0 20px rgba(30, 58, 138, 0.15);
-        }
-        .header {
+            position: absolute;
+            top: 320px; left: 0; right: 0;
             text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #1e3a8a;
-            padding-bottom: 20px;
-        }
-        .logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 10px;
-        }
-        .university-name {
-            font-size: 24px;
+            font-size: 96px;
             font-weight: bold;
-            color: #1e3a8a;
+            color: #084A48;
+            opacity: 0.05;
+            letter-spacing: 12px;
+            transform: rotate(-8deg);
         }
-        .certificate-title {
-            font-size: 28px;
-            font-weight: bold;
-            color: #dc2626;
-            margin: 20px 0;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+
+        /* Header */
+        .header { text-align: center; padding-bottom: 16px; border-bottom: 2px solid #084A48; }
+        .logo { height: 64px; margin-bottom: 8px; }
+        .monogram {
+            width: 60px; height: 60px; line-height: 60px;
+            margin: 0 auto 8px auto;
+            border: 2px solid #084A48; border-radius: 50%;
+            color: #084A48; font-size: 22px; font-weight: bold;
         }
-        .security-banner {
-            background: linear-gradient(90deg, #1e3a8a, #2d5a96);
-            color: white;
-            padding: 12px;
-            border-radius: 5px;
-            font-size: 11px;
+        .uni-name { font-size: 22px; font-weight: bold; color: #001722; letter-spacing: 1px; }
+        .uni-sub { font-size: 11px; color: #6b7280; letter-spacing: 2px; text-transform: uppercase; margin-top: 3px; }
+
+        .cert-title {
             text-align: center;
-            margin: 15px 0;
-            font-weight: bold;
-            letter-spacing: 1px;
+            font-size: 24px; font-weight: bold; color: #084A48;
+            letter-spacing: 4px; text-transform: uppercase;
+            margin: 24px 0 4px 0;
         }
-        .student-info {
-            background: #f3f4f6;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
+        .cert-ref { text-align: center; font-size: 10px; color: #6b7280; margin-bottom: 18px; }
+        .cert-ref strong { color: #1f2a2e; font-family: 'DejaVu Sans Mono', monospace; }
+
+        /* Certifying statement */
+        .statement { text-align: center; font-family: 'DejaVu Serif', serif; line-height: 1.7; margin: 4px 30px 22px 30px; }
+        .statement .lead { font-size: 12px; color: #4b5563; }
+        .student-name {
+            font-size: 24px; font-weight: bold; color: #001722;
+            margin: 8px 0; border-bottom: 1px solid #C9A227; display: inline-block; padding: 0 18px 4px 18px;
         }
-        .info-row {
-            margin: 10px 0;
-            display: flex;
+        .statement .body { font-size: 12px; color: #374151; }
+        .statement .body strong { color: #084A48; }
+
+        /* Details */
+        .details { width: 100%; border-collapse: collapse; margin: 6px 0 18px 0; }
+        .details td { padding: 7px 10px; font-size: 11px; vertical-align: top; width: 50%; }
+        .details .k { color: #6b7280; text-transform: uppercase; font-size: 9px; letter-spacing: 0.5px; }
+        .details .v { color: #1f2a2e; font-weight: bold; font-size: 12px; }
+        .details tr:nth-child(odd) { background: #f4f7f7; }
+
+        .section-label { font-size: 11px; font-weight: bold; color: #084A48; text-transform: uppercase; letter-spacing: 1px; margin: 4px 0 6px 0; }
+
+        /* Approvals */
+        .approvals { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
+        .approvals th {
+            background: #084A48; color: #fff; padding: 8px 10px; text-align: left; font-size: 10px;
+            text-transform: uppercase; letter-spacing: 0.5px;
         }
-        .info-label {
-            width: 150px;
-            font-weight: bold;
-            color: #4b5563;
+        .approvals td { padding: 7px 10px; border-bottom: 1px solid #e5e7eb; font-size: 11px; }
+        .approvals .ok { color: #0f766e; font-weight: bold; }
+
+        /* Footer (QR + signature) */
+        .footer { width: 100%; margin-top: 8px; }
+        .footer td { vertical-align: bottom; }
+        .qr img { width: 96px; height: 96px; }
+        .qr .cap { font-size: 9px; color: #6b7280; margin-top: 4px; }
+        .sign { text-align: center; }
+        .sign-line { border-top: 1px solid #1f2a2e; width: 200px; margin: 36px 0 0 auto; padding-top: 6px; }
+        .sign .role { font-size: 11px; font-weight: bold; color: #001722; }
+        .sign .org { font-size: 10px; color: #6b7280; }
+
+        /* Security strip */
+        .security {
+            margin-top: 18px; border-top: 1px solid #d1d5db; padding-top: 10px;
+            font-size: 9px; color: #6b7280;
         }
-        .info-value {
-            flex: 1;
-            color: #1f2937;
-            font-weight: 500;
-        }
-        .approvals-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        .approvals-table th {
-            background: #1e3a8a;
-            color: white;
-            padding: 10px;
-            text-align: left;
-        }
-        .approvals-table td {
-            padding: 10px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        .status-approved {
-            color: #16a34a;
-            font-weight: bold;
-        }
-        .security-info {
-            background: #ecfdf5;
-            border-left: 4px solid #10b981;
-            padding: 12px;
-            margin: 15px 0;
-            font-size: 9px;
-        }
-        .security-info-label {
-            font-weight: bold;
-            color: #059669;
-            margin-bottom: 5px;
-        }
-        .security-info-value {
-            color: #047857;
-            font-family: monospace;
-            word-break: break-all;
-        }
-        .validity-section {
-            background: #fef3c7;
-            border: 1px solid #fcd34d;
-            padding: 12px;
-            border-radius: 5px;
-            margin: 15px 0;
-            font-size: 10px;
-        }
-        .validity-section strong {
-            color: #92400e;
-        }
-        .footer {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #d1d5db;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-        .qr-code {
-            text-align: center;
-        }
-        .signature {
-            text-align: center;
-        }
-        .signature-line {
-            width: 200px;
-            border-top: 1px solid #000;
-            margin-top: 40px;
-            padding-top: 10px;
-        }
-        .verification-text {
-            font-size: 9px;
-            color: #6b7280;
-            text-align: center;
-            margin-top: 20px;
-            padding: 15px;
-            background: #f3f4f6;
-            border-radius: 5px;
-            border: 1px solid #d1d5db;
-        }
-        .verification-link {
-            color: #1e3a8a;
-            text-decoration: underline;
-            font-weight: bold;
-        }
-        .timestamp {
-            font-size: 8px;
-            color: #9ca3af;
-            text-align: center;
-            margin-top: 10px;
-        }
+        .security .row { margin: 2px 0; }
+        .security .mono { font-family: 'DejaVu Sans Mono', monospace; color: #374151; }
+        .verify-line { text-align: center; font-size: 9.5px; color: #4b5563; margin-top: 8px; }
+        .verify-line a, .verify-url { color: #084A48; font-weight: bold; }
+        .legal { text-align: center; font-size: 8px; color: #9ca3af; font-style: italic; margin-top: 6px; }
     </style>
 </head>
 <body>
-    <div class="watermark">OFFICIAL CERTIFICATE</div>
-    
-    <div class="certificate">
-        <div class="header">
-            <div class="university-name">SALALE UNIVERSITY</div>
-            <div class="certificate-title">CLEARANCE CERTIFICATE</div>
-            <div style="font-size: 12px; color: #4b5563; margin-top: 8px;">Reference No: <strong>{{ $clearance->reference_no }}</strong></div>
-        </div>
-        
-        <div class="security-banner">
-            🔒 SECURE OFFICIAL DOCUMENT - DIGITALLY VERIFIED
-        </div>
-        
-        <div class="student-info">
-            <div class="info-row">
-                <div class="info-label">Student Name:</div>
-                <div class="info-value">{{ $student->full_name }}</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">Student ID:</div>
-                <div class="info-value">{{ $student->student_id }}</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">Faculty:</div>
-                <div class="info-value">{{ $student->faculty }}</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">Department:</div>
-                <div class="info-value">{{ $student->department }}</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">Year of Study:</div>
-                <div class="info-value">Year {{ $student->year }} - {{ $student->semester }} Semester</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">Clearance Type:</div>
-                <div class="info-value">{{ ucfirst(str_replace('_', ' ', $clearance->type)) }}</div>
-            </div>
-        </div>
-        
-        <h3 style="margin: 20px 0 10px 0;">Department Approvals</h3>
-        <table class="approvals-table">
-            <thead>
-                <tr>
-                    <th>Department</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                 </tr>
-            </thead>
-            <tbody>
-                @foreach($approvals->where('status', 'approved') as $approval)
-                <tr>
-                    <td>{{ $approval->department->name }}</td>
-                    <td class="status-approved">✓ Approved</td>
-                    <td>{{ $approval->approved_at ? $approval->approved_at->format('M d, Y') : '-' }}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        
-        <div class="security-info">
-            <div class="security-info-label">🔐 SECURITY INFORMATION</div>
-            <div style="margin: 5px 0;">
-                <strong>Security Code:</strong> <span class="security-info-value">{{ $security_code }}</span>
-            </div>
-            <div style="margin: 5px 0;">
-                <strong>Document Hash:</strong> <span class="security-info-value">{{ $document_hash }}</span>
-            </div>
-            <div style="margin: 5px 0;">
-                <strong>Issued:</strong> {{ $issued_datetime }}
-            </div>
-        </div>
-        
-        <div class="validity-section">
-            <strong>⏰ VALIDITY PERIOD</strong><br>
-            Issued: {{ $generated_date }}<br>
-            Valid Until: {{ $validity_date }}<br>
-            <span style="color: #dc2626;">This certificate is valid for 4 years from the date of issue.</span>
-        </div>
-        
-        <div class="footer">
-            <div class="qr-code">
-                @if(isset($qrCode))
-                    <img src="data:image/svg+xml;base64,{{ $qrCode }}" width="100" height="100" alt="QR Code">
+<div class="page">
+    <div class="frame">
+        <div class="frame-inner">
+            <div class="watermark">OFFICIAL</div>
+
+            <div class="header">
+                @if(!empty($logo_path))
+                    <img class="logo" src="{{ $logo_path }}" alt="Logo">
+                @else
+                    <div class="monogram">{{ strtoupper(substr($university_name, 0, 1)) }}</div>
                 @endif
-                <p class="verification-text">Scan QR Code to Verify</p>
+                <div class="uni-name">{{ strtoupper($university_name) }}</div>
+                <div class="uni-sub">Office of the Registrar</div>
             </div>
-            <div class="signature">
-                <div class="signature-line"></div>
-                <p style="font-size: 11px; font-weight: bold;">Registrar's Signature</p>
-                <p style="font-size: 10px;">Salale University</p>
-                <p style="font-size: 9px; color: #6b7280;">Date: {{ $generated_date }}</p>
+
+            <div class="cert-title">Certificate of Clearance</div>
+            <div class="cert-ref">Reference No: <strong>{{ $clearance->reference_no }}</strong></div>
+
+            <div class="statement">
+                <div class="lead">This is to certify that</div>
+                <div class="student-name">{{ $student->full_name }}</div>
+                <div class="body">
+                    bearing Student ID <strong>{{ $student->student_id }}</strong>,
+                    of the Faculty of {{ $student->faculty }}, Department of {{ $student->department }},
+                    has satisfactorily completed all institutional clearance requirements for
+                    <strong>{{ ucfirst(str_replace('_', ' ', $clearance->type)) }}</strong>
+                    as confirmed by the departments listed below.
+                </div>
             </div>
-        </div>
-        
-        <div class="verification-text">
-            ✓ This is an officially issued digital certificate from Salale University.<br>
-            <strong>Verify this certificate online:</strong><br>
-            <span class="verification-link">{{ url('/verify') }}/{{ $clearance->reference_no }}</span><br>
-            <br>
-            <strong>Security Code for Verification:</strong> {{ $security_code }}<br>
-            <br>
-            <strong>For verification queries:</strong> registrar@salale.edu.et<br>
-            <br>
-            <em>Any unauthorized alteration, forgery, or duplication of this certificate is illegal and subject to prosecution.</em>
-        </div>
-        
-        <div class="timestamp">
-            Generated on {{ $issued_datetime }} | Certificate ID: {{ $security_code }}
+
+            <table class="details">
+                <tr>
+                    <td><div class="k">Student ID</div><div class="v">{{ $student->student_id }}</div></td>
+                    <td><div class="k">Clearance Type</div><div class="v">{{ ucfirst(str_replace('_', ' ', $clearance->type)) }}</div></td>
+                </tr>
+                <tr>
+                    <td><div class="k">Faculty</div><div class="v">{{ $student->faculty }}</div></td>
+                    <td><div class="k">Department</div><div class="v">{{ $student->department }}</div></td>
+                </tr>
+                <tr>
+                    <td><div class="k">Year / Semester</div><div class="v">Year {{ $student->year }} &middot; {{ $student->semester }} Semester</div></td>
+                    <td><div class="k">Date of Issue</div><div class="v">{{ $generated_date }}</div></td>
+                </tr>
+            </table>
+
+            <div class="section-label">Department Approvals</div>
+            <table class="approvals">
+                <thead>
+                    <tr><th style="width:55%">Department</th><th style="width:20%">Status</th><th style="width:25%">Date</th></tr>
+                </thead>
+                <tbody>
+                    @foreach($approvals->where('status', 'approved') as $approval)
+                        <tr>
+                            <td>{{ $approval->department->name }}</td>
+                            <td class="ok">Approved</td>
+                            <td>{{ $approval->approved_at ? $approval->approved_at->format('M d, Y') : '—' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+            <table class="footer">
+                <tr>
+                    <td class="qr" style="width:35%">
+                        @if(isset($qrCode))
+                            <img src="data:image/svg+xml;base64,{{ $qrCode }}" alt="Verification QR">
+                        @endif
+                        <div class="cap">Scan to verify authenticity</div>
+                    </td>
+                    <td style="width:30%"></td>
+                    <td class="sign" style="width:35%">
+                        <div class="sign-line"></div>
+                        <div class="role">Registrar</div>
+                        <div class="org">{{ $university_name }}</div>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="security">
+                <div class="row"><strong>Security Code:</strong> <span class="mono">{{ $security_code }}</span></div>
+                <div class="row"><strong>Document Hash:</strong> <span class="mono">{{ $document_hash }}</span></div>
+                <div class="row"><strong>Issued:</strong> {{ $issued_datetime }} &nbsp;|&nbsp; <strong>Valid Until:</strong> {{ $validity_date }} (4 years)</div>
+            </div>
+
+            <div class="verify-line">
+                Verify this certificate online at <span class="verify-url">{{ $verify_url ?? url('/verify/' . $clearance->reference_no) }}</span>
+            </div>
+            <div class="legal">
+                Any unauthorized alteration, forgery, or duplication of this certificate is illegal and subject to prosecution.
+                For verification queries: registrar@salale.edu.et
+            </div>
         </div>
     </div>
+</div>
 </body>
 </html>
