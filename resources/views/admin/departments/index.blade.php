@@ -38,7 +38,7 @@
                     <i class="fas fa-save"></i>
                     Save order
                 </button>
-                <button id="cancelOrderBtn" type="button" onclick="toggleReorderMode()" class="btn-secondary px-4 py-2 inline-flex items-center gap-2">
+                <button id="cancelOrderBtn" type="button" onclick="toggleReorderMode()" class="hidden btn-secondary px-4 py-2 inline-flex items-center gap-2">
                     <i class="fas fa-times"></i>
                     Cancel
                 </button>
@@ -86,17 +86,28 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($department->officer)
+                                    @php
+                                        $officerName = $department->officer->name;
+                                        $initials = collect(explode(' ', trim($officerName)))
+                                            ->filter()
+                                            ->take(2)
+                                            ->map(fn ($part) => strtoupper(substr($part, 0, 1)))
+                                            ->implode('');
+                                    @endphp
                                     <div class="flex items-center gap-3">
-                                        <div class="h-10 w-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center text-gray-400">
-                                            <img class="h-full w-full object-cover" src="{{ $department->officer->photo ?? asset('images/default-avatar.png') }}" alt="Officer photo">
+                                        <div class="h-10 w-10 shrink-0 rounded-full bg-[#084A48] flex items-center justify-center text-sm font-semibold text-white ring-2 ring-[#084A48]/15">
+                                            {{ $initials ?: 'O' }}
                                         </div>
-                                        <div>
-                                            <div class="text-sm font-medium text-gray-900">{{ $department->officer->name }}</div>
-                                            <div class="text-sm text-gray-500">{{ $department->officer->email }}</div>
+                                        <div class="min-w-0">
+                                            <div class="text-sm font-medium text-gray-900 truncate">{{ $officerName }}</div>
+                                            <div class="text-sm text-gray-500 truncate">{{ $department->officer->email }}</div>
                                         </div>
                                     </div>
                                 @else
-                                    <span class="text-sm text-gray-500">Not assigned</span>
+                                    <span class="inline-flex items-center gap-1.5 text-xs font-medium text-gray-400">
+                                        <span class="h-2 w-2 rounded-full bg-gray-300"></span>
+                                        Not assigned
+                                    </span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -118,16 +129,30 @@
                                     <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full badge-accent">Inactive</span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-3">
-                                <a href="{{ route('admin.departments.edit', $department->id) }}" class="text-blue-600 hover:text-blue-900" title="Edit department">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <button type="button" onclick="toggleStatus({{ $department->id }}, '{{ $department->is_active ? 'deactivate' : 'activate' }}')" class="text-{{ $department->is_active ? 'red' : 'green' }}-600 hover:text-{{ $department->is_active ? 'red' : 'green' }}-900" title="{{ $department->is_active ? 'Deactivate' : 'Activate' }} department">
-                                    <i class="fas fa-{{ $department->is_active ? 'ban' : 'check' }}"></i>
-                                </button>
-                                <button type="button" onclick="confirmDelete({{ $department->id }}, '{{ $department->name }}')" class="text-red-600 hover:text-red-900" title="Delete department">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex items-center gap-1">
+                                    <a href="{{ route('admin.departments.edit', $department->id) }}" class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 hover:bg-[#084A48]/10 hover:text-[#084A48] transition" title="Edit department">
+                                        <i class="fas fa-pen"></i>
+                                    </a>
+                                    @if($department->is_active)
+                                        <button type="button" onclick="toggleStatus({{ $department->id }}, 'deactivate')" class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 hover:bg-amber-100 hover:text-amber-600 transition" title="Deactivate department">
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                    @else
+                                        <button type="button" onclick="toggleStatus({{ $department->id }}, 'activate')" class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 hover:bg-green-100 hover:text-green-600 transition" title="Activate department">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    @endif
+                                    @if($department->officer)
+                                        <button type="button" disabled class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-gray-300 cursor-not-allowed" title="Reassign or remove the officer before deleting this department">
+                                            <i class="fas fa-trash-can"></i>
+                                        </button>
+                                    @else
+                                        <button type="button" onclick="confirmDelete({{ $department->id }}, '{{ addslashes($department->name) }}')" class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 hover:bg-red-100 hover:text-red-600 transition" title="Delete department">
+                                            <i class="fas fa-trash-can"></i>
+                                        </button>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                     @empty

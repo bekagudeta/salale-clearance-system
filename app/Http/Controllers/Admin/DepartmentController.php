@@ -74,15 +74,23 @@ class DepartmentController extends Controller
     public function destroy($id)
     {
         $department = Department::findOrFail($id);
-        
+
+        // Block deletion while an officer is still assigned — either as the
+        // primary officer or via the department staff pivot. The officer must be
+        // reassigned or removed first so no one is left tied to a missing department.
+        if ($department->officer_user_id || $department->staff()->exists()) {
+            return redirect()->back()
+                ->with('error', 'Cannot delete this department while an officer is assigned. Please reassign or remove the officer first.');
+        }
+
         // Check if department has any approvals
         if ($department->approvals()->exists()) {
             return redirect()->back()
                 ->with('error', 'Cannot delete department with existing clearance approvals.');
         }
-        
+
         $department->delete();
-        
+
         return redirect()->route('admin.departments.index')
             ->with('success', 'Department deleted successfully.');
     }

@@ -75,16 +75,22 @@ class ClearanceController extends Controller
         $clearance->updateStatusFromApprovals();
         $clearance->refresh();
         
-        $allApproved = $clearance->approvals->every(function($approval) {
-            return $approval->status === 'approved';
-        });
+        $allApproved = $clearance->hasAllRequiredApprovals();
 
         $registrarApproval = $clearance->approvals->first(function($approval) {
-            return $approval->department->slug === 'registrar-office';
+            return $approval->department && $approval->department->slug === 'registrar-office';
         });
 
-        $canApproveRegistrar = $registrarApproval && $registrarApproval->status === 'pending';
-        
+        // The registrar is the final checkpoint: they may approve only once every
+        // other active department has approved.
+        $otherDepartmentsApproved = $clearance->relevantApprovals()
+            ->filter(fn ($approval) => $approval->department->slug !== 'registrar-office')
+            ->every(fn ($approval) => $approval->status === 'approved');
+
+        $canApproveRegistrar = $registrarApproval
+            && $registrarApproval->status === 'pending'
+            && $otherDepartmentsApproved;
+
         return view('registrar.clearance.show', compact('clearance', 'allApproved', 'registrarApproval', 'canApproveRegistrar'));
     }
 
@@ -92,11 +98,22 @@ class ClearanceController extends Controller
     {
         $clearance = ClearanceRequest::with(['approvals.department', 'student.user'])->findOrFail($id);
         $registrarApproval = $clearance->approvals->first(function($approval) {
-            return $approval->department->slug === 'registrar-office';
+            return $approval->department && $approval->department->slug === 'registrar-office';
         });
 
         if (!$registrarApproval || $registrarApproval->status !== 'pending') {
             return redirect()->back()->with('error', 'No pending registrar approval found for this clearance.');
+        }
+
+        // Enforce registrar-approves-last: every other active department must have
+        // approved before the registrar can record their approval.
+        $pendingOther = $clearance->relevantApprovals()->first(function ($approval) {
+            return $approval->department->slug !== 'registrar-office'
+                && $approval->status !== 'approved';
+        });
+
+        if ($pendingOther) {
+            return redirect()->back()->with('error', 'All other departments must approve before the registrar can approve.');
         }
 
         $this->approvalService->approve($registrarApproval->id);
@@ -107,14 +124,11 @@ class ClearanceController extends Controller
 
     public function finalize($id)
     {
-        $clearance = ClearanceRequest::with(['student.user', 'approvals'])->findOrFail($id);
-        
-        // Check if all departments have approved
-        $allApproved = $clearance->approvals->every(function($approval) {
-            return $approval->status === 'approved';
-        });
-        
-        if (!$allApproved) {
+        $clearance = ClearanceRequest::with(['student.user', 'approvals.department'])->findOrFail($id);
+
+        // Check that all active departments have approved (deactivated departments
+        // are excluded so they can't block finalization).
+        if (!$clearance->hasAllRequiredApprovals()) {
             return redirect()->back()->with('error', 'Cannot finalize: Not all departments have approved.');
         }
         
