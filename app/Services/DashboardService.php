@@ -39,10 +39,15 @@ class DashboardService
      */
     private function getStudentRecentActivities($studentId)
     {
-        return ActivityLog::whereHas('user.student', function($q) use ($studentId) {
-                $q->where('id', $studentId);
+        // Group the OR so it stays scoped to this student. Previously the bare
+        // orWhere('record_id', ...) leaked outside the whereHas, matching any log
+        // whose record_id happened to equal this student id.
+        return ActivityLog::where(function ($query) use ($studentId) {
+                $query->whereHas('user.student', function ($q) use ($studentId) {
+                        $q->where('id', $studentId);
+                    })
+                    ->orWhere('record_id', $studentId);
             })
-            ->orWhere('record_id', $studentId)
             ->orderBy('created_at', 'desc')
             ->take(10)
             ->get();

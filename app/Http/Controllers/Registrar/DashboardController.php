@@ -7,6 +7,7 @@ use App\Models\ClearanceApproval;
 use App\Models\ClearanceRequest;
 use App\Models\Department;
 use App\Services\ReportService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -29,14 +30,26 @@ class DashboardController extends Controller
                 ->count();
         }
 
+        // Collapse the six status counters into one aggregate query, cached briefly.
+        $requestStats = Cache::remember('registrar_dashboard_request_stats', 60, function () {
+            return ClearanceRequest::selectRaw("
+                COUNT(*) as total_requests,
+                SUM(status = 'pending') as pending,
+                SUM(status = 'in_progress') as in_progress,
+                SUM(status = 'approved') as approved,
+                SUM(status = 'completed') as completed,
+                SUM(status = 'rejected') as rejected
+            ")->first();
+        });
+
         $stats = [
-            'total_requests' => ClearanceRequest::count(),
-            'pending' => ClearanceRequest::where('status', 'pending')->count(),
-            'in_progress' => ClearanceRequest::where('status', 'in_progress')->count(),
-            'approved' => ClearanceRequest::where('status', 'approved')->count(),
+            'total_requests' => (int) ($requestStats->total_requests ?? 0),
+            'pending' => (int) ($requestStats->pending ?? 0),
+            'in_progress' => (int) ($requestStats->in_progress ?? 0),
+            'approved' => (int) ($requestStats->approved ?? 0),
             'awaiting_registrar' => $awaitingRegistrarCount,
-            'completed' => ClearanceRequest::where('status', 'completed')->count(),
-            'rejected' => ClearanceRequest::where('status', 'rejected')->count(),
+            'completed' => (int) ($requestStats->completed ?? 0),
+            'rejected' => (int) ($requestStats->rejected ?? 0),
         ];
         
         $monthlyStats = ClearanceRequest::select(

@@ -143,10 +143,33 @@ class SettingController extends Controller
         
         $filename = "backup_{$databaseName}_" . date('Y-m-d_His') . ".sql";
         $filepath = $backupPath . '/' . $filename;
-        
-        $command = "mysqldump --user={$username} --password={$password} {$databaseName} > {$filepath}";
-        exec($command);
-        
+
+        // Escape every argument so special characters can't break out of the shell
+        // command, and pass the password via MYSQL_PWD instead of --password so it
+        // does not appear in the server's process list.
+        $command = sprintf(
+            'mysqldump --user=%s %s > %s',
+            escapeshellarg($username),
+            escapeshellarg($databaseName),
+            escapeshellarg($filepath)
+        );
+
+        putenv("MYSQL_PWD={$password}");
+        exec($command . ' 2>&1', $output, $exitCode);
+        putenv('MYSQL_PWD'); // clear the password from the process environment
+
+        if ($exitCode !== 0) {
+            Log::error('Database backup failed', ['exit_code' => $exitCode, 'output' => $output]);
+
+            // Remove the partial/empty file a failed dump may have left behind.
+            if (is_file($filepath)) {
+                @unlink($filepath);
+            }
+
+            return redirect()->route('admin.settings.backup')
+                ->with('error', 'Backup failed. Please check that mysqldump is available and try again.');
+        }
+
         return redirect()->route('admin.settings.backup')
             ->with('success', "Backup created successfully: {$filename}");
     }

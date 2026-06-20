@@ -162,21 +162,23 @@ class ApprovalService
      */
     public function getDepartmentStats($departmentId)
     {
+        // Single aggregate query instead of 5 separate COUNT queries.
+        $row = ClearanceApproval::where('department_id', $departmentId)
+            ->selectRaw("
+                COUNT(*) as total,
+                SUM(status = 'pending') as pending,
+                SUM(status = 'approved') as approved,
+                SUM(status = 'rejected') as rejected,
+                SUM(status = 'approved' AND DATE(approved_at) = CURDATE()) as approved_today
+            ")
+            ->first();
+
         return [
-            'total' => ClearanceApproval::where('department_id', $departmentId)->count(),
-            'pending' => ClearanceApproval::where('department_id', $departmentId)
-                ->where('status', 'pending')
-                ->count(),
-            'approved' => ClearanceApproval::where('department_id', $departmentId)
-                ->where('status', 'approved')
-                ->count(),
-            'rejected' => ClearanceApproval::where('department_id', $departmentId)
-                ->where('status', 'rejected')
-                ->count(),
-            'approved_today' => ClearanceApproval::where('department_id', $departmentId)
-                ->whereDate('approved_at', today())
-                ->where('status', 'approved')
-                ->count(),
+            'total' => (int) ($row->total ?? 0),
+            'pending' => (int) ($row->pending ?? 0),
+            'approved' => (int) ($row->approved ?? 0),
+            'rejected' => (int) ($row->rejected ?? 0),
+            'approved_today' => (int) ($row->approved_today ?? 0),
             'average_processing_time' => $this->getAverageProcessingTime($departmentId),
         ];
     }

@@ -53,12 +53,23 @@ class ClearanceRepository implements ClearanceRepositoryInterface
 
     public function getStatsByStudent($studentId)
     {
+        // Single aggregate query instead of 5 separate COUNT queries.
+        $row = ClearanceRequest::where('student_id', $studentId)
+            ->selectRaw("
+                COUNT(*) as total,
+                SUM(status = 'pending') as pending,
+                SUM(status = 'approved') as approved,
+                SUM(status = 'rejected') as rejected,
+                SUM(status = 'completed') as completed
+            ")
+            ->first();
+
         return [
-            'total' => ClearanceRequest::where('student_id', $studentId)->count(),
-            'pending' => ClearanceRequest::where('student_id', $studentId)->where('status', 'pending')->count(),
-            'approved' => ClearanceRequest::where('student_id', $studentId)->where('status', 'approved')->count(),
-            'rejected' => ClearanceRequest::where('student_id', $studentId)->where('status', 'rejected')->count(),
-            'completed' => ClearanceRequest::where('student_id', $studentId)->where('status', 'completed')->count(),
+            'total' => (int) ($row->total ?? 0),
+            'pending' => (int) ($row->pending ?? 0),
+            'approved' => (int) ($row->approved ?? 0),
+            'rejected' => (int) ($row->rejected ?? 0),
+            'completed' => (int) ($row->completed ?? 0),
         ];
     }
 }
