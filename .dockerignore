@@ -1,0 +1,40 @@
+# Version control / tooling
+.git
+.github
+.gitignore
+.gitattributes
+.editorconfig
+.fleet
+.idea
+.vscode
+.zed
+.nova
+
+# Dependencies (installed inside the image)
+vendor
+node_modules
+
+# Local env / secrets (provided via Railway variables)
+.env
+.env.*
+
+# Build artifacts (rebuilt inside the image)
+public/build
+public/hot
+
+# Runtime/persistent storage (lives on the Railway volume, not the image)
+storage/app/public/*
+storage/app/private/*
+storage/app/backups/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
+bootstrap/cache/*.php
+
+# Misc
+*.log
+.phpunit.result.cache
+.phpunit.cache
+tests
+README.md
