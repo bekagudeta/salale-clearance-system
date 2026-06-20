@@ -30,8 +30,24 @@ class VerifyController extends Controller
     }
 
     /**
-     * QR / link verification. The QR code carries ?code=<security_code>, so a
-     * scan lands here with full proof; a hand-typed reference shows basic info.
+     * QR / link verification via query string: /verify/lookup?ref=...&code=...
+     * Used by the certificate QR code so the reference number (which contains
+     * slashes) never appears in the URL path, where Apache would reject it.
+     */
+    public function lookup(Request $request)
+    {
+        $reference = $request->query('ref');
+
+        if (! $reference) {
+            return redirect()->route('verify');
+        }
+
+        return $this->resolve($reference, $request->query('code'));
+    }
+
+    /**
+     * Path-based verification (e.g. a manually shared link with the reference in
+     * the path). The QR uses lookup() instead; this remains for legacy/manual use.
      */
     public function show($reference, Request $request)
     {

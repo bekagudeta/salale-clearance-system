@@ -24,7 +24,9 @@ class PdfService
         
         // Encode the QR as a verification URL carrying the security code, so a scan
         // lands on the public verifier with full proof (not just the reference).
-        $verifyUrl = url('/verify/' . rawurlencode($clearance->reference_no) . '?code=' . urlencode($securityCode));
+        // The reference and code go in the QUERY STRING — never the path — because the
+        // reference contains slashes and Apache rejects encoded slashes (%2F) in paths.
+        $verifyUrl = url('/verify/lookup') . '?ref=' . urlencode($clearance->reference_no) . '&code=' . urlencode($securityCode);
 
         $qrSvg = QrCode::format('svg')->size(200)->errorCorrection('H')->generate($verifyUrl);
         $qrCode = base64_encode($qrSvg);
