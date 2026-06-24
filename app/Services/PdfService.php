@@ -34,7 +34,7 @@ class PdfService
         $pdf = Pdf::loadView('pdf.clearance-certificate', [
             'clearance' => $clearance,
             'student' => $clearance->student,
-            'approvals' => $clearance->approvals->load('department'),
+            'approvals' => $clearance->approvals->load('department', 'officer'),
             'qrCode' => $qrCode,
             'verify_url' => $verifyUrl,
             'logo_path' => $this->getLogoPath(),
