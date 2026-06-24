@@ -11,12 +11,43 @@
             'in_progress' => 'bg-[#6BCFCB]/15 text-[#084A48] border border-[#6BCFCB]/20',
             'approved' => 'bg-[#084A48]/15 text-[#084A48] border border-[#084A48]/20',
             'rejected' => 'bg-[#FF4D4D]/15 text-[#B52B2B] border border-[#FF4D4D]/20',
+            'returned' => 'bg-[#FE580B]/15 text-[#7f3f08] border border-[#FE580B]/20',
             'completed' => 'bg-[#001722]/10 text-[#001722] border border-[#001722]/10',
         ];
         $total = $clearance->approvals->count();
         $approved = $clearance->approvals->where('status', 'approved')->count();
         $percentage = $total > 0 ? ($approved / $total) * 100 : 0;
+        $academicApproval = $clearance->academicApproval();
+        $awaitingHead = ! $clearance->hasServiceApprovals();
     @endphp
+
+    @if($clearance->status === 'returned' && $academicApproval)
+        <div class="surface-card overflow-hidden border-l-4 border-[#FE580B] bg-[#FFF5EA] p-6 shadow-sm">
+            <div class="flex items-start gap-4">
+                <div class="flex h-12 w-12 items-center justify-center rounded-3xl bg-[#FE580B]/15 text-[#FE580B]">
+                    <i class="fas fa-rotate-left text-xl"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-[#7f3f08]">Returned by your department head</h3>
+                    <p class="mt-1 text-sm text-[#7f3f08]">
+                        {{ $academicApproval->department->name }} returned this request for fixing.
+                        @if($academicApproval->remarks)
+                            <span class="block mt-1"><span class="font-semibold">Reason:</span> {{ $academicApproval->remarks }}</span>
+                        @endif
+                    </p>
+                    <form action="{{ route('student.clearance.resubmit', $clearance->id) }}" method="POST" class="mt-4 space-y-3">
+                        @csrf
+                        <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-[#7f3f08]">Updated reason (optional)</label>
+                        <textarea name="reason" rows="3" maxlength="500" class="w-full rounded-2xl border border-[#FE580B]/20 bg-white p-3 text-sm text-[#001722] focus:border-[#FE580B] focus:outline-none">{{ old('reason', $clearance->reason) }}</textarea>
+                        <button type="submit" class="btn-primary inline-flex items-center justify-center gap-2">
+                            <i class="fas fa-paper-plane"></i>
+                            Fix &amp; Resubmit
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
 
     <div class="surface-card overflow-hidden shadow-xl">
         <div class="bg-gradient-to-r from-[#084A48] via-[#6BCFCB] to-[#001722] px-6 py-5">
@@ -39,7 +70,11 @@
                     <div class="flex items-center justify-between gap-4">
                         <div>
                             <h2 class="text-lg font-semibold text-[#001722]">Approval Progress</h2>
-                            <p class="mt-2 text-sm text-[#627f7c]">{{ $approved }} of {{ $total }} departments have approved this request.</p>
+                            @if($awaitingHead && $clearance->status !== 'returned')
+                                <p class="mt-2 text-sm text-[#627f7c]">Awaiting your department head's approval before reaching other departments.</p>
+                            @else
+                                <p class="mt-2 text-sm text-[#627f7c]">{{ $approved }} of {{ $total }} departments have approved this request.</p>
+                            @endif
                         </div>
                         <div class="text-right">
                             <div class="text-sm font-semibold text-[#084A48]">{{ round($percentage) }}%</div>

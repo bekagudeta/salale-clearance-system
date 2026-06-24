@@ -29,6 +29,18 @@
                 </div>
 
                 <div>
+                    <label for="category" class="block mb-2 text-sm font-medium text-gray-700">Category</label>
+                    <select id="category" name="category" required class="form-input w-full px-4 py-3 @error('category') border-red-500 @enderror">
+                        <option value="service" {{ old('category', 'service') == 'service' ? 'selected' : '' }}>Service department (clinic, housing, store, ...)</option>
+                        <option value="academic" {{ old('category') == 'academic' ? 'selected' : '' }}>Academic department (student head/coordinator gate)</option>
+                    </select>
+                    <p class="mt-2 text-sm text-gray-500">Academic departments approve their own students first, before service departments.</p>
+                    @error('category')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
                     <label for="officer_user_id" class="block mb-2 text-sm font-medium text-gray-700">Department Officer</label>
                     <select id="officer_user_id" name="officer_user_id" class="form-input w-full px-4 py-3 @error('officer_user_id') border-red-500 @enderror">
                         <option value="">Select an officer (optional)</option>

@@ -4,10 +4,12 @@ namespace App\Providers;
 
 use App\Events\ClearanceApproved;
 use App\Events\ClearanceCompleted;
+use App\Events\ClearanceForwarded;
 use App\Events\ClearanceRejected;
 use App\Events\ClearanceSubmitted;
 use App\Listeners\LogClearanceActivity;
 use App\Listeners\NotifyDepartments;
+use App\Listeners\NotifyServiceDepartments;
 use App\Listeners\NotifyStudent;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -21,6 +23,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         ClearanceSubmitted::class => [
             NotifyDepartments::class,
+        ],
+        ClearanceForwarded::class => [
+            NotifyServiceDepartments::class,
         ],
     ];
 

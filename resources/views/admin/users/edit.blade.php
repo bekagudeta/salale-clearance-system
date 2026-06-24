@@ -120,8 +120,13 @@
                             
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Department</label>
-                                <input type="text" name="department" value="{{ old('department', $user->student->department ?? '') }}" class="form-input w-full px-4 py-2 @error('department') border-red-500 @enderror">
-                                @error('department')
+                                <select name="department_id" class="form-input w-full px-4 py-2 @error('department_id') border-red-500 @enderror">
+                                    <option value="">Select department</option>
+                                    @foreach($academicDepartments as $department)
+                                        <option value="{{ $department->id }}" {{ old('department_id', $user->student->department_id ?? '') == $department->id ? 'selected' : '' }}>{{ $department->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('department_id')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
@@ -287,15 +292,23 @@
         const studentFields = document.getElementById('studentFields');
         const officerFields = document.getElementById('officerFields');
 
-        studentFields.style.display = selectedRole === 'student' ? 'block' : 'none';
-        officerFields.style.display = selectedRole === 'department_officer' ? 'block' : 'none';
+        const isStudent = selectedRole === 'student';
+        const isOfficer = selectedRole === 'department_officer';
 
+        studentFields.style.display = isStudent ? 'block' : 'none';
+        officerFields.style.display = isOfficer ? 'block' : 'none';
+
+        // Disable controls in the hidden section so they are NOT submitted.
+        // Both sections contain a `department_id` field — leaving the inactive
+        // one enabled would submit its empty value and override the active one.
         document.querySelectorAll('#studentFields input, #studentFields select').forEach(field => {
-            field.required = selectedRole === 'student' && field.name !== 'phone';
+            field.disabled = !isStudent;
+            field.required = isStudent && field.name !== 'phone';
         });
 
         document.querySelectorAll('#officerFields select, #officerFields input').forEach(field => {
-            field.required = selectedRole === 'department_officer' && field.name !== 'position';
+            field.disabled = !isOfficer;
+            field.required = isOfficer && field.name !== 'position';
         });
     }
 

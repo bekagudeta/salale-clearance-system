@@ -31,6 +31,7 @@ class StudentProvisioningService
                 'full_name' => $data['name'],
                 'faculty' => $data['faculty'],
                 'department' => $data['department'],
+                'department_id' => $data['department_id'] ?? null,
                 'year' => (int) $data['year'],
                 'semester' => $data['semester'],
                 'phone' => $data['phone'] ?? null,

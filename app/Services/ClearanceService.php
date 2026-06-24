@@ -32,6 +32,19 @@ class ClearanceService
     public function createClearance(array $data, $studentId)
     {
         return DB::transaction(function () use ($data, $studentId) {
+            $student = \App\Models\Student::with('academicDepartment')->findOrFail($studentId);
+
+            // Stage one: the request must first go to the student's own academic
+            // department head/coordinator. Without a linked, active academic
+            // department there is no one to gate the request.
+            $academicDepartment = $student->academicDepartment;
+
+            if (! $academicDepartment || ! $academicDepartment->is_active) {
+                throw new \RuntimeException(
+                    'Your academic department has no head/coordinator assigned yet. Please contact the registrar before submitting a clearance request.'
+                );
+            }
+
             $clearanceData = [
                 'student_id' => $studentId,
                 'reference_no' => $this->generateReferenceNumber(),
@@ -40,21 +53,17 @@ class ClearanceService
                 'status' => 'pending',
                 'requested_date' => now(),
             ];
-            
+
             $clearance = $this->clearanceRepository->create($clearanceData);
 
-            $departments = \App\Models\Department::where('is_active', true)
-                ->orderBy('priority_order')
-                ->get();
+            // Only the academic head's approval is created now. Service
+            // departments are opened later, once the head approves.
+            ClearanceApproval::create([
+                'clearance_request_id' => $clearance->id,
+                'department_id' => $academicDepartment->id,
+                'status' => 'pending',
+            ]);
 
-            foreach ($departments as $department) {
-                ClearanceApproval::create([
-                    'clearance_request_id' => $clearance->id,
-                    'department_id' => $department->id,
-                    'status' => 'pending',
-                ]);
-            }
-            
             // Log activity
             $this->logActivity(
                 'create_clearance',
@@ -62,12 +71,41 @@ class ClearanceService
                 $clearance->id,
                 "Created clearance request with reference: {$clearance->reference_no}"
             );
-            
+
             // Dispatch event
             Event::dispatch(new ClearanceSubmitted($clearance));
-            
+
             return $clearance;
         });
+    }
+
+    /**
+     * Open stage two: create pending approvals for every active service
+     * department once the academic head has approved. Idempotent — existing
+     * service approvals are left untouched. Caller is responsible for the
+     * surrounding transaction and for dispatching ClearanceForwarded.
+     *
+     * @return bool true if any new service approvals were created
+     */
+    public function forwardToServiceDepartments(ClearanceRequest $clearance): bool
+    {
+        $existingDeptIds = $clearance->approvals()->pluck('department_id')->all();
+
+        $serviceDepartments = \App\Models\Department::service()
+            ->where('is_active', true)
+            ->whereNotIn('id', $existingDeptIds)
+            ->orderBy('priority_order')
+            ->get();
+
+        foreach ($serviceDepartments as $department) {
+            ClearanceApproval::create([
+                'clearance_request_id' => $clearance->id,
+                'department_id' => $department->id,
+                'status' => 'pending',
+            ]);
+        }
+
+        return $serviceDepartments->isNotEmpty();
     }
 
     /**
@@ -172,6 +210,57 @@ class ClearanceService
         );
         
         return $clearance;
+    }
+
+    /**
+     * Resubmit a request the academic head returned for fixing. Reuses the
+     * same request: updates the reason/notes, resets the head's approval back
+     * to pending, and re-notifies the head. No new request is created.
+     */
+    public function resubmitClearance($id, $studentId, array $data = [])
+    {
+        return DB::transaction(function () use ($id, $studentId, $data) {
+            $clearance = ClearanceRequest::with('approvals.department')
+                ->where('id', $id)
+                ->where('student_id', $studentId)
+                ->firstOrFail();
+
+            if ($clearance->status !== 'returned') {
+                throw new \RuntimeException('Only a returned request can be resubmitted.');
+            }
+
+            if (array_key_exists('reason', $data)) {
+                $clearance->reason = $data['reason'];
+            }
+
+            $approval = $clearance->academicApproval();
+
+            if (! $approval) {
+                throw new \RuntimeException('This request has no academic department to resubmit to.');
+            }
+
+            // Send it back to the head as a fresh pending approval.
+            $approval->update([
+                'status' => 'pending',
+                'approved_by' => null,
+                'remarks' => null,
+                'approved_at' => null,
+            ]);
+
+            $clearance->status = 'pending';
+            $clearance->save();
+
+            $this->logActivity(
+                'resubmit_clearance',
+                'clearance_requests',
+                $clearance->id,
+                "Resubmitted clearance request: {$clearance->reference_no}"
+            );
+
+            Event::dispatch(new ClearanceSubmitted($clearance));
+
+            return $clearance;
+        });
     }
 
     /**

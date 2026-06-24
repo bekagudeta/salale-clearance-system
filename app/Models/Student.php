@@ -16,6 +16,7 @@ class Student extends Model
         'full_name',
         'faculty',
         'department',
+        'department_id',
         'year',
         'semester',
         'phone',
@@ -35,6 +36,15 @@ class Student extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * The student's academic department — the head/coordinator that gates
+     * their clearance request before it reaches service departments.
+     */
+    public function academicDepartment()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
     }
 
     public function clearances()

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Department;
 use App\Models\User;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -14,35 +15,45 @@ class RegisterController extends Controller
 {
     public function showRegistrationForm()
     {
-        return view('auth.register');
+        $academicDepartments = Department::academic()
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
+
+        return view('auth.register', compact('academicDepartments'));
     }
 
     public function register(Request $request)
     {
         $this->validator($request->all())->validate();
-        
+
         $user = $this->create($request->all());
-        
+
         event(new Registered($user));
-        
+
         // Assign student role
         $user->assignRole('student');
-        
+
+        // Link the student to their academic department (the head/coordinator
+        // that gates their clearance), keeping the readable name too.
+        $department = Department::find($request->department_id);
+
         // Create student profile
         Student::create([
             'user_id' => $user->id,
             'student_id' => $request->student_id,
             'full_name' => $request->name,
             'faculty' => $request->faculty,
-            'department' => $request->department,
+            'department' => $department?->name ?? $request->department,
+            'department_id' => $department?->id,
             'year' => $request->year,
             'semester' => $request->semester,
             'phone' => $request->phone,
             'gender' => $request->gender,
         ]);
-        
+
         auth()->login($user);
-        
+
         return redirect()->route('student.dashboard');
     }
 
@@ -54,7 +65,7 @@ class RegisterController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'student_id' => ['required', 'string', 'unique:students'],
             'faculty' => ['required', 'string'],
-            'department' => ['required', 'string'],
+            'department_id' => ['required', 'exists:departments,id'],
             'year' => ['required', 'integer', 'min:1', 'max:6'],
             'semester' => ['required', 'string'],
             'phone' => ['nullable', 'string'],

@@ -12,10 +12,48 @@ class Department extends Model
     protected $fillable = [
         'name',
         'slug',
+        'category',
         'officer_user_id',
         'priority_order',
         'is_active',
     ];
+
+    /**
+     * Academic departments (Software Engineering, etc.) act as the first-stage
+     * head/coordinator gate for their own students.
+     */
+    public function scopeAcademic($query)
+    {
+        return $query->where('category', 'academic');
+    }
+
+    /**
+     * Service departments (clinic, housing, store, ...) open only after the
+     * student's academic head approves.
+     */
+    public function scopeService($query)
+    {
+        return $query->where('category', 'service');
+    }
+
+    public function isAcademic(): bool
+    {
+        return $this->category === 'academic';
+    }
+
+    /**
+     * The head/coordinator responsible for approving on behalf of this
+     * department: the assigned officer, otherwise the staff member flagged
+     * with position 'head'.
+     */
+    public function head()
+    {
+        if ($this->officer) {
+            return $this->officer;
+        }
+
+        return $this->staff()->wherePivot('position', 'head')->first();
+    }
 
     public function officer()
     {

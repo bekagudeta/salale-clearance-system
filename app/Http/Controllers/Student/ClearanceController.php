@@ -27,11 +27,33 @@ class ClearanceController extends Controller
     public function store(StoreClearanceRequest $request)
     {
         $student = Auth::user()->student;
-        
-        $clearance = $this->clearanceService->createClearance($request->validated(), $student->id);
-        
+
+        try {
+            $clearance = $this->clearanceService->createClearance($request->validated(), $student->id);
+        } catch (\RuntimeException $e) {
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
+        }
+
         return redirect()->route('student.clearance.show', $clearance->id)
-            ->with('success', 'Clearance request submitted successfully.');
+            ->with('success', 'Clearance request submitted to your department head.');
+    }
+
+    public function resubmit(\Illuminate\Http\Request $request, $id)
+    {
+        $student = Auth::user()->student;
+
+        $data = $request->validate([
+            'reason' => 'nullable|string|max:500',
+        ]);
+
+        try {
+            $this->clearanceService->resubmitClearance($id, $student->id, $data);
+        } catch (\RuntimeException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('student.clearance.show', $id)
+            ->with('success', 'Clearance request resubmitted to your department head.');
     }
 
     public function show($id)

@@ -12,77 +12,56 @@ class DepartmentSeeder extends Seeder
      */
     public function run(): void
     {
-        $departments = [
-            [
-                'name' => 'School / Department',
-                'slug' => 'school-department',
-                'priority_order' => 1,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Book Store',
-                'slug' => 'book-store',
-                'priority_order' => 2,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Library',
-                'slug' => 'library',
-                'priority_order' => 3,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Food Service',
-                'slug' => 'food-service',
-                'priority_order' => 4,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Housing',
-                'slug' => 'housing',
-                'priority_order' => 5,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Store Keeper',
-                'slug' => 'store-keeper',
-                'priority_order' => 6,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Campus Security / Police',
-                'slug' => 'campus-security',
-                'priority_order' => 7,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Registrar Office',
-                'slug' => 'registrar-office',
-                'priority_order' => 8,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'ICT Center',
-                'slug' => 'ict-center',
-                'priority_order' => 9,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Finance Office',
-                'slug' => 'finance-office',
-                'priority_order' => 10,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Clinic',
-                'slug' => 'clinic',
-                'priority_order' => 11,
-                'is_active' => true,
-            ],
+        // Academic departments act as the first-stage head/coordinator gate for
+        // their own students. Extend this list with your real departments.
+        $academic = [
+            ['name' => 'Software Engineering', 'slug' => 'software-engineering'],
+            ['name' => 'Computer Science', 'slug' => 'computer-science'],
+            ['name' => 'Accounting', 'slug' => 'accounting'],
+            ['name' => 'Civil Engineering', 'slug' => 'civil-engineering'],
+            ['name' => 'Biology', 'slug' => 'biology'],
+            ['name' => 'Plant Science', 'slug' => 'plant-science'],
         ];
 
-        foreach ($departments as $department) {
-            Department::firstOrCreate(['slug' => $department['slug']], $department);
+        // Service departments open only after the academic head approves.
+        $service = [
+            ['name' => 'Book Store', 'slug' => 'book-store'],
+            ['name' => 'Library', 'slug' => 'library'],
+            ['name' => 'Food Service', 'slug' => 'food-service'],
+            ['name' => 'Housing', 'slug' => 'housing'],
+            ['name' => 'Store Keeper', 'slug' => 'store-keeper'],
+            ['name' => 'Campus Security / Police', 'slug' => 'campus-security'],
+            ['name' => 'Registrar Office', 'slug' => 'registrar-office'],
+            ['name' => 'ICT Center', 'slug' => 'ict-center'],
+            ['name' => 'Finance Office', 'slug' => 'finance-office'],
+            ['name' => 'Clinic', 'slug' => 'clinic'],
+        ];
+
+        $priority = 1;
+        foreach ($academic as $department) {
+            Department::updateOrCreate(
+                ['slug' => $department['slug']],
+                [
+                    'name' => $department['name'],
+                    'category' => 'academic',
+                    'priority_order' => $priority++,
+                    'is_active' => true,
+                ]
+            );
+        }
+
+        // Service departments ordered after all academic ones.
+        $priority = 100;
+        foreach ($service as $department) {
+            Department::updateOrCreate(
+                ['slug' => $department['slug']],
+                [
+                    'name' => $department['name'],
+                    'category' => 'service',
+                    'priority_order' => $priority++,
+                    'is_active' => true,
+                ]
+            );
         }
     }
 }

@@ -36,6 +36,31 @@ class ClearanceRequest extends Model
     }
 
     /**
+     * The first-stage approval belonging to the student's academic department
+     * (the head/coordinator gate), if one exists.
+     */
+    public function academicApproval()
+    {
+        $this->loadMissing('approvals.department');
+
+        return $this->approvals->first(function ($approval) {
+            return $approval->department && $approval->department->isAcademic();
+        });
+    }
+
+    /**
+     * True once the request has fanned out to service departments (stage two).
+     */
+    public function hasServiceApprovals(): bool
+    {
+        $this->loadMissing('approvals.department');
+
+        return $this->approvals->contains(function ($approval) {
+            return $approval->department && ! $approval->department->isAcademic();
+        });
+    }
+
+    /**
      * Approvals that actually gate this request. Approvals belonging to a
      * deactivated department are excluded so a department taken out of the
      * workflow can't permanently block an in-flight clearance.

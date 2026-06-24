@@ -8,6 +8,7 @@ use App\Traits\LogsActivity;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use App\Events\ClearanceApproved;
+use App\Events\ClearanceForwarded;
 use App\Events\ClearanceRejected;
 
 class ApprovalService
@@ -16,13 +17,16 @@ class ApprovalService
 
     protected $clearanceRepository;
     protected $notificationService;
+    protected $clearanceService;
 
     public function __construct(
         ClearanceRepositoryInterface $clearanceRepository,
-        NotificationService $notificationService
+        NotificationService $notificationService,
+        ClearanceService $clearanceService
     ) {
         $this->clearanceRepository = $clearanceRepository;
         $this->notificationService = $notificationService;
+        $this->clearanceService = $clearanceService;
     }
 
     /**
@@ -54,10 +58,21 @@ class ApprovalService
                 'remarks' => $remarks,
                 'approved_at' => now(),
             ]);
-            
+
+            // Stage one → stage two: the academic head's approval opens the
+            // request up to the service departments. Done inside this same
+            // transaction so the request never momentarily looks "fully
+            // approved" with only the head's approval present.
+            $forwarded = false;
+            if ($approval->department->isAcademic()
+                && ! $approval->request->hasServiceApprovals()) {
+                $forwarded = $this->clearanceService->forwardToServiceDepartments($approval->request);
+                $approval->request->load('approvals.department');
+            }
+
             // Update main request status
             $approval->request->updateStatusFromApprovals();
-            
+
             // Log activity
             $this->logActivity(
                 'approve_clearance',
@@ -65,10 +80,14 @@ class ApprovalService
                 $approval->id,
                 "Approved clearance for department: {$approval->department->name}"
             );
-            
+
             // Dispatch event
             Event::dispatch(new ClearanceApproved($approval));
-            
+
+            if ($forwarded) {
+                Event::dispatch(new ClearanceForwarded($approval->request));
+            }
+
             return $approval;
         });
     }
@@ -102,10 +121,16 @@ class ApprovalService
                 'remarks' => $remarks,
                 'approved_at' => now(),
             ]);
-            
-            // Update main request status
-            $approval->request->updateStatusFromApprovals();
-            
+
+            if ($approval->department->isAcademic()) {
+                // The academic head returns the request to the student to fix
+                // and resubmit, rather than killing it outright.
+                $approval->request->update(['status' => 'returned']);
+            } else {
+                // Update main request status
+                $approval->request->updateStatusFromApprovals();
+            }
+
             // Log activity
             $this->logActivity(
                 'reject_clearance',

@@ -41,14 +41,26 @@ class NotifyStudent implements ShouldQueue
     public function handleRejected(ClearanceRejected $event)
     {
         $studentUser = $event->approval->request->student->user;
-        
+
+        // An academic head's rejection returns the request for fixing rather
+        // than killing it, so the student gets an actionable message.
+        $isReturned = $event->approval->department->isAcademic();
+
+        if ($isReturned) {
+            $title = 'Clearance Returned';
+            $message = "Your clearance was returned by {$event->approval->department->name}. Reason: {$event->approval->remarks}. Please fix the issue and resubmit.";
+        } else {
+            $title = 'Clearance Rejected';
+            $message = "Your clearance was rejected by {$event->approval->department->name}. Reason: {$event->approval->remarks}";
+        }
+
         $this->notificationService->createDatabaseNotification(
             $studentUser->id,
-            'Clearance Rejected',
-            "Your clearance was rejected by {$event->approval->department->name}. Reason: {$event->approval->remarks}",
+            $title,
+            $message,
             'rejection'
         );
-        
+
         $this->notificationService->sendEmailNotification(
             $studentUser,
             'rejected',

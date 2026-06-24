@@ -29,6 +29,7 @@ class DepartmentController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:departments',
             'slug' => 'required|string|max:255|unique:departments',
+            'category' => 'required|in:academic,service',
             'officer_user_id' => 'nullable|exists:users,id',
             'priority_order' => 'nullable|integer',
             'is_active' => 'boolean',
@@ -57,6 +58,7 @@ class DepartmentController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:departments,name,' . $id,
             'slug' => 'required|string|max:255|unique:departments,slug,' . $id,
+            'category' => 'required|in:academic,service',
             'officer_user_id' => 'nullable|exists:users,id',
             'priority_order' => 'nullable|integer',
             'is_active' => 'boolean',

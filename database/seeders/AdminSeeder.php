@@ -41,7 +41,6 @@ class AdminSeeder extends Seeder
 
         // Create Department Officers
         $officers = [
-            ['name' => 'School Department Officer', 'email' => 'school@salale.edu.et'],
             ['name' => 'Book Store Officer', 'email' => 'bookstore@salale.edu.et'],
             ['name' => 'Library Officer', 'email' => 'library@salale.edu.et'],
             ['name' => 'Food Service Officer', 'email' => 'food@salale.edu.et'],
@@ -74,7 +73,6 @@ class AdminSeeder extends Seeder
     private function assignOfficersToDepartments(): void
     {
         $departmentMappings = [
-            'school-department' => 'school@salale.edu.et',
             'book-store' => 'bookstore@salale.edu.et',
             'library' => 'library@salale.edu.et',
             'food-service' => 'food@salale.edu.et',

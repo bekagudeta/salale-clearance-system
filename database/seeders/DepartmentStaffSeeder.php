@@ -18,9 +18,17 @@ class DepartmentStaffSeeder extends Seeder
     {
         $staffPassword = $this->seedPassword('SEED_DEPARTMENT_STAFF_PASSWORD');
 
-        // Create sample staff users for each department
+        // Create sample staff users for each department. The first name in each
+        // list becomes the department 'head' (the academic coordinator gate).
         $departments = [
-            'school-department' => ['Dr. John Smith', 'Mrs. Sarah Wilson'],
+            // Academic department heads / coordinators
+            'software-engineering' => ['Dr. Selam Bekele'],
+            'computer-science' => ['Dr. Henok Girma'],
+            'accounting' => ['Mr. Yonas Tesfaye'],
+            'civil-engineering' => ['Dr. Meron Alemu'],
+            'biology' => ['Dr. Hanna Mekonnen'],
+            'plant-science' => ['Dr. Dawit Fikru'],
+            // Service departments
             'book-store' => ['Mr. Ahmed Hassan', 'Ms. Fatima Ali'],
             'library' => ['Mr. James Brown', 'Ms. Rose Johnson', 'Mr. David Lee'],
             'food-service' => ['Mr. Ibrahim Yusuf', 'Ms. Amina Mohamed'],
@@ -50,6 +58,10 @@ class DepartmentStaffSeeder extends Seeder
                         'password' => Hash::make($staffPassword),
                     ]
                 );
+
+                // Department staff (academic heads included) need this role to
+                // reach the approval dashboard (see IsOfficer middleware).
+                $user->assignRole('department_officer');
 
                 // Assign user to department (skip if already exists)
                 // First staff member is 'head', others are 'staff'

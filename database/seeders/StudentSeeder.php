@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\Department;
 use App\Models\User;
 use App\Models\Student;
 use Illuminate\Support\Facades\Hash;
@@ -87,7 +88,12 @@ class StudentSeeder extends Seeder
             );
             
             $user->assignRole('student');
-            
+
+            // Link to the matching academic department (head/coordinator gate).
+            $department = Department::academic()
+                ->where('name', $studentData['department'])
+                ->first();
+
             Student::updateOrCreate(
                 ['student_id' => $studentData['student_id']],
                 [
@@ -95,6 +101,7 @@ class StudentSeeder extends Seeder
                     'full_name' => $studentData['name'],
                     'faculty' => $studentData['faculty'],
                     'department' => $studentData['department'],
+                    'department_id' => $department?->id,
                     'year' => $studentData['year'],
                     'semester' => $studentData['semester'],
                     'phone' => $studentData['phone'],

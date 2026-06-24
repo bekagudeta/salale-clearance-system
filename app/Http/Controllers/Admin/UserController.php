@@ -63,7 +63,8 @@ class UserController extends Controller
     {
         $roles = Role::whereNotIn('name', ['super_admin'])->get();
         $departments = Department::where('is_active', true)->get();
-        return view('admin.users.create', compact('roles', 'departments'));
+        $academicDepartments = Department::academic()->where('is_active', true)->orderBy('name')->get();
+        return view('admin.users.create', compact('roles', 'departments', 'academicDepartments'));
     }
 
     public function store(Request $request)
@@ -82,12 +83,14 @@ class UserController extends Controller
             $request->validate([
                 'student_id' => 'required|string|unique:students',
                 'faculty' => 'required|string',
-                'department' => 'required|string',
+                'department_id' => 'required|exists:departments,id',
                 'year' => 'required|integer|min:1|max:6',
                 'semester' => 'required|string',
                 'gender' => 'nullable|in:male,female,other',
                 'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
+
+            $department = Department::find($request->department_id);
 
             $user = $this->studentProvisioning->createStudent([
                 'name' => $request->name,
@@ -95,7 +98,8 @@ class UserController extends Controller
                 'password' => $request->password,
                 'student_id' => $request->student_id,
                 'faculty' => $request->faculty,
-                'department' => $request->department,
+                'department' => $department?->name ?? $request->department,
+                'department_id' => $department?->id,
                 'year' => $request->year,
                 'semester' => $request->semester,
                 'phone' => $request->phone,
@@ -138,9 +142,10 @@ class UserController extends Controller
         $user = User::with('student')->findOrFail($id);
         $roles = Role::whereNotIn('name', ['super_admin'])->get();
         $departments = Department::where('is_active', true)->get();
+        $academicDepartments = Department::academic()->where('is_active', true)->orderBy('name')->get();
         $userRoles = $user->roles->pluck('name')->toArray();
-        
-        return view('admin.users.edit', compact('user', 'roles', 'departments', 'userRoles'));
+
+        return view('admin.users.edit', compact('user', 'roles', 'departments', 'academicDepartments', 'userRoles'));
     }
 
     public function update(Request $request, $id)
@@ -169,18 +174,21 @@ class UserController extends Controller
             $request->validate([
                 'student_id' => 'required|string|unique:students,student_id,' . optional($user->student)->id,
                 'faculty' => 'required|string',
-                'department' => 'required|string',
+                'department_id' => 'required|exists:departments,id',
                 'year' => 'required|integer|min:1|max:6',
                 'semester' => 'required|string',
                 'gender' => 'nullable|in:male,female,other',
                 'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
 
+            $department = Department::find($request->department_id);
+
             $updateData = [
                 'student_id' => $request->student_id,
                 'full_name' => $request->name,
                 'faculty' => $request->faculty,
-                'department' => $request->department,
+                'department' => $department?->name ?? $request->department,
+                'department_id' => $department?->id,
                 'year' => $request->year,
                 'semester' => $request->semester,
                 'phone' => $request->phone,

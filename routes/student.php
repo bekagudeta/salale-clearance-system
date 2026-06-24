@@ -26,6 +26,7 @@ Route::middleware(['auth', 'is.student'])->prefix('student')->name('student.')->
         Route::get('/{id}', [ClearanceController::class, 'show'])->name('show')->whereNumber('id');
         Route::get('/{id}/download', [ClearanceController::class, 'download'])->name('download')->whereNumber('id');
         Route::post('/{id}/cancel', [ClearanceController::class, 'cancel'])->name('cancel')->whereNumber('id');
+        Route::post('/{id}/resubmit', [ClearanceController::class, 'resubmit'])->name('resubmit')->whereNumber('id');
     });
     
     // Profile Management

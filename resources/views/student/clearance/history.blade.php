@@ -44,6 +44,7 @@
                         'in_progress' => 'bg-[#6BCFCB]/15 text-[#084A48]',
                         'approved' => 'bg-[#084A48]/15 text-[#084A48] hover:bg-[#084A48]/90 hover:text-white',
                         'rejected' => 'bg-[#FF4D4D]/15 text-[#B52B2B]',
+                        'returned' => 'bg-[#FE580B]/15 text-[#7f3f08]',
                         'completed' => 'bg-[#001722]/10 text-[#001722]',
                     ];
                 @endphp

@@ -3,7 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\ClearanceSubmitted;
-use App\Models\Department;
 use App\Services\NotificationService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -18,22 +17,23 @@ class NotifyDepartments implements ShouldQueue
 
     public function handle(ClearanceSubmitted $event)
     {
-        $departments = Department::where('is_active', true)
-            ->with('staff')
-            ->get();
-        
-        foreach ($departments as $department) {
-            // Get all staff members in this department who can approve
-            $staff = $department->allStaff();
-            
-            foreach ($staff as $person) {
-                $this->notificationService->createDatabaseNotification(
-                    $person->id,
-                    'New Clearance Request',
-                    "New clearance request {$event->clearance->reference_no} from student {$event->clearance->student->full_name} requires your approval in {$department->name}.",
-                    'new_clearance'
-                );
-            }
+        // Stage one: only the student's academic department head/coordinator is
+        // notified. Service departments are notified later, on ClearanceForwarded.
+        $approval = $event->clearance->academicApproval();
+
+        if (! $approval || ! $approval->department) {
+            return;
+        }
+
+        $department = $approval->department->loadMissing('staff');
+
+        foreach ($department->allStaff() as $person) {
+            $this->notificationService->createDatabaseNotification(
+                $person->id,
+                'New Clearance Request',
+                "New clearance request {$event->clearance->reference_no} from student {$event->clearance->student->full_name} requires your approval in {$department->name}.",
+                'new_clearance'
+            );
         }
     }
 }

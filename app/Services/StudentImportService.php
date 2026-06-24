@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Department;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
@@ -12,6 +13,11 @@ use Maatwebsite\Excel\Facades\Excel;
 class StudentImportService
 {
     public const MAX_ROWS = 2000;
+
+    /**
+     * Cache of academic departments keyed by normalized name, for import lookups.
+     */
+    protected $academicDepartments = null;
 
     public function __construct(
         protected StudentProvisioningService $provisioning
@@ -104,6 +110,7 @@ class StudentImportService
             }
 
             $data = $entry['data'];
+            $department = $this->resolveAcademicDepartment($data['department']);
 
             try {
                 $this->provisioning->createStudent([
@@ -112,7 +119,8 @@ class StudentImportService
                     'password' => $data['password'],
                     'student_id' => $data['student_id'],
                     'faculty' => $data['faculty'],
-                    'department' => $data['department'],
+                    'department' => $department?->name ?? $data['department'],
+                    'department_id' => $department?->id,
                     'year' => $data['year'],
                     'semester' => $data['semester'],
                     'phone' => $data['phone'] ?? null,
@@ -317,5 +325,30 @@ class StudentImportService
         }
 
         return array_values(array_unique($errors));
+    }
+
+    /**
+     * Match an imported department name to an academic Department so the
+     * student is linked to the correct head/coordinator. Returns null when no
+     * academic department matches (the readable name is still stored).
+     */
+    protected function resolveAcademicDepartment(?string $name): ?Department
+    {
+        $key = $this->normalizeDepartmentKey($name);
+
+        if ($key === '') {
+            return null;
+        }
+
+        $this->academicDepartments ??= Department::academic()
+            ->get(['id', 'name', 'slug'])
+            ->keyBy(fn ($dept) => $this->normalizeDepartmentKey($dept->name));
+
+        return $this->academicDepartments->get($key);
+    }
+
+    protected function normalizeDepartmentKey(?string $value): string
+    {
+        return preg_replace('/[^a-z0-9]/', '', strtolower((string) $value));
     }
 }
