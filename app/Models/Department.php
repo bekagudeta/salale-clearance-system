@@ -65,6 +65,11 @@ class Department extends Model
         return $this->hasMany(ClearanceApproval::class);
     }
 
+    public function studentCases()
+    {
+        return $this->hasMany(DepartmentStudentCase::class);
+    }
+
     public function staff()
     {
         return $this->belongsToMany(User::class)

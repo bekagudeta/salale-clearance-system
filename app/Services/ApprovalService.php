@@ -18,15 +18,18 @@ class ApprovalService
     protected $clearanceRepository;
     protected $notificationService;
     protected $clearanceService;
+    protected $studentCaseService;
 
     public function __construct(
         ClearanceRepositoryInterface $clearanceRepository,
         NotificationService $notificationService,
-        ClearanceService $clearanceService
+        ClearanceService $clearanceService,
+        StudentCaseService $studentCaseService
     ) {
         $this->clearanceRepository = $clearanceRepository;
         $this->notificationService = $notificationService;
         $this->clearanceService = $clearanceService;
+        $this->studentCaseService = $studentCaseService;
     }
 
     /**
@@ -47,9 +50,17 @@ class ApprovalService
                 throw new \Exception('You are not authorized to process this approval.');
             }
             
-            // Check if already approved or rejected
-            if ($approval->status !== 'pending') {
+            if (! in_array($approval->status, ['pending', 'on_hold'], true)) {
                 throw new \Exception('This approval has already been processed.');
+            }
+
+            if ($this->studentCaseService->hasOpenCases(
+                $approval->department_id,
+                $approval->request->student_id
+            )) {
+                throw new \Exception(
+                    'Cannot approve: this student has open case(s) on record. Clear the cases first or notify the student.'
+                );
             }
             
             $approval->update([
@@ -87,6 +98,61 @@ class ApprovalService
             if ($forwarded) {
                 Event::dispatch(new ClearanceForwarded($approval->request));
             }
+
+            return $approval;
+        });
+    }
+
+    /**
+     * Put a clearance on hold because the student has open case(s).
+     */
+    public function flagWithCase($approvalId, $remarks)
+    {
+        return DB::transaction(function () use ($approvalId, $remarks) {
+            $approval = ClearanceApproval::with(['request.student.user', 'department'])->findOrFail($approvalId);
+
+            $isAuthorized = ($approval->department->officer_user_id === auth()->id())
+                || auth()->user()->departments()->wherePivot('can_approve', true)
+                    ->where('departments.id', $approval->department_id)
+                    ->exists()
+                || (auth()->user()->hasRole('registrar') && $approval->department->slug === 'registrar-office');
+
+            if (! $isAuthorized) {
+                throw new \Exception('You are not authorized to process this approval.');
+            }
+
+            if (! in_array($approval->status, ['pending', 'on_hold'], true)) {
+                throw new \Exception('This approval has already been processed.');
+            }
+
+            if (! $this->studentCaseService->hasOpenCases(
+                $approval->department_id,
+                $approval->request->student_id
+            )) {
+                throw new \Exception('This student has no open cases. You can approve the request directly.');
+            }
+
+            $approval->update([
+                'status' => 'on_hold',
+                'remarks' => $remarks,
+            ]);
+
+            $studentUser = $approval->request->student->user;
+            if ($studentUser) {
+                $this->notificationService->notifyCaseHold(
+                    $studentUser,
+                    $approval->request,
+                    $approval->department,
+                    $remarks
+                );
+            }
+
+            $this->logActivity(
+                'flag_clearance_case',
+                'clearance_approvals',
+                $approval->id,
+                "Flagged clearance on hold for {$approval->department->name}: {$remarks}"
+            );
 
             return $approval;
         });
@@ -149,13 +215,19 @@ class ApprovalService
     /**
      * Get pending approvals for a department
      */
-    public function getDepartmentPendingApprovals($departmentId)
+    public function getDepartmentPendingApprovals($departmentId, ?string $studentIdSearch = null)
     {
-        return ClearanceApproval::where('department_id', $departmentId)
-            ->where('status', 'pending')
-            ->with(['request.student'])
-            ->orderBy('created_at', 'asc')
-            ->get();
+        $query = ClearanceApproval::where('department_id', $departmentId)
+            ->whereIn('status', ['pending', 'on_hold'])
+            ->with(['request.student']);
+
+        if ($studentIdSearch) {
+            $query->whereHas('request.student', function ($q) use ($studentIdSearch) {
+                $q->where('student_id', 'like', '%' . $studentIdSearch . '%');
+            });
+        }
+
+        return $query->orderBy('created_at', 'asc')->get();
     }
 
     /**
@@ -191,7 +263,7 @@ class ApprovalService
         $row = ClearanceApproval::where('department_id', $departmentId)
             ->selectRaw("
                 COUNT(*) as total,
-                SUM(status = 'pending') as pending,
+                SUM(status = 'pending') + SUM(status = 'on_hold') as pending,
                 SUM(status = 'approved') as approved,
                 SUM(status = 'rejected') as rejected,
                 SUM(status = 'approved' AND DATE(approved_at) = CURDATE()) as approved_today
@@ -259,6 +331,7 @@ class ApprovalService
                 $q->where('name', 'registrar');
             })->exists() && $approval->department->slug === 'registrar-office';
 
-        return ($assignedViaPrimary || $assignedViaPivot || $assignedViaRegistrar) && $approval->status === 'pending';
+        return ($assignedViaPrimary || $assignedViaPivot || $assignedViaRegistrar)
+            && in_array($approval->status, ['pending', 'on_hold'], true);
     }
 }

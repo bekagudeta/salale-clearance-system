@@ -148,6 +148,8 @@
                                 <p class="mt-1 text-sm text-[#084A48]">Approved by {{ $approval->officer->name ?? 'System' }} on {{ $approval->approved_at->format('M d, Y H:i') }}</p>
                             @elseif($approval->status == 'rejected')
                                 <p class="mt-1 text-sm text-[#B52B2B]">Rejected: {{ $approval->remarks }}</p>
+                            @elseif($approval->status == 'on_hold')
+                                <p class="mt-1 text-sm text-[#7f3f08]">On hold — please clear your case: {{ $approval->remarks }}</p>
                             @else
                                 <p class="mt-1 text-sm text-[#627f7c]">Pending review</p>
                             @endif
@@ -163,6 +165,11 @@
                             <span class="inline-flex items-center gap-2 rounded-full border border-[#FF4D4D]/15 bg-[#FF4D4D]/10 px-4 py-2 text-sm font-semibold text-[#B52B2B]">
                                 <i class="fas fa-times-circle"></i>
                                 Rejected
+                            </span>
+                        @elseif($approval->status == 'on_hold')
+                            <span class="inline-flex items-center gap-2 rounded-full border border-[#FE580B]/15 bg-[#FE580B]/10 px-4 py-2 text-sm font-semibold text-[#7f3f08]">
+                                <i class="fas fa-pause-circle"></i>
+                                On Hold
                             </span>
                         @else
                             <span class="inline-flex items-center gap-2 rounded-full border border-[#FE580B]/15 bg-[#FE580B]/10 px-4 py-2 text-sm font-semibold text-[#7f3f08]">

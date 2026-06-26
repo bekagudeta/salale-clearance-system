@@ -78,6 +78,19 @@ class NotificationService
     }
 
     /**
+     * Notify student that they must clear a department case before approval.
+     */
+    public function notifyCaseHold($user, $clearance, $department, $reason)
+    {
+        $this->createDatabaseNotification(
+            $user->id,
+            'Clearance On Hold — Action Required',
+            "Your clearance request ({$clearance->reference_no}) is on hold at {$department->name}. Please clear your case before approval.\n\nOfficer comment: {$reason}",
+            'case_hold'
+        );
+    }
+
+    /**
      * Notify about rejection
      */
     public function notifyRejection($user, $clearance, $department, $reason)

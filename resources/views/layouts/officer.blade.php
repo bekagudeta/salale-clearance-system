@@ -6,6 +6,11 @@
         <span>Dashboard</span>
     </a>
 
+    <a href="{{ route('department.cases.index') }}" class="flex items-center px-4 py-3 gap-3 rounded-2xl transition {{ request()->routeIs('department.cases.*') ? 'bg-current text-white shadow-lg' : 'text-[#d4f3ee] hover:bg-[#6BCFCB]/10 hover:text-white' }}">
+        <i class="fas fa-folder-open w-5"></i>
+        <span>Student Cases</span>
+    </a>
+
     <a href="{{ route('department.approvals.index') }}" class="flex items-center px-4 py-3 gap-3 rounded-2xl transition {{ request()->routeIs('department.approvals.*') ? 'bg-current text-white shadow-lg' : 'text-[#d4f3ee] hover:bg-[#6BCFCB]/10 hover:text-white' }}">
         <i class="fas fa-clock w-5"></i>
         <span>Pending Approvals</span>

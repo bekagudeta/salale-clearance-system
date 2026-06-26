@@ -51,4 +51,16 @@ class Student extends Model
     {
         return $this->hasMany(ClearanceRequest::class);
     }
+
+    public function departmentCases()
+    {
+        return $this->hasMany(DepartmentStudentCase::class);
+    }
+
+    public function openCasesForDepartment(int $departmentId)
+    {
+        return $this->departmentCases()
+            ->where('department_id', $departmentId)
+            ->open();
+    }
 }
