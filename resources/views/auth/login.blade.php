@@ -8,18 +8,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ── DESIGN TOKENS ─────────────────────────────── */
+        /* ── DESIGN TOKENS (aligned with welcome/brand palette) ─ */
         :root {
-            --teal-deep:    #0E7490;
-            --teal-mid:     #1BA3C6;
-            --teal-light:   #38C9EB;
-            --green-deep:   #14532D;
-            --green-mid:    #166534;
-            --green-light:  #22C55E;
-            --gold:         #F59E0B;
+            --teal-deep:    #084A48;
+            --teal-mid:     #2BA6A2;
+            --teal-light:   #6BCFCB;
+            --accent:       #FE580B;
+            --accent-soft:  #FF7A3D;
             --white:        #FFFFFF;
-            --off-white:    #F0FAFB;
-            --ink:          #0B1F2A;
+            --off-white:    #EAF7F6;
+            --ink:          #001722;
+            --ink-2:        #00232F;
             --muted:        #64748B;
 
             --f-display:  'Cormorant Garamond', Georgia, serif;
@@ -44,7 +43,7 @@
         /* ── LOGIN PAGE STYLES ─────────────────────────── */
         .login-wrapper {
             min-height: 100vh;
-            background: linear-gradient(145deg, var(--ink) 0%, #0d2a3a 40%, #0e3d50 100%);
+            background: linear-gradient(145deg, var(--ink) 0%, var(--ink-2) 45%, #003640 100%);
             position: relative;
             overflow: hidden;
             display: flex;
@@ -60,7 +59,7 @@
             pointer-events: none;
             width: 700px;
             height: 700px;
-            background: radial-gradient(circle, rgba(27,163,198,.22) 0%, transparent 65%);
+            background: radial-gradient(circle, rgba(107,207,203,.20) 0%, transparent 65%);
             top: -200px;
             right: -150px;
         }
@@ -70,7 +69,7 @@
             pointer-events: none;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, rgba(20,83,45,.50) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(8,74,72,.55) 0%, transparent 70%);
             bottom: -100px;
             left: -80px;
         }
@@ -80,7 +79,7 @@
             pointer-events: none;
             width: 300px;
             height: 300px;
-            background: radial-gradient(circle, rgba(245,158,11,.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(254,88,11,.12) 0%, transparent 70%);
             bottom: 120px;
             right: 200px;
         }
@@ -91,8 +90,8 @@
             inset: 0;
             pointer-events: none;
             background-image:
-                linear-gradient(rgba(27,163,198,.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(27,163,198,.03) 1px, transparent 1px);
+                linear-gradient(rgba(107,207,203,.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(107,207,203,.035) 1px, transparent 1px);
             background-size: 60px 60px;
         }
 
@@ -131,8 +130,8 @@
             align-items: center;
             justify-content: center;
             background: rgba(255,255,255,.08);
-            border: 2px solid rgba(27,163,198,.3);
-            box-shadow: 0 0 0 4px rgba(27,163,198,.15), 0 8px 32px rgba(14,116,144,.3);
+            border: 2px solid rgba(107,207,203,.35);
+            box-shadow: 0 0 0 4px rgba(107,207,203,.15), 0 8px 32px rgba(8,74,72,.45);
             overflow: hidden;
         }
 
@@ -171,8 +170,8 @@
             padding: 6px 14px;
             border-radius: 100px;
             margin-bottom: 16px;
-            background: rgba(27,163,198,.10);
-            border: 1px solid rgba(27,163,198,.22);
+            background: rgba(107,207,203,.10);
+            border: 1px solid rgba(107,207,203,.22);
             color: var(--teal-light);
             font-size: 10px;
             font-weight: 700;
@@ -247,14 +246,19 @@
             transition: all .22s ease;
         }
 
+        /* leave room for the show/hide toggle on the password field */
+        .input-wrapper input#password {
+            padding-right: 48px;
+        }
+
         .input-wrapper input::placeholder {
-            color: rgba(200,240,248,.4);
+            color: rgba(200,240,248,.45);
         }
 
         .input-wrapper input:focus {
             background: rgba(255,255,255,.10);
-            border-color: var(--teal-mid);
-            box-shadow: 0 0 0 3px rgba(27,163,198,.15);
+            border-color: var(--teal-light);
+            box-shadow: 0 0 0 3px rgba(107,207,203,.18);
         }
 
         .input-icon {
@@ -262,27 +266,47 @@
             left: 16px;
             top: 50%;
             transform: translateY(-50%);
-            color: rgba(200,240,248,.4);
+            color: var(--teal-light);
             font-size: 14px;
+            opacity: .85;
             pointer-events: none;
+            transition: color .22s, opacity .22s;
+        }
+
+        /* icon brightens when its field is focused */
+        .input-wrapper:focus-within .input-icon {
+            color: var(--accent-soft);
+            opacity: 1;
         }
 
         .toggle-password {
             position: absolute;
-            right: 16px;
+            right: 8px;
             top: 50%;
             transform: translateY(-50%);
-            color: rgba(200,240,248,.4);
-            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            color: var(--teal-light);
+            font-size: 14px;
             cursor: pointer;
-            transition: color .2s;
+            transition: color .2s, background .2s;
             background: none;
             border: none;
+            border-radius: 8px;
             padding: 0;
         }
 
         .toggle-password:hover {
-            color: var(--teal-light);
+            color: #fff;
+            background: rgba(107,207,203,.14);
+        }
+
+        .toggle-password:focus-visible {
+            outline: 2px solid var(--accent-soft);
+            outline-offset: 1px;
         }
 
         .error-message {
@@ -343,7 +367,7 @@
             font-weight: 600;
             letter-spacing: .025em;
             color: #fff;
-            background: linear-gradient(135deg, var(--teal-mid), var(--teal-deep));
+            background: linear-gradient(135deg, var(--accent-soft), var(--accent));
             border: none;
             border-radius: var(--r-sm);
             cursor: pointer;
@@ -352,12 +376,12 @@
             justify-content: center;
             gap: 10px;
             transition: transform .18s, box-shadow .22s;
-            box-shadow: 0 6px 24px rgba(27,163,198,.35);
+            box-shadow: 0 6px 24px rgba(254,88,11,.35);
         }
 
         .submit-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 14px 36px rgba(27,163,198,.50);
+            box-shadow: 0 14px 36px rgba(254,88,11,.50);
         }
 
         .submit-btn i {
