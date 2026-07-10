@@ -4,6 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Salale University — Clearance Management System</title>
+  <meta name="description" content="The official digital clearance portal of Salale University. Submit clearance requests, track sequential department approvals, and verify QR-secured clearance certificates online.">
+  <meta name="theme-color" content="#0E7490">
+  <link rel="icon" type="image/png" href="{{ asset('uploads/logos/logo.png') }}">
+
+  <!-- Open Graph / social sharing -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Salale University — Clearance Management System">
+  <meta property="og:description" content="A secure, paperless portal for student clearance requests, department approvals, and QR-verifiable certificates.">
+  <meta property="og:image" content="{{ asset('uploads/logos/logo.png') }}">
+  <meta property="og:url" content="{{ url()->current() }}">
+  <meta name="twitter:card" content="summary">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -536,7 +548,7 @@
       </h1>
 
       <p class="hero-lead">
-        A secure, unified portal for student clearance requests, sequential department approvals, and QR-verifiable certificate delivery — fully digital and paperless across 16 university departments.
+        A secure, unified portal for student clearance requests, sequential department approvals, and QR-verifiable certificate delivery — fully digital and paperless across {{ $stats['departments'] }} university departments.
       </p>
 
       <div class="hero-btns">
@@ -558,7 +570,7 @@
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
           <div>
             <div class="g-sub" style="margin-bottom:3px;">Departments in the clearance chain</div>
-            <div class="g-number">16</div>
+            <div class="g-number">{{ $stats['departments'] }}</div>
           </div>
           <div style="width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,var(--teal-mid),#22C55E);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;">
             <i class="fas fa-sitemap"></i>
@@ -576,22 +588,22 @@
         <div class="mini-card">
           <div class="mini-icon" style="background:rgba(27,163,198,.18);"><i class="fas fa-building" style="color:var(--teal-light);"></i></div>
           <div class="mini-label">Departments</div>
-          <div class="mini-val">16</div>
+          <div class="mini-val">{{ $stats['departments'] }}</div>
         </div>
         <div class="mini-card">
           <div class="mini-icon" style="background:rgba(34,197,94,.18);"><i class="fas fa-graduation-cap" style="color:#4ADE80;"></i></div>
           <div class="mini-label">Academic Units</div>
-          <div class="mini-val">6</div>
+          <div class="mini-val">{{ $stats['academic'] }}</div>
         </div>
         <div class="mini-card">
           <div class="mini-icon" style="background:rgba(245,158,11,.18);"><i class="fas fa-concierge-bell" style="color:#FCD34D;"></i></div>
           <div class="mini-label">Service Units</div>
-          <div class="mini-val">10</div>
+          <div class="mini-val">{{ $stats['service'] }}</div>
         </div>
         <div class="mini-card">
           <div class="mini-icon" style="background:rgba(27,163,198,.15);"><i class="fas fa-users" style="color:var(--teal-light);"></i></div>
           <div class="mini-label">User Roles</div>
-          <div class="mini-val">4</div>
+          <div class="mini-val">{{ $stats['roles'] }}</div>
         </div>
       </div>
 
@@ -619,10 +631,10 @@
 <div class="stats-band">
   <div class="stats-inner">
     <div class="stats-row">
-      <div class="stat-item"><div class="stat-num"><em>16</em></div><div class="stat-lbl">Departments</div></div>
-      <div class="stat-item"><div class="stat-num"><em>6</em></div><div class="stat-lbl">Academic units</div></div>
-      <div class="stat-item"><div class="stat-num"><em>10</em></div><div class="stat-lbl">Service units</div></div>
-      <div class="stat-item"><div class="stat-num"><em>4</em></div><div class="stat-lbl">User roles</div></div>
+      <div class="stat-item"><div class="stat-num"><em>{{ $stats['departments'] }}</em></div><div class="stat-lbl">Departments</div></div>
+      <div class="stat-item"><div class="stat-num"><em>{{ $stats['academic'] }}</em></div><div class="stat-lbl">Academic units</div></div>
+      <div class="stat-item"><div class="stat-num"><em>{{ $stats['service'] }}</em></div><div class="stat-lbl">Service units</div></div>
+      <div class="stat-item"><div class="stat-num"><em>{{ $stats['roles'] }}</em></div><div class="stat-lbl">User roles</div></div>
       <div class="stat-item"><div class="stat-num">QR<em>✓</em></div><div class="stat-lbl">Verifiable certificates</div></div>
     </div>
   </div>
@@ -747,7 +759,7 @@
     <span class="cta-tag">Ready to begin?</span>
     <h2 class="cta-h">Start managing clearances<br>with confidence</h2>
     <p class="cta-p">Request access from your institution administrator and use the portal to initiate, track, and complete student clearances in minutes.</p>
-    <a href="#" class="btn-cta">
+    <a href="{{ route('login') }}" class="btn-cta">
       Sign In Now &ensp;<i class="fas fa-arrow-right" style="font-size:14px;"></i>
     </a>
   </div>
@@ -778,7 +790,7 @@
       <div>
         <div class="ft-col-ttl">Quick Links</div>
         <ul class="ft-links">
-          <li><a href="#">About Us</a></li>
+          <li><a href="{{ route('about') }}">About Us</a></li>
           <li><a href="#features">Features</a></li>
           <li><a href="#workflow">Workflow</a></li>
           <li><a href="#roles">User Roles</a></li>
