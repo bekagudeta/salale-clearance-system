@@ -1,31 +1,31 @@
 @extends('layouts.app')
 
 @section('sidebar')
-    <a href="{{ route('student.dashboard') }}" class="flex items-center px-4 py-3 gap-3 rounded-2xl transition {{ request()->routeIs('student.dashboard') ? 'bg-current text-white shadow-lg' : 'text-[#d4f3ee] hover:bg-[#6bcfcb]/10 hover:text-white' }}">
-        <i class="fas fa-tachometer-alt w-5"></i>
+    <a href="{{ route('student.dashboard') }}" class="sidebar-link {{ request()->routeIs('student.dashboard') ? 'is-active' : '' }}">
+        <i class="fas fa-tachometer-alt"></i>
         <span>Dashboard</span>
     </a>
 
-    <a href="{{ route('student.clearance.create') }}" class="flex items-center px-4 py-3 gap-3 rounded-2xl transition {{ request()->routeIs('student.clearance.create') ? 'bg-current text-white shadow-lg' : 'text-[#d4f3ee] hover:bg-[#6bcfcb]/10 hover:text-white' }}">
-        <i class="fas fa-plus-circle w-5"></i>
+    <a href="{{ route('student.clearance.create') }}" class="sidebar-link {{ request()->routeIs('student.clearance.create') ? 'is-active' : '' }}">
+        <i class="fas fa-plus-circle"></i>
         <span>New Clearance</span>
     </a>
 
-    <a href="{{ route('student.clearance.history') }}" class="flex items-center px-4 py-3 gap-3 rounded-2xl transition {{ request()->routeIs('student.clearance.history') ? 'bg-current text-white shadow-lg' : 'text-[#d4f3ee] hover:bg-[#6bcfcb]/10 hover:text-white' }}">
-        <i class="fas fa-history w-5"></i>
+    <a href="{{ route('student.clearance.history') }}" class="sidebar-link {{ request()->routeIs('student.clearance.history') ? 'is-active' : '' }}">
+        <i class="fas fa-history"></i>
         <span>My Requests</span>
     </a>
 
-    <a href="{{ route('student.profile.edit') }}" class="flex items-center px-4 py-3 gap-3 rounded-2xl transition {{ request()->routeIs('student.profile.edit') ? 'bg-current text-white shadow-lg' : 'text-[#d4f3ee] hover:bg-[#6bcfcb]/10 hover:text-white' }}">
-        <i class="fas fa-user-circle w-5"></i>
+    <a href="{{ route('student.profile.edit') }}" class="sidebar-link {{ request()->routeIs('student.profile.edit') ? 'is-active' : '' }}">
+        <i class="fas fa-user-circle"></i>
         <span>Profile</span>
     </a>
 
-    <a href="{{ route('student.notifications.index') }}" class="flex items-center px-4 py-3 gap-3 rounded-2xl transition {{ request()->routeIs('student.notifications.index') ? 'bg-current text-white shadow-lg' : 'text-[#d4f3ee] hover:bg-[#6bcfcb]/10 hover:text-white' }}">
-        <i class="fas fa-bell w-5"></i>
+    <a href="{{ route('student.notifications.index') }}" class="sidebar-link {{ request()->routeIs('student.notifications.index') ? 'is-active' : '' }}">
+        <i class="fas fa-bell"></i>
         <span>Notifications</span>
         @if(isset($unreadNotifications) && $unreadNotifications > 0)
-            <span class="ml-auto bg-red-500 text-white text-[11px] font-semibold px-2 py-0.5 rounded-full">{{ $unreadNotifications }}</span>
+            <span class="ml-auto rounded-full bg-[#FE580B] px-2 py-0.5 text-[11px] font-semibold text-white">{{ $unreadNotifications }}</span>
         @endif
     </a>
 @endsection

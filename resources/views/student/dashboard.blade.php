@@ -2,151 +2,150 @@
 
 @section('title', 'Student Dashboard - Salale University')
 @section('page-title', 'Student Dashboard')
+@section('page-subtitle', 'Track requests, progress, and clearance notifications')
 
 @section('content')
+@php
+    $student = auth()->user()->student;
+@endphp
+
 <div class="space-y-6">
-    <!-- Hero Summary -->
-    <div class="surface-card overflow-hidden rounded-[28px] p-6 relative">
-        <div class="absolute inset-0 bg-gradient-to-br from-[#001722] via-[#084A48] to-[#6BCFCB] opacity-10"></div>
-        <div class="relative grid gap-6 lg:grid-cols-[1.6fr_1fr] items-center">
-            <div class="space-y-4">
-                <p class="inline-flex items-center gap-2 rounded-full border border-[#6BCFCB]/20 bg-[#6BCFCB]/10 px-4 py-2 text-sm font-semibold uppercase tracking-[0.2em] text-[#084A48]">Student Dashboard</p>
-                <h1 class="text-4xl sm:text-5xl font-extrabold text-[#001722]">Welcome back, {{ auth()->user()->name }}!</h1>
-                <p class="max-w-2xl text-slate-600">Your clearance progress is updated in real time. Send new requests, review recent status, and stay on track with the university clearance process.</p>
-                <div class="grid gap-4 sm:grid-cols-2">
-                    <div class="rounded-[22px] border border-[#084A48]/10 bg-white/90 p-4 shadow-lg">
-                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#6BCFCB]">Student ID</p>
-                        <p class="mt-3 text-2xl font-semibold text-[#001722]">{{ auth()->user()->student->student_id }}</p>
+    <section class="dashboard-hero overflow-hidden p-6 sm:p-8">
+        <div class="grid gap-6 lg:grid-cols-[1.45fr_0.85fr] lg:items-center">
+            <div class="space-y-5">
+                <p class="dashboard-kicker">Student clearance portal</p>
+                <div>
+                    <h1 class="dashboard-title text-4xl font-bold sm:text-5xl">Welcome back, {{ auth()->user()->name }}.</h1>
+                    <p class="mt-4 max-w-3xl text-sm leading-7 text-[#EAF7F6]/78">
+                        Start clearance requests, monitor department decisions, and keep every step of your university clearance visible in one place.
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <a href="{{ route('student.clearance.create') }}" class="btn-primary">
+                        <i class="fas fa-plus-circle"></i>
+                        New Clearance Request
+                    </a>
+                    <a href="{{ route('student.clearance.history') }}" class="btn-secondary border-white/20 bg-white/10 text-white hover:bg-white/15">
+                        <i class="fas fa-history"></i>
+                        My Requests
+                    </a>
+                </div>
+            </div>
+
+            <div class="rounded-[22px] border border-white/10 bg-white/10 p-5 text-white shadow-xl">
+                <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#38C9EB]">Student profile</p>
+                <div class="mt-5 space-y-3">
+                    <div class="rounded-2xl bg-white/10 px-4 py-3">
+                        <p class="text-xs font-bold uppercase tracking-[0.14em] text-white/55">Student ID</p>
+                        <p class="mt-2 text-2xl font-extrabold">{{ $student->student_id }}</p>
                     </div>
-                    <div class="rounded-[22px] border border-[#084A48]/10 bg-white/90 p-4 shadow-lg">
-                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#FE580B]">Today</p>
-                        <p class="mt-3 text-2xl font-semibold text-[#001722]">{{ date('F j, Y') }}</p>
-                        <p class="text-sm text-slate-500">{{ date('l') }}</p>
+                    <div class="rounded-2xl bg-white/10 px-4 py-3">
+                        <p class="text-xs font-bold uppercase tracking-[0.14em] text-white/55">Faculty</p>
+                        <p class="mt-2 text-lg font-bold">{{ $student->faculty }}</p>
+                    </div>
+                    <div class="rounded-2xl bg-white/10 px-4 py-3">
+                        <p class="text-xs font-bold uppercase tracking-[0.14em] text-white/55">Department</p>
+                        <p class="mt-2 text-lg font-bold">{{ $student->department }}</p>
                     </div>
                 </div>
             </div>
-            <div class="rounded-[28px] border border-[#084A48]/10 bg-[#001722] p-6 text-white shadow-xl">
-                <div class="flex items-center justify-between gap-4">
-                    <div>
-                        <p class="text-sm uppercase tracking-[0.2em] text-[#6BCFCB]">My faculty</p>
-                        <p class="mt-3 text-xl font-semibold">{{ auth()->user()->student->faculty }}</p>
-                    </div>
-                    <div class="flex h-14 w-14 items-center justify-center rounded-3xl bg-[#6BCFCB]/15 text-[#6BCFCB] text-xl shadow-inner shadow-[#6BCFCB]/20">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
+        </div>
+    </section>
+
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-5">
+        <div class="surface-card stat-card p-5 card-hover transition">
+            <div class="flex items-center justify-between gap-4">
+                <div>
+                    <p class="stat-label">Total requests</p>
+                    <p class="stat-value mt-3">{{ $stats['total'] }}</p>
                 </div>
-                <div class="mt-6 rounded-[24px] bg-[#084A48]/10 p-4">
-                    <p class="text-xs uppercase tracking-[0.2em] text-[#084A48]">Department</p>
-                    <p class="mt-2 text-lg font-semibold text-[#001722]">{{ auth()->user()->student->department }}</p>
+                <div class="icon-tile">
+                    <i class="fas fa-file-alt text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="surface-card stat-card p-5 card-hover transition">
+            <div class="flex items-center justify-between gap-4">
+                <div>
+                    <p class="stat-label">Pending</p>
+                    <p class="stat-value mt-3 text-[#92400E]">{{ $stats['pending'] }}</p>
+                </div>
+                <div class="icon-tile icon-tile-accent">
+                    <i class="fas fa-clock text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="surface-card stat-card p-5 card-hover transition">
+            <div class="flex items-center justify-between gap-4">
+                <div>
+                    <p class="stat-label">Approved</p>
+                    <p class="stat-value mt-3">{{ $stats['approved'] }}</p>
+                </div>
+                <div class="icon-tile">
+                    <i class="fas fa-check text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="surface-card stat-card p-5 card-hover transition">
+            <div class="flex items-center justify-between gap-4">
+                <div>
+                    <p class="stat-label">Completed</p>
+                    <p class="stat-value mt-3 text-[#166534]">{{ $stats['completed'] }}</p>
+                </div>
+                <div class="icon-tile icon-tile-success">
+                    <i class="fas fa-check-double text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="surface-card stat-card p-5 card-hover transition">
+            <div class="flex items-center justify-between gap-4">
+                <div>
+                    <p class="stat-label">Rejected</p>
+                    <p class="stat-value mt-3 text-red-600">{{ $stats['rejected'] }}</p>
+                </div>
+                <div class="icon-tile icon-tile-danger">
+                    <i class="fas fa-times-circle text-xl"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Overview Cards -->
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-5">
-        <div class="surface-card rounded-[24px] p-5 card-hover transition">
-            <div class="flex items-center justify-between gap-4">
-                <div>
-                    <p class="text-sm font-medium text-slate-500">Total Requests</p>
-                    <p class="mt-3 text-3xl font-bold text-[#001722]">{{ $stats['total'] }}</p>
-                </div>
-                <div class="flex h-14 w-14 items-center justify-center rounded-3xl bg-[#6BCFCB]/15 text-[#084A48] shadow-sm">
-                    <i class="fas fa-file-alt text-2xl"></i>
-                </div>
-            </div>
-        </div>
-        <div class="surface-card rounded-[24px] p-5 card-hover transition">
-            <div class="flex items-center justify-between gap-4">
-                <div>
-                    <p class="text-sm font-medium text-slate-500">Pending</p>
-                    <p class="mt-3 text-3xl font-bold text-[#FE580B]">{{ $stats['pending'] }}</p>
-                </div>
-                <div class="flex h-14 w-14 items-center justify-center rounded-3xl bg-[#FE580B]/15 text-[#FE580B] shadow-sm">
-                    <i class="fas fa-clock text-2xl"></i>
-                </div>
-            </div>
-        </div>
-        <div class="surface-card rounded-[24px] p-5 card-hover transition">
-            <div class="flex items-center justify-between gap-4">
-                <div>
-                    <p class="text-sm font-medium text-slate-500">Approved</p>
-                    <p class="mt-3 text-3xl font-bold text-[#084A48]">{{ $stats['approved'] }}</p>
-                </div>
-                <div class="flex h-14 w-14 items-center justify-center rounded-3xl bg-[#084A48]/15 text-[#084A48] shadow-sm">
-                    <i class="fas fa-check text-2xl"></i>
-                </div>
-            </div>
-        </div>
-        <div class="surface-card rounded-[24px] p-5 card-hover transition">
-            <div class="flex items-center justify-between gap-4">
-                <div>
-                    <p class="text-sm font-medium text-slate-500">Completed</p>
-                    <p class="mt-3 text-3xl font-bold text-[#001722]">{{ $stats['completed'] }}</p>
-                </div>
-                <div class="flex h-14 w-14 items-center justify-center rounded-3xl bg-[#001722]/10 text-[#001722] shadow-sm">
-                    <i class="fas fa-check-circle text-2xl"></i>
-                </div>
-            </div>
-        </div>
-        <div class="surface-card rounded-[24px] p-5 card-hover transition">
-            <div class="flex items-center justify-between gap-4">
-                <div>
-                    <p class="text-sm font-medium text-slate-500">Rejected</p>
-                    <p class="mt-3 text-3xl font-bold text-[#FE580B]">{{ $stats['rejected'] }}</p>
-                </div>
-                <div class="flex h-14 w-14 items-center justify-center rounded-3xl bg-[#FE580B]/15 text-[#FE580B] shadow-sm">
-                    <i class="fas fa-times-circle text-2xl"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Recent Clearance Requests -->
-    <div class="surface-card overflow-hidden rounded-[28px] border border-[#084A48]/10">
-        <div class="flex flex-col gap-4 px-6 py-5 border-b border-[#084A48]/10 md:flex-row md:items-center md:justify-between">
+    <section class="surface-card overflow-hidden">
+        <div class="flex flex-col gap-3 border-b border-[#0E7490]/10 bg-[#F0FAFB] px-6 py-5 md:flex-row md:items-center md:justify-between">
             <div>
-                <h3 class="text-xl font-semibold text-[#001722]">Recent Clearance Requests</h3>
-                <p class="text-sm text-slate-500">Monitor the latest requests and check current statuses in one place.</p>
+                <h3 class="text-lg font-bold text-[#0B1F2A]">Recent Clearance Requests</h3>
+                <p class="text-sm text-[#64748B]">Monitor the latest submissions and their current status.</p>
             </div>
-            <a href="{{ route('student.clearance.history') }}" class="inline-flex items-center gap-2 rounded-full border border-[#6BCFCB]/25 bg-[#6BCFCB]/10 px-4 py-2 text-sm font-semibold text-[#084A48] transition hover:bg-[#6BCFCB]/20">
+            <a href="{{ route('student.clearance.history') }}" class="btn-secondary px-4 py-2 text-sm">
                 View All
-                <i class="fas fa-arrow-right text-sm"></i>
+                <i class="fas fa-arrow-right"></i>
             </a>
         </div>
+
         <div class="overflow-x-auto">
-            <table class="min-w-full border-separate border-spacing-0">
-                <thead class="bg-gradient-to-r from-[#001722] via-[#084A48] to-[#6BCFCB] text-white">
+            <table class="table-shell min-w-full">
+                <thead>
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.2em]">Reference No</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.2em]">Type</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.2em]">Date</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.2em]">Status</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.2em]">Action</th>
+                        <th class="px-6 py-4 text-left text-xs uppercase">Reference No</th>
+                        <th class="px-6 py-4 text-left text-xs uppercase">Type</th>
+                        <th class="px-6 py-4 text-left text-xs uppercase">Date</th>
+                        <th class="px-6 py-4 text-left text-xs uppercase">Status</th>
+                        <th class="px-6 py-4 text-left text-xs uppercase">Action</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-200 bg-white">
-                    @php
-                        $statusColors = [
-                            'pending' => 'bg-[#FE580B]/15 text-[#FE580B]',
-                            'in_progress' => 'bg-[#6BCFCB]/15 text-[#084A48]',
-                            'approved' => 'bg-[#084A48]/15 text-[#084A48]',
-                            'rejected' => 'bg-[#FF4D4D]/15 text-[#B52B2B]',
-                            'completed' => 'bg-[#001722]/10 text-[#001722]',
-                        ];
-                    @endphp
+                <tbody class="divide-y divide-[#0E7490]/10 bg-white">
                     @forelse($recentClearances as $clearance)
-                        <tr class="hover:bg-[#F8FEFF] transition">
-                            <td class="px-6 py-4 text-sm font-semibold text-[#001722]">{{ $clearance->reference_no }}</td>
-                            <td class="px-6 py-4 text-sm text-slate-600">{{ ucfirst(str_replace('_', ' ', $clearance->type)) }}</td>
-                            <td class="px-6 py-4 text-sm text-slate-600">{{ $clearance->created_at->format('M d, Y') }}</td>
+                        <tr class="transition hover:bg-[#F8FEFF]">
+                            <td class="px-6 py-4 text-sm font-bold text-[#102A32]">{{ $clearance->reference_no }}</td>
+                            <td class="px-6 py-4 text-sm text-[#64748B]">{{ ucfirst(str_replace('_', ' ', $clearance->type)) }}</td>
+                            <td class="px-6 py-4 text-sm text-[#64748B]">{{ $clearance->created_at->format('M d, Y') }}</td>
+                            <td class="px-6 py-4">@include('components.status-badge', ['status' => $clearance->status])</td>
                             <td class="px-6 py-4">
-                                <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold {{ $statusColors[$clearance->status] ?? 'bg-slate-100 text-slate-600' }}">
-                                    {{ ucfirst(str_replace('_', ' ', $clearance->status)) }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <a href="{{ route('student.clearance.show', $clearance->id) }}" class="inline-flex items-center gap-2 text-[#084A48] font-semibold hover:text-[#001722]">
+                                <a href="{{ route('student.clearance.show', $clearance->id) }}" class="inline-flex items-center gap-2 text-sm font-bold text-[#0E7490] hover:text-[#0B1F2A]">
                                     <i class="fas fa-eye"></i>
                                     View
                                 </a>
@@ -154,13 +153,14 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-slate-500">
-                                <div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-[#6BCFCB]/15 text-[#084A48]">
-                                    <i class="fas fa-inbox text-3xl"></i>
+                            <td colspan="5" class="px-6 py-12 text-center text-[#64748B]">
+                                <div class="empty-state-icon mx-auto mb-4">
+                                    <i class="fas fa-inbox text-2xl"></i>
                                 </div>
-                                <p class="text-lg font-semibold text-[#001722]">No clearance requests found</p>
-                                <p class="mt-2 text-sm text-slate-500">Create your first request to start your clearance journey.</p>
-                                <a href="{{ route('student.clearance.create') }}" class="mt-4 inline-flex items-center justify-center rounded-full bg-[#6BCFCB] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#5bc0b5]">
+                                <p class="font-semibold text-[#102A32]">No clearance requests found</p>
+                                <p class="mt-1 text-sm">Create your first request to start your clearance journey.</p>
+                                <a href="{{ route('student.clearance.create') }}" class="btn-primary mt-5 px-5 py-3 text-sm">
+                                    <i class="fas fa-plus"></i>
                                     Create Request
                                 </a>
                             </td>
@@ -169,13 +169,19 @@
                 </tbody>
             </table>
         </div>
-    </div>
+    </section>
 
-    <div class="mt-8 rounded-[28px] border border-[#084A48]/10 bg-[#F5FFFE] p-6 text-right">
-        <a href="{{ route('student.clearance.create') }}" class="btn-primary inline-flex items-center gap-2">
-            <i class="fas fa-plus"></i>
-            New Clearance Request
-        </a>
-    </div>
+    <section class="surface-card p-6">
+        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+                <h3 class="text-lg font-bold text-[#0B1F2A]">Ready for another request?</h3>
+                <p class="mt-1 text-sm text-[#64748B]">Use the official digital workflow instead of paper follow-ups.</p>
+            </div>
+            <a href="{{ route('student.clearance.create') }}" class="btn-primary">
+                <i class="fas fa-plus"></i>
+                New Clearance Request
+            </a>
+        </div>
+    </section>
 </div>
 @endsection
